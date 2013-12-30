@@ -193,7 +193,7 @@ user = User.find(166) #=> nil
 
 ### Serialization
 
-Service Client supports serialization from/to JSON.
+Service Client supports serialization to and from JSON.
 
 ```ruby
 user = User.find(166)
