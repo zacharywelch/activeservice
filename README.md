@@ -1,6 +1,6 @@
 # ServiceClient
 
-Service Client implements object-relational mapping for web services. Like ActiveRecord, its chief aim is to reduce the amount of code needed for object persistence. This is made possible through an interface that’s [Active Model][active_model] compliant and provides transparent proxying between the client and service.
+Service Client implements object-relational mapping for web services. Like ActiveRecord, its chief aim is to reduce the amount of code necessary for data access and object persistence using web services. This is made possible through an interface that’s [Active Model][active_model] compliant and provides transparent proxying between the client and service.
 
 [active_model]: https://github.com/rails/rails/tree/master/activemodel
 [active_attr]: https://github.com/cgriego/active_attr
