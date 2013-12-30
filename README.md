@@ -179,7 +179,7 @@ user.email #=> "foo@baz.com"
 ```ruby
 
 # Delete a record
-user = user.find(166)
+user = User.find(166)
 => #<User email: "foo@bar.com", id: 166, name: "foo"> 
 
 user.destroyed? #=> false
@@ -189,4 +189,19 @@ user.destroyed? #=> true
 # Delete a record on the fly
 User.destroy(166) #=> true
 user = User.find(166) #=> nil 
+```
+
+### Serialization
+
+Service Client supports serialization from/to JSON.
+
+```ruby
+user = User.find(166)
+=> #<User email: "foo@bar.com", id: 166, name: "foo"> 
+
+json = user.to_json
+=> "{\"id\":167,\"name\":\"foo\",\"email\":\"foo@bar.com\"}" 
+
+user = User.new.from_json(json)
+ => #<User email: "foo@bar.com", id: 167, name: "foo"> 
 ```
