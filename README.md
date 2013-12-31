@@ -1,6 +1,12 @@
-# ServiceClient
+# ActiveService
 
-Service Client implements object-relational mapping for web services. Like ActiveRecord, its chief aim is to reduce the amount of code necessary for data access and object persistence using web services. This is made possible through an interface that’s [Active Model][active_model] compliant and provides transparent proxying between the client and service.
+ActiveService is an object-relational mapper for web services. It facilitates the creation and use of business objects through a uniform interface similar to ActiveRecord. With ActiveRecord, objects are mapped to a database via SQL SELECT, INSERT, UPDATE, and DELETE statements. With ActiveService, objects are mapped to a resource via HTTP GET, POST, PUT and DELETE requests.
+
+ActiveService combines several important modules and gems.
+
+* [Active Model][active_model]
+* [Active Attr][active_attr]
+* [Typhoeus][typhoeus]
 
 [active_model]: https://github.com/rails/rails/tree/master/activemodel
 [active_attr]: https://github.com/cgriego/active_attr
@@ -9,11 +15,10 @@ Service Client implements object-relational mapping for web services. Like Activ
 
 ## Examples
 
-### Defining Service Client Models
-
-ServiceClient extends the [ActiveAttr][active_attr] module with additional features such as Active Model callbacks and object persistence via [Typhoeus][typhoeus]. To create your model first include ActiveAttr::Model
+### Defining Active Service Models
 
 ```ruby
+# To create your model first include ActiveAttr::Model
 class User
   include ActiveAttr::Model
 end
@@ -45,7 +50,7 @@ user.admin? #=> false
 
 ### Validations
 
-Service Client uses Active Model for validation support. Add validations the same way you would using Active Record. Service Client will validate models before requests are sent to the service, saving a round trip to the server.
+ActiveService uses Active Model for validation support. Add validations the same way you would using Active Record. Active Service will validate models before requests are sent to the service, saving a round trip to the server.
 
 ```ruby
 class User
@@ -69,7 +74,7 @@ user.errors.full_messages #=> ["Email can't be blank", "Email is invalid"]
 
 ### Callbacks
 
-Service Client defines Active Model callbacks matching the life cycle of Active Record objects. See the ActiveRecord [documentation][activerecord_callbacks] for details.
+Active Service defines Active Model callbacks matching the life cycle of Active Record objects. See the ActiveRecord [documentation][activerecord_callbacks] for details.
 
 ```ruby
 class User
@@ -93,7 +98,7 @@ user.email #=> "foo@bar.com"
 
 ### CRUD
 
-Provide an api endpoint for your models and Service Client will handle CRUD operations with your service backend.
+Provide an api endpoint for your models and Active Service will handle CRUD operations with your service backend.
 
 ```ruby
 class User
@@ -105,7 +110,7 @@ end
 
 #### Read
 
-Service Client provides an API familiar to Active Record users for accessing resources. Below are a few examples of different data access methods provided by Service Client.
+Active Service provides an API familiar to Active Record users for accessing resources. Below are a few examples of different data access methods provided by Active Service.
 
 ```ruby
 # Find a record by id
@@ -193,7 +198,7 @@ user = User.find(166) #=> nil
 
 ### Serialization
 
-Service Client supports serialization to and from JSON.
+Active Service supports serialization to and from JSON.
 
 ```ruby
 user = User.find(166)
