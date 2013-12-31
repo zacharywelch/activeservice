@@ -1,7 +1,8 @@
 class SecurityTag
   include ActiveAttr::Model
 
-  self.base_uri = "http://localhost:3000/api/v1/securitytags"
+  self.base_uri = "https://cafexwstest.careerbuilder.com/v1/securitytags"
+  self.headers  = { Authorization: "Partner careerbuilder:1n73rnal" }
 
   attribute :name
   attribute :description
@@ -13,7 +14,7 @@ class SecurityTag
   validates :description, length: { maximum: 50 }
 
   def self.all
-    super(from: "#{base_uri}/GetSecurityTags")
+    super(from: "#{base_uri}/getsecuritytags")
   end
 
   def self.from_json(json)

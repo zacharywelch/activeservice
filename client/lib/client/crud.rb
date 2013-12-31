@@ -110,7 +110,7 @@ module Persistence
         def find_single(id, options)
           response = Typhoeus::Request.get(id_uri(id))
           if response.success?
-            new(JSON.parse(response.body))
+            new.from_json(response.body)
           elsif response.code == 404
             nil
           else
