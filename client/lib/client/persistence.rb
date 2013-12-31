@@ -6,11 +6,11 @@ require 'client/crud'
 # = Persistence
 # 
 # Persistence facilitates the storage of ActiveAttr(ActiveModel) models to a 
-# remote data store. Where ActiveRecord runs SQL statements against a 
-# database, Persistence runs HTTP requests against a web service api.
+# remote data store using Typhoeus. Where ActiveRecord runs SQL statements 
+# against a database, Persistence runs HTTP requests against a web service api.
 #
 # ActiveService uses an interface similar to ActiveRecord for querying an 
-# object's state (new?, destroyed?, etc.) and interacting w/ the data store.
+# object's state (new?, destroyed?, etc.) and interacting w/ the remote service.
 module Persistence
   extend  ActiveSupport::Concern
   extend  ActiveModel::Callbacks
