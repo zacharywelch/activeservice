@@ -14,7 +14,7 @@ class SecurityTag
   validates :description, length: { maximum: 50 }
 
   def self.all
-    super(from: "#{base_uri}/getsecuritytags")
+    super(from: "#{base_uri}/getsecuritytags", response_key: "ResponseData")
   end
 
   def self.from_json(json)
