@@ -74,7 +74,7 @@ user.errors.full_messages #=> ["Email can't be blank", "Email is invalid"]
 
 ### Callbacks
 
-Active Service defines Active Model callbacks matching the life cycle of Active Record objects. See the ActiveRecord [documentation][activerecord_callbacks] for details.
+Active Service defines Active Model callbacks matching the life cycle of Active Record objects. See the ActiveRecord [documentation on callbacks][activerecord_callbacks] for details.
 
 ```ruby
 class User
