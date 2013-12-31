@@ -20,6 +20,11 @@ module Persistence
     # <tt>before_*</tt> callbacks return +false+ the action is cancelled and
     # +save+ returns +false+. See ActiveRecord::Callbacks for further
     # details.
+    #
+    # Similar to ActiveRecord, if +save+ returns false you can check the 
+    # object's errors array for any validations that failed. ActiveService will 
+    # add client and server validations that fail to the same array for 
+    # easy access.
     def save
       run_callbacks(:save) do 
         new? ? create : update
