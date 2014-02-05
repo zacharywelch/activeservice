@@ -1,4 +1,4 @@
-require 'client/persistence'
+require 'active_service/persistence'
 
 # = ActiveService 
 #

@@ -1,7 +1,7 @@
 require 'active_support/concern'
 require 'active_attr/attributes'
 require 'active_model'
-require 'client/crud'
+require 'active_service/crud'
 
 # = Persistence
 # 

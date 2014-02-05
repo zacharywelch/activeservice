@@ -9,12 +9,15 @@ class Invoice
   attribute :total
   attribute :account_id
 
-  def self.from_json(json)
-    new(
-      invoice_number: json["InvoiceNumber"],
-      account_id:     json["AccountDID"],
-      status:         json["Status"],
-      total:          json["Total"]);
+  def from_json(json)
+    hash = JSON.parse(json)
+    self.attributes = {
+      "invoice_number" => hash["InvoiceNumber"],
+      "account_id"     => hash["AccountDID"],
+      "status"         => hash["Status"],
+      "total"          => hash["Total"]
+    }
+    self
   end
 
   def self.paid
