@@ -20,7 +20,11 @@ class Invoice
     self
   end
 
-  def self.paid
+  def self.open
+    where(status: "OPN")
+  end
 
+  def self.paid
+    where(status: "CLS")
   end
 end
