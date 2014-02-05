@@ -248,7 +248,7 @@ module Persistence
           options = default_options.merge(options)
           response = Typhoeus::Request.get(from, options)
           if response.success?
-            JSON.parse(response.body).map { |hash| new(hash) }
+            JSON.parse(response.body).map { |hash| from_json(hash) }
           else
             raise response.body
           end

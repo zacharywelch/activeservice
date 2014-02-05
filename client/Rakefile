@@ -17,8 +17,8 @@ Jeweler::Tasks.new do |gem|
   gem.name = "client"
   gem.homepage = "http://github.com/zwelchcb/client"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{ActiveService is an object-relational mapper for web services.}
+  gem.description = %Q{It facilitates the creation and use of business objects through a uniform interface similar to ActiveRecord. With ActiveRecord, objects are mapped to a database via SQL SELECT, INSERT, UPDATE, and DELETE statements. With ActiveService, objects are mapped to a resource via HTTP GET, POST, PUT and DELETE requests.}
   gem.email = "Zachary.Welch@careerbuilder.com"
   gem.authors = ["zwelchcb"]
   # dependencies defined in Gemfile
