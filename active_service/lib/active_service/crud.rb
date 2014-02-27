@@ -224,6 +224,19 @@ module Persistence
         "#{base_uri}/#{id}"
       end
 
+      protected 
+
+        # Hook method for parsing a single record from response
+        def parse_single(response)
+          new.from_json(response)
+        end
+
+        # Hook method for parsing a collection from response
+        def parse_every(response)
+          collection = JSON.parse(response)["Collection"]
+          collection.map { |hash| new.from_json(hash.to_json) }
+        end
+
       private
 
         def default_options
@@ -234,7 +247,7 @@ module Persistence
         def find_single(id, options)
           response = Typhoeus::Request.get(id_uri(id))
           if response.success?
-            new.from_json(response.body)
+            parse_single(response.body)
           elsif response.code == 404
             nil
           else
@@ -248,7 +261,7 @@ module Persistence
           options = default_options.merge(options)
           response = Typhoeus::Request.get(from, options)
           if response.success?
-            JSON.parse(response.body).map { |hash| new.from_json(hash.to_json) }
+            parse_every(response.body)
           else
             raise response.body
           end
