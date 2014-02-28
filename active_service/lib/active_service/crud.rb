@@ -224,23 +224,20 @@ module Persistence
         "#{base_uri}/#{id}"
       end
 
-      protected 
-
-        # Hook method for parsing a single record from response
-        def parse_single(response)
-          new.from_json(response)
-        end
-
-        # Hook method for parsing a collection from response
-        def parse_every(response)
-          collection = JSON.parse(response)["Collection"]
-          collection.map { |hash| new.from_json(hash.to_json) }
-        end
-
       private
 
         def default_options
           { headers: headers }
+        end
+
+        def parse_single(response)
+          single = ActiveService::Config.parser.parse_single(response)
+          new.from_json(json)
+        end
+
+        def parse_collection(response)
+          collection = ActiveService::Config.parser.parse_collection(response)
+          collection.map { |hash| new.from_json(hash.to_json) }
         end
 
         # Find a single resource from the default URL
@@ -261,7 +258,7 @@ module Persistence
           options = default_options.merge(options)
           response = Typhoeus::Request.get(from, options)
           if response.success?
-            parse_every(response.body)
+            parse_collection(response.body)
           else
             raise response.body
           end
