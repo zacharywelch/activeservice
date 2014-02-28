@@ -1,5 +1,5 @@
 class User
-  include ActiveAttr::Model
+  include ActiveService::Model
 
   self.base_uri = "http://localhost:3000/api/v1/users"
 
