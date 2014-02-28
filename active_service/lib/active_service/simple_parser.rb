@@ -4,6 +4,6 @@ class SimpleParser
   end
 
   def parse_collection(response)
-    response
+    JSON.parse(response)
   end
 end

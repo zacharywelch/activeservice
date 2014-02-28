@@ -1,5 +1,4 @@
 $LOAD_PATH.unshift(File.dirname(__FILE__))
-require 'active_attr'
 require 'active_service/config'
 require 'active_service/model'
 # require 'active_service/user'

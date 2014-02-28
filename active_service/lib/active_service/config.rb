@@ -1,6 +1,6 @@
 require_relative 'simple_parser'
 
-module ActiveService
+module ActiveService  
   class Config
     class << self
       attr_writer :parser

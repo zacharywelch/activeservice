@@ -1,5 +1,5 @@
 class Invoice
-  include ActiveAttr::Model
+  include ActiveService::Model
 
   #self.base_uri = "https://cafexwstest.careerbuilder.com/v2/accounts/AT-9900479560/Invoices"
   self.base_uri = "https://cafexwstest.careerbuilder.com/v2/Invoices"
