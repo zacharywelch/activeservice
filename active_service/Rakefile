@@ -21,7 +21,8 @@ Jeweler::Tasks.new do |gem|
   gem.description = %Q{It facilitates the creation and use of business objects through a uniform interface similar to ActiveRecord. With ActiveRecord, objects are mapped to a database via SQL SELECT, INSERT, UPDATE, and DELETE statements. With ActiveService, objects are mapped to a resource via HTTP GET, POST, PUT and DELETE requests.}
   gem.email = "Zachary.Welch@careerbuilder.com"
   gem.authors = ["zwelchcb"]
-  # dependencies defined in Gemfile
+  gem.add_dependency 'active_attr'
+  gem.add_dependency 'typhoeus'
 end
 Jeweler::RubygemsDotOrgTasks.new
 

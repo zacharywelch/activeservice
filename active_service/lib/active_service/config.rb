@@ -1,4 +1,5 @@
-require_relative 'simple_parser'
+#require_relative 'simple_parser'
+require_relative 'cbparser'
 
 module ActiveService  
   class Config
@@ -6,7 +7,7 @@ module ActiveService
       attr_writer :parser
 
       def parser
-        @parser ||= ::SimpleParser.new
+        @parser ||= ::CbParser.new
       end
     end
   end
