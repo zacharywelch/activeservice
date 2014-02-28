@@ -13,18 +13,15 @@ Gem::Specification.new do |s|
   s.date = "2014-02-28"
   s.description = "It facilitates the creation and use of business objects through a uniform interface similar to ActiveRecord. With ActiveRecord, objects are mapped to a database via SQL SELECT, INSERT, UPDATE, and DELETE statements. With ActiveService, objects are mapped to a resource via HTTP GET, POST, PUT and DELETE requests."
   s.email = "Zachary.Welch@careerbuilder.com"
-  s.extra_rdoc_files = [
-    "README.rdoc"
-  ]
   s.files = [
     ".document",
     ".rspec",
     "Gemfile",
-    "Gemfile.lock",
     "LICENSE.txt",
     "README.rdoc",
     "Rakefile",
     "VERSION",
+    "active_service.gemspec",
     "lib/active_service.rb",
     "lib/active_service/cbparser.rb",
     "lib/active_service/config.rb",
@@ -34,8 +31,6 @@ Gem::Specification.new do |s|
     "lib/active_service/persistence.rb",
     "lib/active_service/simple_parser.rb",
     "lib/active_service/user.rb",
-    "pkg/active_service-0.1.0.gem",
-    "pkg/active_service-0.2.0.gem",
     "spec/active_service/user_spec.rb",
     "spec/active_service_spec.rb",
     "spec/spec_helper.rb",
@@ -53,29 +48,11 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<active_attr>, [">= 0"])
       s.add_runtime_dependency(%q<typhoeus>, [">= 0"])
-      s.add_development_dependency(%q<rspec>, ["~> 2.8.0"])
-      s.add_development_dependency(%q<rdoc>, ["~> 3.12"])
-      s.add_development_dependency(%q<bundler>, ["~> 1.0"])
-      s.add_development_dependency(%q<jeweler>, ["~> 1.8.7"])
-      s.add_runtime_dependency(%q<active_attr>, [">= 0"])
-      s.add_runtime_dependency(%q<typhoeus>, [">= 0"])
     else
-      s.add_dependency(%q<active_attr>, [">= 0"])
-      s.add_dependency(%q<typhoeus>, [">= 0"])
-      s.add_dependency(%q<rspec>, ["~> 2.8.0"])
-      s.add_dependency(%q<rdoc>, ["~> 3.12"])
-      s.add_dependency(%q<bundler>, ["~> 1.0"])
-      s.add_dependency(%q<jeweler>, ["~> 1.8.7"])
       s.add_dependency(%q<active_attr>, [">= 0"])
       s.add_dependency(%q<typhoeus>, [">= 0"])
     end
   else
-    s.add_dependency(%q<active_attr>, [">= 0"])
-    s.add_dependency(%q<typhoeus>, [">= 0"])
-    s.add_dependency(%q<rspec>, ["~> 2.8.0"])
-    s.add_dependency(%q<rdoc>, ["~> 3.12"])
-    s.add_dependency(%q<bundler>, ["~> 1.0"])
-    s.add_dependency(%q<jeweler>, ["~> 1.8.7"])
     s.add_dependency(%q<active_attr>, [">= 0"])
     s.add_dependency(%q<typhoeus>, [">= 0"])
   end
