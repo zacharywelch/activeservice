@@ -7,21 +7,9 @@ class Invoice
 
   attribute :id,     field: 'InvoiceDID'
   attribute :number, field: 'InvoiceNumber'
-  attribute :due_at, field: 'EndDT'
+  attribute :due_at, field: 'EndDT', type: Date
   attribute :status, field: 'Status'
   attribute :amount, field: 'Total'
-
-  # def from_json(json)
-  #   hash = JSON.parse(json)
-  #   self.attributes = {
-  #     "id" => hash["InvoiceDID"],
-  #     "number" => hash["InvoiceNumber"],
-  #     "due_at" => Date.parse(hash["EndDT"]),
-  #     "status" => hash["Status"],
-  #     "amount" => hash["Total"]
-  #   }
-  #   self
-  # end
 
   def paid?
     status == "CLS" 
