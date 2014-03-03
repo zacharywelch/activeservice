@@ -5,23 +5,23 @@ class Invoice
   self.base_uri = "https://cafexwstest.careerbuilder.com/v2/Invoices"
   self.headers  = { Authorization: "Partner careerbuilder:1n73rnal" }
 
-  attribute :id 
-  attribute :number
-  attribute :due_at
-  attribute :status 
-  attribute :amount
+  attribute :id,     field: 'InvoiceDID'
+  attribute :number, field: 'InvoiceNumber'
+  attribute :due_at, field: 'EndDT'
+  attribute :status, field: 'Status'
+  attribute :amount, field: 'Total'
 
-  def from_json(json)
-    hash = JSON.parse(json)
-    self.attributes = {
-      "id" => hash["InvoiceDID"],
-      "number" => hash["InvoiceNumber"],
-      "due_at" => Date.parse(hash["EndDT"]),
-      "status" => hash["Status"],
-      "amount" => hash["Total"]
-    }
-    self
-  end
+  # def from_json(json)
+  #   hash = JSON.parse(json)
+  #   self.attributes = {
+  #     "id" => hash["InvoiceDID"],
+  #     "number" => hash["InvoiceNumber"],
+  #     "due_at" => Date.parse(hash["EndDT"]),
+  #     "status" => hash["Status"],
+  #     "amount" => hash["Total"]
+  #   }
+  #   self
+  # end
 
   def paid?
     status == "CLS" 

@@ -6,8 +6,31 @@ require 'active_service/persistence'
 # ActiveService combines the ActiveModel features of ActiveAttr with a 
 # persistence mechanism using Typhoeus.
 
+# add field accessor to AttributeDefinition
+class ActiveAttr::AttributeDefinition
+  # Use field if the source key has a name different than the attribute
+  # The field name will be used to map a json key to its attribute and vice-versa   
+  def field
+    options[:field] || name
+  end
+end
+
 module ActiveAttr::Model
   include Persistence
+
+  module ClassMethods
+    # Returns a map of attributes to fields
+    def field_map
+      attributes.values.inject({}) do |result, attr|
+        result[attr.name] = attr.field
+        result
+      end
+    end
+  end
+
+  def self.included(base)
+    base.extend(ClassMethods)
+  end
 end
 
 module ActiveService

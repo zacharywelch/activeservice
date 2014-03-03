@@ -55,6 +55,12 @@ module Persistence
       assign_attributes(attributes, options) && save
     end
 
+    def from_json(json, include_root=include_root_in_json)
+      hash = JSON.parse(json)
+      self.attributes = attributes_from_json(hash)
+      self
+    end
+
     protected
 
       # Creates a record with values matching those of the instance attributes. 
@@ -95,6 +101,14 @@ module Persistence
           nil
         else
           raise response.body
+        end
+      end
+
+      # Map a json hash to the model's attributes
+      def attributes_from_json(hash)
+        self.class.field_map.inject({}) do |result, (target, source)|
+          result[target] = hash[source]
+          result
         end
       end
 
@@ -232,7 +246,7 @@ module Persistence
 
         def parse_single(response)
           single = ActiveService::Config.parser.parse_single(response)
-          new.from_json(json)
+          new.from_json(single)
         end
 
         def parse_collection(response)
@@ -242,7 +256,8 @@ module Persistence
 
         # Find a single resource from the default URL
         def find_single(id, options)
-          response = Typhoeus::Request.get(id_uri(id))
+          options = default_options.merge(options)
+          response = Typhoeus::Request.get(id_uri(id), options)
           if response.success?
             parse_single(response.body)
           elsif response.code == 404
