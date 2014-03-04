@@ -139,6 +139,8 @@ user = User.last
 => #<User email: "foo@baz.com", id: 167, name: "baz"> 
 
 # Find all records by a where clause
+# Any attributes with a field mapping defined automatically get translated 
+# before the service is called
 users = User.where(email: 'foo@bar.com')
 => [#<User email: "foo@bar.com", id: 167, name: "foo">] 
 
