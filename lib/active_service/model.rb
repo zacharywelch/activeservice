@@ -1,5 +1,6 @@
 require 'active_attr'
 require 'active_service/persistence'
+require 'active_service/field_map'
 
 # = ActiveService 
 #
@@ -21,10 +22,7 @@ module ActiveAttr::Model
   module ClassMethods
     # Returns a map of attributes to fields
     def field_map
-      attributes.values.inject({}) do |result, attr|
-        result[attr.name] = attr.field
-        result
-      end
+      @field_map ||= ActiveService::FieldMap.new(attributes.values)
     end
   end
 

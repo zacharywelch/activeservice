@@ -106,7 +106,7 @@ module Persistence
 
       # Map a json hash to the model's attributes
       def attributes_from_json(hash)
-        self.class.field_map.inject({}) do |result, (target, source)|
+        self.class.field_map.by_target.inject({}) do |result, (target, source)|
           result[target] = hash[source]
           result
         end
@@ -226,10 +226,12 @@ module Persistence
       end
 
       # This is an alias for find(:all) which passes a params option.
+      # params are mapped to their source columns before calling the service
       def where(clauses = {})
         unless clauses.is_a? Hash
           raise ArgumentError, "expected a clauses Hash, got #{clauses.inspect}"
         end
+        clauses = field_map.map(clauses, :by => :target)
         find(:all, params: clauses)
       end
 
