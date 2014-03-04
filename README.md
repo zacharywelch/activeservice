@@ -46,6 +46,15 @@ end
 
 user = User.new(name: 'foo', email: 'foo@bar.com')
 user.admin? #=> false
+
+# Map fields from a service to your attribute names
+class User
+  include ActiveAttr::Model
+
+  attribute :name, field: "UserName"
+  attribute :email, field: "Email"
+  attribute :admin, field: "AdminFlag"
+end
 ```
 
 ### Validations
