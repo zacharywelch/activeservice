@@ -7,7 +7,7 @@ module ActiveService
       attr_writer :parser
 
       def parser
-        @parser ||= ::CbParser.new
+        @parser ||= ::SimpleParser.new
       end
     end
   end
