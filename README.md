@@ -18,14 +18,14 @@ ActiveService combines several important modules and gems.
 ### Defining Active Service Models
 
 ```ruby
-# To create your model first include ActiveAttr::Model
+# To create your model first include ActiveService::Model
 class User
-  include ActiveAttr::Model
+  include ActiveService::Model
 end
 
 # Define attributes for your model
 class User
-  include ActiveAttr::Model
+  include ActiveService::Model
 
   attribute :name 
   attribute :email
@@ -37,7 +37,7 @@ user.email #=> "foo@bar.com"
 
 # Declare defaults for your model
 class User
-  include ActiveAttr::Model
+  include ActiveService::Model
 
   attribute :name 
   attribute :email
@@ -49,7 +49,7 @@ user.admin? #=> false
 
 # Map fields from a service to your attribute names
 class User
-  include ActiveAttr::Model
+  include ActiveService::Model
 
   attribute :name, field: "UserName"
   attribute :email, field: "Email"
@@ -63,7 +63,7 @@ ActiveService uses Active Model for validation support. Add validations the same
 
 ```ruby
 class User
-  include ActiveAttr::Model
+  include ActiveService::Model
 
   attribute :name 
   attribute :email
@@ -87,7 +87,7 @@ Active Service defines Active Model callbacks matching the life cycle of Active 
 
 ```ruby
 class User
-  include ActiveAttr::Model
+  include ActiveService::Model
 
   attribute :name 
   attribute :email
@@ -111,7 +111,7 @@ Provide an api endpoint for your models and Active Service will handle CRUD oper
 
 ```ruby
 class User
-  include ActiveAttr::Model
+  include ActiveService::Model
 
   self.base_uri = "http://api.com/v1/users"
 end
