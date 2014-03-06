@@ -1,3 +1,4 @@
+require 'active_service/collection'
 require 'typhoeus'
 
 # = CRUD
@@ -120,6 +121,16 @@ module Persistence
       # Class method for setting the default HTTP request headers
       # Example: self.headers  = { Authorization: "secretdecoderring" }
       attr_accessor :headers
+
+      # Sets the parser to use when a collection is returned. The parser must be Enumerable.
+      def collection_parser=(parser_instance)
+        parser_instance = parser_instance.constantize if parser_instance.is_a?(String)
+        @collection_parser = parser_instance
+      end
+
+      def collection_parser
+        @collection_parser ||= ActiveService::Collection
+      end
 
       # Issues an HTTP +POST+ to the remote service if validations pass. 
       # The resulting object is returned whether the object was saved 
@@ -246,14 +257,18 @@ module Persistence
           { headers: headers }
         end
 
-        def parse_single(response)
-          single = ActiveService::Config.parser.parse_single(response)
-          new.from_json(single)
+        def instantiate_record(record)
+          #record = ActiveService::Config.parser.parse_single(record)
+          #new.from_json(record)
+          new(record)
         end
 
-        def parse_collection(response)
-          collection = ActiveService::Config.parser.parse_collection(response)
-          collection.map { |hash| new.from_json(hash.to_json) }
+        def instantiate_collection(collection)
+          # collection = ActiveService::Config.parser.parse_collection(collection)
+          # collection.map { |hash| new.from_json(hash.to_json) }
+          collection_parser.new(collection).tap do |parser|
+            parser.resource_class = self
+          end.collect! { |record| instantiate_record(record) }
         end
 
         # Find a single resource from the default URL
@@ -261,7 +276,7 @@ module Persistence
           options = default_options.merge(options)
           response = Typhoeus::Request.get(id_uri(id), options)
           if response.success?
-            parse_single(response.body)
+            instantiate_record(JSON.parse(response.body))
           elsif response.code == 404
             nil
           else
@@ -275,7 +290,7 @@ module Persistence
           options = default_options.merge(options)
           response = Typhoeus::Request.get(from, options)
           if response.success?
-            parse_collection(response.body)
+            instantiate_collection(JSON.parse(response.body))
           else
             raise response.body
           end
