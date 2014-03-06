@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["zwelchcb"]
-  s.date = "2014-03-04"
+  s.date = "2014-03-06"
   s.description = "It facilitates the creation and use of business objects through a uniform interface similar to ActiveRecord. With ActiveRecord, objects are mapped to a database via SQL SELECT, INSERT, UPDATE, and DELETE statements. With ActiveService, objects are mapped to a resource via HTTP GET, POST, PUT and DELETE requests."
   s.email = "Zachary.Welch@careerbuilder.com"
   s.extra_rdoc_files = [
@@ -32,6 +32,7 @@ Gem::Specification.new do |s|
     "lib/active_service/cbparser.rb",
     "lib/active_service/config.rb",
     "lib/active_service/crud.rb",
+    "lib/active_service/field_map.rb",
     "lib/active_service/invoice.rb",
     "lib/active_service/model.rb",
     "lib/active_service/persistence.rb",

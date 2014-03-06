@@ -1,6 +1,7 @@
 require 'active_attr'
 require 'active_service/persistence'
 require 'active_service/field_map'
+require 'active_service/aggregations'
 
 # = ActiveService 
 #
@@ -33,4 +34,5 @@ end
 
 module ActiveService
   include ActiveAttr
+  include Aggregations
 end
