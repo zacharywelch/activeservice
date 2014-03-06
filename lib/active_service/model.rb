@@ -19,7 +19,8 @@ end
 
 module ActiveAttr::Model
   include Persistence
-
+  include ActiveService::Aggregations
+  
   module ClassMethods
     # Returns a map of attributes to fields
     def field_map
@@ -33,6 +34,5 @@ module ActiveAttr::Model
 end
 
 module ActiveService
-  include ActiveAttr
-  include Aggregations
+  include ActiveAttr  
 end
