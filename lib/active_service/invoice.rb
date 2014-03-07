@@ -1,11 +1,8 @@
-require 'active_service/cb_collection'
-
 class Invoice
   include ActiveService::Model
 
   self.base_uri = "https://cafexwstest.careerbuilder.com/v2/Invoices"
   self.headers  = { Authorization: "Partner careerbuilder:1n73rnal" }
-  self.collection_parser = CbCollection
 
   attribute :id, field: 'InvoiceNumber'
   attribute :due_at, field: 'AgingDt', type: Date
