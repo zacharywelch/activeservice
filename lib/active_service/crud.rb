@@ -129,7 +129,7 @@ module Persistence
       end
 
       def collection_parser
-        @collection_parser ||= ActiveService::Collection
+        @collection_parser ||= ActiveService::Config.default_collection_parser
       end
 
       # Issues an HTTP +POST+ to the remote service if validations pass. 
@@ -258,14 +258,10 @@ module Persistence
         end
 
         def instantiate_record(record)
-          #record = ActiveService::Config.parser.parse_single(record)
-          #new.from_json(record)
           new.from_json(record.to_json)
         end
 
         def instantiate_collection(collection)
-          # collection = ActiveService::Config.parser.parse_collection(collection)
-          # collection.map { |hash| new.from_json(hash.to_json) }
           collection_parser.new(collection).tap do |parser|
             parser.resource_class = self
           end.collect! { |record| instantiate_record(record) }

@@ -1,13 +1,12 @@
-#require_relative 'simple_parser'
-require_relative 'cbparser'
+require 'active_service/collection'
 
 module ActiveService  
   class Config
     class << self
-      attr_writer :parser
+      attr_writer :default_collection_parser
 
-      def parser
-        @parser ||= ::SimpleParser.new
+      def default_collection_parser
+        @default_collection_parser ||= ActiveService::Collection
       end
     end
   end
