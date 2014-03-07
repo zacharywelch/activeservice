@@ -20,7 +20,8 @@ module ActiveService
     def map(hash, options={})
       mapping = (options[:by] == :target ? by_target : by_source)
       hash.inject({}) do |result, (k, v)|
-        result[mapping[k]] = v
+        key = mapping.has_key?(k) ? mapping[k] : k 
+        result[key] = v
         result
       end
     end
