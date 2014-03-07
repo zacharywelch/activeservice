@@ -3,8 +3,8 @@ class User
 
   self.base_uri = "http://localhost:3000/api/v1/users"
 
-  attribute :name 
-  attribute :email
+  attribute :name, field: 'name'
+  attribute :email, field: 'email'
   
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
 

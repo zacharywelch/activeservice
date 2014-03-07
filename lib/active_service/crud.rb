@@ -260,7 +260,7 @@ module Persistence
         def instantiate_record(record)
           #record = ActiveService::Config.parser.parse_single(record)
           #new.from_json(record)
-          new(record)
+          new.from_json(record.to_json)
         end
 
         def instantiate_collection(collection)
