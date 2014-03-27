@@ -13,7 +13,7 @@ class ActiveAttr::AttributeDefinition
   # Use field if the source key has a name different than the attribute
   # The field name will be used to map a json key to its attribute and vice-versa   
   def field
-    options[:field] || name
+    options[:field] || name.to_s
   end
 end
 
