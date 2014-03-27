@@ -8,7 +8,7 @@ describe "user" do
 
   subject { @user }
 
-  it_should_behave_like "active model"  
+  it_should_behave_like "ActiveModel"   
 
   it { should respond_to(:name) }
   it { should respond_to(:email) }

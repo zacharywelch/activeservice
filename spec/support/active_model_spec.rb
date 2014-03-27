@@ -1,17 +1,21 @@
-shared_examples_for "active model" do
-  require 'test/unit/assertions'
-  include Test::Unit::Assertions  
-  include ActiveModel::Lint::Tests
+require "active_model/lint"
+require "test/unit/assertions"
 
-  # to_s is to support ruby-1.9
-  ActiveModel::Lint::Tests.public_instance_methods.map{|m| m.to_s}.grep(/^test/).each do |m|
-    example m.gsub('_',' ') do
-      send m
-    end
+shared_examples_for "ActiveModel" do
+  include ActiveModel::Lint::Tests
+  include Test::Unit::Assertions
+  attr_writer :assertions
+
+  def assertions
+    @assertions ||= 0
   end
 
-  def model
-    subject
+  before { @model = subject }
+
+  ActiveModel::Lint::Tests.public_instance_methods.map(&:to_s).grep(/^test/).each do |test|
+    example test.gsub("_", " ") do
+      send test
+    end
   end
 
   describe "persistence" do
