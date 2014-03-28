@@ -214,3 +214,39 @@ json = user.to_json
 user = User.new.from_json(json)
  => #<User email: "foo@bar.com", id: 166, name: "foo"> 
 ```
+
+### Associations
+
+Active Service provides a familiar interface for defining associations.
+
+```ruby
+class User < ActiveService::Base
+
+  attribute :name 
+  attribute :email
+  
+  has_many :microposts
+end
+
+class Micropost < ActiveService::Base
+
+  attribute :content 
+  attribute :user_id
+  attribute :created_at
+  attribute :updated_at
+
+  belongs_to :user
+end
+
+user = User.find(166)
+=> #<User email: "foo@bar.com", id: 166, name: "foo"> 
+
+user.microposts
+=> [#<Micropost content: "Lorem ipsum dolor sit amet.", created_at: "2014-03-27T16:15:11Z", id: 625, updated_at: "2014-03-27T16:15:11Z", user_id: 166>, #<Micropost content: "Lorem ipsum dolor sit amet.", created_at: "2014-03-27T16:15:11Z", id: 619, updated_at: "2014-03-27T16:15:11Z", user_id: 166>]
+
+micropost = Micropost.find(625)
+=> #<Micropost content: "Lorem ipsum dolor sit amet.", created_at: "2014-03-27T16:15:11Z", id: 625, updated_at: "2014-03-27T16:15:11Z", user_id: 166>
+
+micropost.user
+=> #<User email: "foo@bar.com", id: 166, name: "foo"> 
+```
