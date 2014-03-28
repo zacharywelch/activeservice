@@ -6,6 +6,9 @@ module ActiveService
   module Reflection # :nodoc:
     extend ActiveSupport::Concern
 
+    # ActiveService::Reflection helps in definining associations between 
+    # ActiveService models. Implementation details are heavily influenced by 
+    # ActiveResource::Reflection
     included do
       class_attribute :reflections
       self.reflections = {}
