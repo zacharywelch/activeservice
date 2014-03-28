@@ -252,3 +252,28 @@ micropost = Micropost.find(625)
 micropost.user
 => #<User email: "foo@bar.com", id: 166, name: "foo"> 
 ```
+
+### Aggregations
+
+Active Service implements aggregation in a similar fashion to ActiveRecord using
+a composed_of macro.
+
+```ruby
+class Person < ActiveService::Base
+  attribute :address_street
+  attribute :address_city
+  
+  composed_of :address, mapping: [ %w(address_street street), %w(address_city city) ]
+end
+
+class Address
+  attr_reader :street, :city
+  def initialize(street, city)
+    @street, @city = street, city
+  end
+end
+
+customer.address_street = "123 Sesame St"
+customer.address_city   = "Taipei"
+customer.address        # => Address.new("123 Sesame St", "Taipei")
+```
