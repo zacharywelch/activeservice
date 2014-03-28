@@ -221,6 +221,7 @@ Active Service provides a familiar interface for defining associations.
 
 ```ruby
 class User < ActiveService::Base
+  self.base_uri = "http://localhost:3000/api/v1/users"
 
   attribute :name 
   attribute :email
@@ -229,6 +230,7 @@ class User < ActiveService::Base
 end
 
 class Micropost < ActiveService::Base
+  self.base_uri = "http://localhost:3000/api/v1/microposts"
 
   attribute :content 
   attribute :user_id
