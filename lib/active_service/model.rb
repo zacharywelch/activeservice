@@ -2,6 +2,8 @@ require 'active_attr'
 require 'active_service/persistence'
 require 'active_service/field_map'
 require 'active_service/aggregations'
+require 'active_service/associations'
+require 'active_service/reflection'
 
 # = ActiveService 
 #
@@ -20,6 +22,8 @@ end
 module ActiveAttr::Model
   include Persistence
   include ActiveService::Aggregations
+  include ActiveService::Reflection
+  include ActiveService::Associations
   
   module ClassMethods
     # Returns a map of attributes to fields
