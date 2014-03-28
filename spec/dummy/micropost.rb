@@ -1,5 +1,4 @@
-class Micropost
-  include ActiveService::Model
+class Micropost < ActiveService::Base
 
   self.base_uri = "http://localhost:3000/api/v1/microposts"
 

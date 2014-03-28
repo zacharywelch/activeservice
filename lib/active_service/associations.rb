@@ -1,3 +1,4 @@
+require 'active_support/concern'
 require 'active_service/associations/builder/association'
 require 'active_service/associations/builder/has_many'
 require 'active_service/associations/builder/belongs_to'

@@ -1,5 +1,4 @@
-class Invoice
-  include ActiveService::Model
+class Invoice < ActiveService::Base
 
   self.base_uri = "https://cafexwstest.careerbuilder.com/v2/Invoices"
   self.headers  = { Authorization: "Partner careerbuilder:1n73rnal" }

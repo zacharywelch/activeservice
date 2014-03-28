@@ -1,5 +1,3 @@
-require 'active_service/collection'
-
 module ActiveService  
   class Config
     class << self

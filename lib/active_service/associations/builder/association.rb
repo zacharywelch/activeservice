@@ -1,7 +1,11 @@
+require 'active_support/core_ext/class/attribute'
+
 module ActiveService
   module Associations
     module Builder
+      
       class Association
+        
         class_attribute :valid_options
         self.valid_options = [:class_name]
 

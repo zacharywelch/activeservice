@@ -1,7 +1,41 @@
+require 'active_support/concern'
+
 module ActiveService::Aggregations
   extend ActiveSupport::Concern
 
+  # Active Service implements aggregation through a macro-like class method 
+  # called +composed_of+ for representing attributes as value objects. This 
+  # macro is very similar to Active Record's composed_of macro. For detailed 
+  # documentation on this macro please see the Rails documentation at 
+  # +http://api.rubyonrails.org/classes/ActiveRecord/Aggregations/ClassMethods.html#method-i-composed_of+
+  #
+  #   class Customer < ActiveService::Base
+  #     composed_of :address, mapping: [ %w(address_street street), %w(address_city city) ]
+  #   end
+  #
+  # The customer class now has the following methods to manipulate the value objects:
+  # * <tt>Customer#balance, Customer#balance=(money)</tt>
+  # * <tt>Customer#address, Customer#address=(address)</tt>
+  #
+  # These methods will operate with value objects like the ones described below:
+  #
+  #  class Address
+  #    attr_reader :street, :city
+  #    def initialize(street, city)
+  #      @street, @city = street, city
+  #    end
+  #
+  #    def close_to?(other_address)
+  #      city == other_address.city
+  #    end
+  #
+  #    def ==(other_address)
+  #      city == other_address.city && street == other_address.street
+  #    end
+  #  end
+
   module ClassMethods    
+    
     def composed_of(value, options = {})
       options.assert_valid_keys(:class_name, :mapping)
       

@@ -18,14 +18,12 @@ ActiveService combines several important modules and gems.
 ### Defining Active Service Models
 
 ```ruby
-# To create your model first include ActiveService::Model
-class User
-  include ActiveService::Model
+# To create your model first inherit from ActiveService::Base
+class User < ActiveService::Base
 end
 
 # Define attributes for your model
-class User
-  include ActiveService::Model
+class User < ActiveService::Base
 
   attribute :name 
   attribute :email
@@ -36,8 +34,7 @@ user.name #=> "foo"
 user.email #=> "foo@bar.com"
 
 # Declare defaults for your model
-class User
-  include ActiveService::Model
+class User < ActiveService::Base
 
   attribute :name 
   attribute :email
@@ -48,8 +45,7 @@ user = User.new(name: 'foo', email: 'foo@bar.com')
 user.admin? #=> false
 
 # Map fields from a service to your attribute names
-class User
-  include ActiveService::Model
+class User < ActiveService::Base
 
   attribute :name, field: "UserName"
   attribute :email, field: "Email"
@@ -62,8 +58,7 @@ end
 ActiveService uses Active Model for validation support. Add validations the same way you would using Active Record. Active Service will validate models before requests are sent to the service, saving a round trip to the server.
 
 ```ruby
-class User
-  include ActiveService::Model
+class User < ActiveService::Base
 
   attribute :name 
   attribute :email
@@ -86,8 +81,7 @@ user.errors.full_messages #=> ["Email can't be blank", "Email is invalid"]
 Active Service defines Active Model callbacks matching the life cycle of Active Record objects. See the ActiveRecord [documentation on callbacks][activerecord_callbacks] for details.
 
 ```ruby
-class User
-  include ActiveService::Model
+class User < ActiveService::Base
 
   attribute :name 
   attribute :email
@@ -110,8 +104,7 @@ user.email #=> "foo@bar.com"
 Provide an api endpoint for your models and Active Service will handle CRUD operations with your service backend.
 
 ```ruby
-class User
-  include ActiveService::Model
+class User < ActiveService::Base
 
   self.base_uri = "http://api.com/v1/users"
 end

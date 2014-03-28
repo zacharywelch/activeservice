@@ -1,7 +1,15 @@
 $LOAD_PATH.unshift(File.dirname(__FILE__))
-require 'active_service/config'
-require 'active_service/model'
-# require 'active_service/user'
-# require 'active_service/invoice'
 
-I18n.enforce_available_locales = true
+# ActiveService combines the ActiveModel features of ActiveAttr with a 
+# persistence mechanism using Typhoeus.
+require 'active_attr'
+require 'typhoeus'
+
+module ActiveService
+  autoload :Base,       'active_service/base'
+  autoload :Collection, 'active_service/collection'
+  autoload :Config,     'active_service/config'
+end
+
+# There are some ActiveAttr patches contained here.
+require 'ext/active_attr'

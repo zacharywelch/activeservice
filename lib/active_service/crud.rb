@@ -1,11 +1,8 @@
-require 'active_service/collection'
-require 'typhoeus'
-
 # = CRUD
 # 
 # CRUD encapsulates the operations for reading and writing data to a 
 # web service backend using an interface similar to ActiveRecord.
-module Persistence
+module ActiveService
   module CRUD    
     
     # Saves the model.
