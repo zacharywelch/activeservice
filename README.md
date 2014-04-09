@@ -1,6 +1,6 @@
 # ActiveService
 
-ActiveService is an object-relational mapper for web services. It facilitates the creation and use of business objects through a uniform interface similar to ActiveRecord. With ActiveRecord, objects are mapped to a database via SQL SELECT, INSERT, UPDATE, and DELETE statements. With ActiveService, objects are mapped to a resource via HTTP GET, POST, PUT and DELETE requests.
+ActiveService is an object-relational mapper for web services. Its goal is to provide an ORM similar to Ruby on Rail's ActiveRecord for interacting with web services. With ActiveRecord, objects are mapped to a database via SQL SELECT, INSERT, UPDATE, and DELETE statements. With ActiveService, objects are mapped to a resource via HTTP GET, POST, PUT and DELETE requests.
 
 ActiveService combines several important modules and gems.
 
