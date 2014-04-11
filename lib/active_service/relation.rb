@@ -1,7 +1,7 @@
 # = Relation
 # 
 # Relation sets up the association proxy methods.
-class Relation
+class Relation < ActiveSupport::BasicObject
 
   def initialize(owner)
     @owner = owner
@@ -20,10 +20,6 @@ class Relation
     args = args.flatten.join('_') if args.is_a? Hash
     @params.merge!(sort: args)
     self
-  end
-
-  def all
-    loaded_target
   end
 
   def to_a
