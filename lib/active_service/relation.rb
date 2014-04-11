@@ -43,10 +43,6 @@ class Relation < ActiveSupport::BasicObject
   end
 
   def method_missing(m, *args, &block)
-    if ::Array.method_defined?(m)
-      loaded_target.send(m, *args, &block)
-    else
-      loaded_target.send(m, *args, &block)
-    end
+    loaded_target.send(m, *args, &block)
   end
 end
