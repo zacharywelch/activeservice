@@ -22,10 +22,6 @@ class Relation < ActiveSupport::BasicObject
     self
   end
 
-  def to_a
-    loaded_target
-  end
-
   private
 
   def preprocess_order_args(args)
