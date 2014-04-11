@@ -245,6 +245,10 @@ module ActiveService
         # find(:all, params: clauses)
       end
 
+      def order(field)
+        Relation.new(self).order(field)
+      end
+
       # Helper method for calculating a URI based on the object's id
       def id_uri(id)
         "#{base_uri}/#{id}"
