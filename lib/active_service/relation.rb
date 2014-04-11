@@ -26,10 +26,6 @@ class Relation < ActiveSupport::BasicObject
     loaded_target
   end
 
-  def to_json(*args)
-    to_a.to_json(*args)
-  end  
-
   private
 
   def preprocess_order_args(args)
