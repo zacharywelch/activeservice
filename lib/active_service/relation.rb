@@ -3,10 +3,6 @@
 # Relation sets up the association proxy methods.
 class Relation < ActiveSupport::BasicObject
 
-  def class
-    ::ActiveService::Relation
-  end
-
   def initialize(owner)
     @owner = owner
     @target = nil
