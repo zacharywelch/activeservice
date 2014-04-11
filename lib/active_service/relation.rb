@@ -1,3 +1,4 @@
+require 'active_service/relation'
 # = Relation
 # 
 # Relation sets up the association proxy methods.
