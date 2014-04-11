@@ -15,12 +15,24 @@ class Relation
   end
 
   def order(args)
+    preprocess_order_args(args)
+    clauses = field_map.map(clauses, :by => :target)
     args = args.flatten.join('_') if args.is_a? Hash
     @params.merge!(sort: args)
     self
   end
 
   private
+
+  def preprocess_order_args(args)
+    case args
+    when Symbol
+      
+    when Hash
+
+    end
+       
+  end
 
   def loaded_target
     @target ||= load_target!

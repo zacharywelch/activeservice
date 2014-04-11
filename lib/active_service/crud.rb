@@ -1,5 +1,3 @@
-require 'active_service/relation'
-
 # = CRUD
 # 
 # CRUD encapsulates the operations for reading and writing data to a 
@@ -242,12 +240,7 @@ module ActiveService
           raise ArgumentError, "expected a clauses Hash, got #{clauses.inspect}"
         end
         clauses = field_map.map(clauses, :by => :target)
-        Relation.new(self).where(clauses)
-      end
-
-      # Appends a +sort_by+ parameter to the querystring
-      def order(field)
-        Relation.new(self).order(field)
+        find(:all, params: clauses)
       end
 
       # Helper method for calculating a URI based on the object's id
