@@ -2,8 +2,7 @@
 # 
 # Relation sets up the association proxy methods.
 class Relation
-  include ActiveModel::Conversion
-  
+
   def initialize(owner)
     @owner = owner
     @target = nil
