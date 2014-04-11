@@ -1,3 +1,4 @@
+require 'active_service/relation'
 # = CRUD
 # 
 # CRUD encapsulates the operations for reading and writing data to a 
