@@ -14,25 +14,23 @@ class Relation < ActiveSupport::BasicObject
     self
   end
 
+  # args = :name => { :sort => :name }
+  # args = { name: :desc } => { :sort => "name_desc" }
   def order(args)
+    order_args = {}
+    if args.is_a? ::Hash
+      order_args = args
+    else
+      order_args[args] = :desc
+    end
     # preprocess_order_args(args)
     # clauses = field_map.map(clauses, :by => :target)
-    args = args.flatten.join('_') if args.is_a? Hash
-    @params.merge!(sort: args)
+    order_args = @owner.field_map.map(order_args, :by => :target)
+    @params.merge!(sort: order_args.flatten.join('_'))
     self
   end
 
   private
-
-  def preprocess_order_args(args)
-    case args
-    when Symbol
-      
-    when Hash
-
-    end
-       
-  end
 
   def loaded_target
     @target ||= load_target!
