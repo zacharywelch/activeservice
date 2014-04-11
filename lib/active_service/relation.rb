@@ -1,10 +1,9 @@
-require 'active_support/core_ext/module/delegation'
-
 # = Relation
 # 
 # Relation sets up the association proxy methods.
 class Relation
-
+  include ActiveModel::Conversion
+  
   def initialize(owner)
     @owner = owner
     @target = nil
@@ -24,8 +23,6 @@ class Relation
     self
   end
 
-  delegate :to_model, :to_param, :to_key, :to_partial_path, to: :loaded_target
-  
   private
 
   def preprocess_order_args(args)
