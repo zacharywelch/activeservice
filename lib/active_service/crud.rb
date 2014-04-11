@@ -240,7 +240,8 @@ module ActiveService
           raise ArgumentError, "expected a clauses Hash, got #{clauses.inspect}"
         end
         clauses = field_map.map(clauses, :by => :target)
-        find(:all, params: clauses)
+        Relation.new(self).where(clauses)
+        # find(:all, params: clauses)
       end
 
       # Helper method for calculating a URI based on the object's id
