@@ -4,7 +4,7 @@
 class Relation < ActiveSupport::BasicObject
 
   def class
-    @owner.class
+    ::ActiveService::Relation
   end
 
   def initialize(owner)
