@@ -18,8 +18,7 @@ class Relation < ActiveSupport::BasicObject
   # args = { name: :desc } => { :sort => "name_desc" }
   def order(args)
     args = Hash[args, :desc] if args.is_a? ::Symbol
-    args.symbolize_keys!
-    args = @owner.field_map.map(args, :by => :target)
+    args = @owner.field_map.map(args.symbolize_keys!, :by => :target)
     @params.merge!(sort: args.flatten.join('_'))
     self
   end
