@@ -17,7 +17,10 @@ class Relation < ActiveSupport::ProxyObject
   # args = :name => { :sort => :name }
   # args = { name: :desc } => { :sort => "name_desc" }
   def order(*args)
-    @params.merge!(sort: preprocess_order_args(args))
+    puts "args = #{args}"
+    order_args = preprocess_order_args(args)
+    @params.merge!(sort: order_args)
+    puts "params after merge = #{params}"
     self
   end
 
@@ -33,7 +36,9 @@ class Relation < ActiveSupport::ProxyObject
       end
     end
     order_args = Hash[args].symbolize_keys
-    @owner.field_map.map(order_args, :by => :target).flatten.join('_')
+    puts "order_args = #{order_args}"
+    order_args
+    #@owner.field_map.map(order_args, :by => :target).flatten.join('_')
   end
 
   def preprocess_order_args(args)
