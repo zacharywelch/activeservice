@@ -1,7 +1,7 @@
 # = Relation
 # 
 # Relation sets up the association proxy methods.
-class Relation < ActiveSupport::ProxyObject
+class Relation < ActiveSupport::BasicObject
 
   def initialize(owner)
     @owner = owner
@@ -16,41 +16,15 @@ class Relation < ActiveSupport::ProxyObject
 
   # args = :name => { :sort => :name }
   # args = { name: :desc } => { :sort => "name_desc" }
-  def order(*args)
-    puts "args = #{args}"
-    order_args = preprocess_order_args(args)
-    @params.merge!(sort: order_args)
-    puts "params after merge = #{params}"
+  def order(args)
+    args = Hash[args, :desc] if args.is_a? ::Symbol
+    args.symbolize_keys!
+    args = @owner.field_map.map(args, :by => :target)
+    @params.merge!(sort: args.flatten.join('_'))
     self
   end
 
   private
-
-  def preprocess_order_args(args)
-    args.map! do |arg|
-      case arg
-      when ::Symbol
-        [arg, :desc]
-      when ::Hash
-        arg.flatten
-      end
-    end
-    order_args = Hash[args].symbolize_keys
-    puts "order_args = #{order_args}"
-    order_args
-    #@owner.field_map.map(order_args, :by => :target).flatten.join('_')
-  end
-
-  def preprocess_order_args(args)
-    order_args = {}
-    if args.is_a? ::Hash
-      order_args = args
-    else
-      order_args[args] = :desc
-    end
-    order_args.symbolize_keys!
-    order_args = @owner.field_map.map(order_args, :by => :target)
-  end
 
   def loaded_target
     @target ||= load_target!
