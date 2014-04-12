@@ -32,7 +32,7 @@ class Relation < ActiveSupport::ProxyObject
         arg.flatten
       end
     end
-    order_args = Hash[args].symbolize_keys!
+    order_args = Hash[args].symbolize_keys
     @owner.field_map.map(order_args, :by => :target).flatten.join('_')
   end
 
