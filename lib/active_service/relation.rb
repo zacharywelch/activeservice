@@ -24,6 +24,7 @@ class Relation < ActiveSupport::ProxyObject
     else
       order_args[args] = :desc
     end
+    order_args.symbolize_keys!
     # preprocess_order_args(args)
     # clauses = field_map.map(clauses, :by => :target)
     order_args = @owner.field_map.map(order_args, :by => :target)
