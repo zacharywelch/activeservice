@@ -1,7 +1,7 @@
 # = Relation
 # 
 # Relation sets up the association proxy methods.
-class Relation < ActiveSupport::BasicObject
+class Relation < ActiveSupport::ProxyObject
 
   def initialize(owner)
     @owner = owner
@@ -17,6 +17,7 @@ class Relation < ActiveSupport::BasicObject
   # args = :name => { :sort => :name }
   # args = { name: :desc } => { :sort => "name_desc" }
   def order(args)
+    return self if args.nil?
     order_args = {}
     if args.is_a? ::Hash
       order_args = args
