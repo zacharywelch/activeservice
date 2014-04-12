@@ -17,7 +17,26 @@ class Relation < ActiveSupport::ProxyObject
   # args = :name => { :sort => :name }
   # args = { name: :desc } => { :sort => "name_desc" }
   def order(args)
-    return self if args.nil?
+    @params.merge!(sort: preprocess_order_args(args))
+    self
+  end
+
+  private
+
+  def preprocess_order_args(*args)
+    args.map! do |arg|
+      case arg
+      when ::Symbol
+        [arg, :desc]
+      when ::Hash
+        arg.flatten
+      end
+    end
+    order_args = Hash[args].symbolize_keys!
+    @owner.field_map.map(order_args, :by => :target).flatten.join('_')
+  end
+
+  def preprocess_order_args(args)
     order_args = {}
     if args.is_a? ::Hash
       order_args = args
@@ -25,14 +44,8 @@ class Relation < ActiveSupport::ProxyObject
       order_args[args] = :desc
     end
     order_args.symbolize_keys!
-    # preprocess_order_args(args)
-    # clauses = field_map.map(clauses, :by => :target)
     order_args = @owner.field_map.map(order_args, :by => :target)
-    @params.merge!(sort: order_args.flatten.join('_'))
-    self
   end
-
-  private
 
   def loaded_target
     @target ||= load_target!
