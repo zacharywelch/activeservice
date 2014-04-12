@@ -16,14 +16,14 @@ class Relation < ActiveSupport::ProxyObject
 
   # args = :name => { :sort => :name }
   # args = { name: :desc } => { :sort => "name_desc" }
-  def order(args)
+  def order(*args)
     @params.merge!(sort: preprocess_order_args(args))
     self
   end
 
   private
 
-  def preprocess_order_args(*args)
+  def preprocess_order_args(args)
     args.map! do |arg|
       case arg
       when ::Symbol
