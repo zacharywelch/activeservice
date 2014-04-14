@@ -1,7 +1,7 @@
 # = Relation
 # 
 # Relation sets up the association proxy methods.
-class Relation < ActiveSupport::BasicObject
+class Relation < ActiveSupport::ProxyObject
 
   def initialize(owner)
     @owner = owner
