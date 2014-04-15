@@ -1,5 +1,5 @@
 class Invoice < ActiveService::Base
-  self.base_uri = "http://localhost:8888/api/v1/invoices"
+  # self.base_uri = "http://localhost:8888/api/v1/invoices"
 
   attribute :number, field: 'invoice_number'
   attribute :due_at, type: Date

@@ -68,7 +68,7 @@ module ActiveService
       # the JSON result is used to set the model attributes.
       def create
         run_callbacks :create do
-          response = Typhoeus::Request.post(self.class.base_uri, body: to_json)
+          response = Typhoeus::Request.post(self.class.uri, body: to_json)
           load_attributes_from_response(response)
         end
       end
@@ -113,8 +113,28 @@ module ActiveService
 
     module ClassMethods
 
-      # The api endpoint for the service (e.g. http://api.com/v1/users)
-      attr_accessor :base_uri
+      # The base uri of an api (e.g. http://api.com/v1)
+      attr_writer :base_uri
+
+      # base_uri can be configured globally in ActiveService::Config or 
+      # overridden at the class level
+      def base_uri
+        @base_uri ||= ActiveService::Config.base_uri
+      end
+
+      # The service endpoint of an api (e.g. users)
+      attr_writer :resource
+
+      # Resource defaults to the plural form of the class name 
+      # (e.g. User => users)
+      def resource
+        @resource ||= model_name.plural
+      end
+
+      # Returns the resource path of a service (e.g. http://api.com/v1/users)
+      def uri 
+        "#{base_uri}/#{resource}"
+      end
 
       # Class method for setting the default HTTP request headers
       # Example: self.headers  = { Authorization: "secretdecoderring" }
@@ -251,7 +271,7 @@ module ActiveService
 
       # Helper method for calculating a URI based on the object's id
       def id_uri(id)
-        "#{base_uri}/#{id}"
+        "#{uri}/#{id}"
       end
 
       private
@@ -285,7 +305,7 @@ module ActiveService
 
         # find every resource
         def find_every(options)
-          from = options.delete(:from) || base_uri
+          from = options.delete(:from) || uri
           options = default_options.merge(options)
           response = Typhoeus::Request.get(from, options)
           if response.success?
