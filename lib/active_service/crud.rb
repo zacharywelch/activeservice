@@ -138,7 +138,11 @@ module ActiveService
 
       # Class method for setting the default HTTP request headers
       # Example: self.headers  = { Authorization: "secretdecoderring" }
-      attr_accessor :headers
+      attr_writer :headers
+
+      def headers
+        @headers ||= ActiveService::Config.headers
+      end
 
       # Sets the parser to use when a collection is returned. The parser must be Enumerable.
       def collection_parser=(parser_instance)

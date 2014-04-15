@@ -5,7 +5,7 @@
 module ActiveService  
   class Config
     class << self      
-      attr_accessor :hydra, :base_uri
+      attr_accessor :hydra, :base_uri, :headers
       attr_writer   :default_collection_parser
       
       def default_collection_parser
