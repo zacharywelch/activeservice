@@ -3,6 +3,7 @@ require 'active_service/associations'
 require 'active_service/aggregations'
 require 'active_service/persistence'
 require 'active_service/field_map'
+require 'active_service/request'
 
 module ActiveService
 
@@ -16,7 +17,7 @@ module ActiveService
     include ActiveService::Associations
     include ActiveService::Aggregations
     include ActiveService::Persistence
-
+    include ActiveService::Request
 
     # Returns a mapping of attributes to fields
     # 

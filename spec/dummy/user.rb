@@ -1,5 +1,5 @@
 class User < ActiveService::Base
-  self.base_uri = "http://localhost:3000/api/v1/users"
+  self.base_uri = "http://localhost:8888/api/v1"
 
   attribute :name
   attribute :email
