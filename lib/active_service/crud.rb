@@ -274,8 +274,10 @@ module ActiveService
       end
 
       # Helper method for calculating a URI based on the object's id
-      def id_uri(id)
-        "#{uri}/#{id}"
+      def id_uri(id, format = nil)
+        result  = "#{uri}/#{id}"
+        result += ".#{format}" if format
+        result
       end
 
       private
@@ -296,8 +298,9 @@ module ActiveService
 
         # Find a single resource from the default URL
         def find_single(id, options)
-          options = default_options.merge(options)
-          response = Typhoeus::Request.get(id_uri(id), options)
+          options  = default_options.merge(options)
+          format   = options.delete(:format) # TODO: refactor to URI builder 
+          response = Typhoeus::Request.get(id_uri(id, format), options)
           if response.success?
             instantiate_record(JSON.parse(response.body))
           elsif response.code == 404
