@@ -274,9 +274,10 @@ module ActiveService
       end
 
       # Helper method for calculating a URI based on the object's id
-      def id_uri(id, format = nil)
-        result  = "#{uri}/#{id}"
-        result += ".#{format}" if format
+      def id_uri(id, options = {})
+        format = options.delete(:format)
+        result = "#{uri}/#{id}"
+        result = "#{result}.#{format}" if format
         result
       end
 
