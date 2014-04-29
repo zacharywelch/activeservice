@@ -60,6 +60,11 @@ module ActiveService
       self
     end
 
+    # Returns the resource path for this instance (e.g. http://api.com/v1/users/1)
+    def uri 
+      self.class.id_uri(id) if persisted?  
+    end
+
     protected
 
       # Creates a record with values matching those of the instance attributes. 
@@ -79,7 +84,7 @@ module ActiveService
       # is used to set the model attributes.
       def update
         run_callbacks :update do
-          response = Typhoeus::Request.put(self.class.id_uri(id), body: to_json)
+          response = Typhoeus::Request.put(uri, body: to_json)
           load_attributes_from_response(response).present?
         end
       end
