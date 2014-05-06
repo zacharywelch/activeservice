@@ -51,7 +51,7 @@ module ActiveService
             attributes[method_name]
           elsif !new_record?
             instance_variable_set(ivar_name, association_model.find(:all, 
-              :params => {:"#{self.class.model_name.element}_id" => self.id}))
+              :from => "/#{self.uri}/#{association_model.resource_name}"))
           else
             instance_variable_set(ivar_name, self.class.collection_parser.new)
           end
@@ -71,7 +71,7 @@ module ActiveService
               :params => {:"#{self.class.model_name.element}_id" => self.id}))
           else
             instance_variable_set(ivar_name, association_model.find(:one, 
-              :from => "/#{self.class.model_name.collection}/#{self.id}/#{method_name}"))
+              :from => "/#{self.uri}/#{method_name}"))
           end
         end
       end

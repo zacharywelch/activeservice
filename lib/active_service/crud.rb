@@ -128,17 +128,17 @@ module ActiveService
       end
 
       # The service endpoint of an api (e.g. users)
-      attr_writer :resource
+      attr_writer :resource_name
 
-      # Resource defaults to the plural form of the class name 
+      # resource_name is derived from the model name's collection method
       # (e.g. User => users)
-      def resource
-        @resource ||= model_name.plural
+      def resource_name
+        @resource_name ||= model_name.collection
       end
 
       # Returns the resource path of a service (e.g. http://api.com/v1/users)
       def uri 
-        "#{base_uri}/#{resource}"
+        "#{base_uri}/#{resource_name}"
       end
 
       # Class method for setting the default HTTP request headers
