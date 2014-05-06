@@ -7,19 +7,19 @@ module ActiveService
     end
 
     def find_one(resource, id, options = {})
-      "#{find_single(resource, resource_id)}#{format(options[:format])}"
+      "#{find_single(resource, id)}#{format(options[:format])}"
     end
 
     def belongs_to(resource, id, options = {})
-      "#{find_single(resource, resource_id)}#{format(options[:format])}"
+      "#{find_single(resource, id)}#{format(options[:format])}"
     end
 
-    def has_one(resource, resource_id, nested_resource, options = {})
-      "#{find_single(resource, resource_id)}/#{nested_resource.element_name}#{format(options[:format])}"
+    def has_one(resource, id, nested_resource, options = {})
+      "#{find_single(resource, id)}/#{nested_resource.element_name}#{format(options[:format])}"
     end
 
-    def has_many(resource, resource_id, nested_resource, options = {})
-      "#{find_single(resource, resource_id)}/#{nested_resource.collection_name}#{format(options[:format])}"
+    def has_many(resource, id, nested_resource, options = {})
+      "#{find_single(resource, id)}/#{nested_resource.collection_name}#{format(options[:format])}"
     end
 
     private 
