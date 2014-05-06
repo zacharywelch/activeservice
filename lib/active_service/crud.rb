@@ -60,9 +60,12 @@ module ActiveService
       self
     end
 
-    # Returns the resource path for this instance (e.g. http://api.com/v1/users/1)
-    def uri 
-      self.class.id_uri(id) if persisted?  
+    def collection_path(options = {})
+      self.class.collection_path(options)
+    end
+
+    def element_path(options = {})
+      self.class.element_path(id, options)
     end
 
     protected
@@ -73,7 +76,7 @@ module ActiveService
       # the JSON result is used to set the model attributes.
       def create
         run_callbacks :create do
-          response = Typhoeus::Request.post(self.class.uri, body: to_json)
+          response = Typhoeus::Request.post(collection_path, body: to_json)
           load_attributes_from_response(response)
         end
       end
@@ -84,7 +87,7 @@ module ActiveService
       # is used to set the model attributes.
       def update
         run_callbacks :update do
-          response = Typhoeus::Request.put(uri, body: to_json)
+          response = Typhoeus::Request.put(element_path, body: to_json)
           load_attributes_from_response(response).present?
         end
       end
@@ -128,17 +131,24 @@ module ActiveService
       end
 
       # The service endpoint of an api (e.g. users)
-      attr_writer :resource_name
+      attr_writer :collection_name
 
       # resource_name is derived from the model name's collection method
       # (e.g. User => users)
-      def resource_name
+      def collection_name
         @resource_name ||= model_name.collection
       end
 
-      # Returns the resource path of a service (e.g. http://api.com/v1/users)
-      def uri 
-        "#{base_uri}/#{resource_name}"
+      def element_name
+        model_name.element
+      end
+
+      def collection_path(options = {})
+        UriBuilder.find_all(self, options)
+      end
+
+      def element_path(id, options = {})
+        UriBuilder.find_one(self, id, options)
       end
 
       # Class method for setting the default HTTP request headers
@@ -176,7 +186,7 @@ module ActiveService
       #
       # Example: User.destroy(166) #=> true
       def destroy(id)
-        response = Typhoeus::Request.delete(id_uri(id))
+        response = Typhoeus::Request.delete(element_path(id))
         response.success?
       end
 
@@ -278,14 +288,6 @@ module ActiveService
         Relation.new(self).order(field)
       end
 
-      # Helper method for calculating a URI based on the object's id
-      def id_uri(id, options = {})
-        format = options.delete(:format)
-        result = "#{uri}/#{id}"
-        result = "#{result}.#{format}" if format
-        result
-      end
-
       private
 
         def default_options
@@ -306,7 +308,7 @@ module ActiveService
         # TODO: refactor to URI builder 
         def find_single(id, options)
           options  = default_options.merge(options)
-          response = Typhoeus::Request.get(id_uri(id), options)
+          response = Typhoeus::Request.get(element_path(id), options)
           if response.success?
             instantiate_record(JSON.parse(response.body))
           elsif response.code == 404
@@ -318,7 +320,7 @@ module ActiveService
 
         # find every resource
         def find_every(options)
-          from = options.delete(:from) || uri
+          from = options.delete(:from) || collection_path
           options = default_options.merge(options)
           response = Typhoeus::Request.get(from, options)
           if response.success?

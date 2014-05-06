@@ -51,7 +51,7 @@ module ActiveService
             attributes[method_name]
           elsif !new_record?
             instance_variable_set(ivar_name, association_model.find(:all, 
-              :from => "/#{self.uri}/#{association_model.resource_name}"))
+              from: UriBuilder.has_many(self.class, id, association_model)))
           else
             instance_variable_set(ivar_name, self.class.collection_parser.new)
           end
@@ -66,12 +66,9 @@ module ActiveService
             instance_variable_get(ivar_name)
           elsif attributes.include?(method_name)
             attributes[method_name]
-          elsif association_model.respond_to?(:singleton_name)
-            instance_variable_set(ivar_name, association_model.find(
-              :params => {:"#{self.class.model_name.element}_id" => self.id}))
           else
-            instance_variable_set(ivar_name, association_model.find(:one, 
-              :from => "/#{self.uri}/#{method_name}"))
+            instance_variable_set(ivar_name, association_model.find(:all, 
+              from: UriBuilder.has_one(self.class, id, association_model)))
           end
         end
       end

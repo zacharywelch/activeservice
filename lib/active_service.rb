@@ -9,6 +9,7 @@ module ActiveService
   autoload :Base,       'active_service/base'
   autoload :Collection, 'active_service/collection'
   autoload :Config,     'active_service/config'
+  autoload :UriBuilder, 'active_service/uri_builder'
 end
 
 # There are some ActiveAttr patches contained here.
