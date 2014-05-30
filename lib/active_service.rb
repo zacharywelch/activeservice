@@ -4,6 +4,7 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 # persistence mechanism using Typhoeus.
 require 'active_attr'
 require 'typhoeus'
+require 'active_service/exceptions'
 
 module ActiveService
   autoload :Base,       'active_service/base'

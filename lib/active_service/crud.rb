@@ -98,17 +98,14 @@ module ActiveService
       # to set the errors array on the model. Any other HTTP errors will raise 
       # an exception with the response body as its message
       def load_attributes_from_response(response)
-        if response.success?
-          from_json(response.body)        
-        elsif [400, 404].include? response.code  
-          msgs = JSON.parse(response.body)
-          msgs.each do |attr, attr_errors|
-            attr_errors.each { |error| errors.add(attr, error) }
-          end
-          nil
-        else
-          raise response.body
+        self.class.handle_response(response)
+        from_json(response.body)        
+      rescue BadRequest, ResourceInvalid
+        msgs = JSON.parse(response.body)
+        msgs.each do |attr, attr_errors|
+          attr_errors.each { |error| errors.add(attr, error) }
         end
+        nil  
       end
 
       # Map a json hash to the model's attributes
@@ -281,11 +278,37 @@ module ActiveService
         end
         clauses = field_map.map(clauses, :by => :target)
         Relation.new(self).where(clauses)
-        # find(:all, params: clauses)
       end
 
       def order(field)
         Relation.new(self).order(field)
+      end
+
+      # Parse response and error codes
+      # todo: refactor to separate class
+      def handle_response(response)
+        if response.timed_out?
+          raise TimeoutError
+        end
+        
+        case response.code
+          when 200, 201
+            response
+          when 400
+            raise BadRequest
+          when 401
+            raise UnauthorizedAccess
+          when 404
+            raise ResourceNotFound
+          when 422
+            raise ResourceInvalid
+          when 401..499
+            raise ClientError.new(response.code)
+          when 500..599
+            raise ServerError.new(response.code)
+          else
+            raise response.body
+        end
       end
 
       private
@@ -305,17 +328,11 @@ module ActiveService
         end
 
         # Find a single resource from the default URL
-        # TODO: refactor to URI builder 
         def find_single(id, options)
           options  = default_options.merge(options)
           response = Typhoeus::Request.get(element_path(id), options)
-          if response.success?
-            instantiate_record(JSON.parse(response.body))
-          elsif response.code == 404
-            nil
-          else
-            raise response.body
-          end
+          handle_response(response)
+          instantiate_record(JSON.parse(response.body))
         end
 
         # find every resource
@@ -323,11 +340,8 @@ module ActiveService
           from = options.delete(:from) || collection_path
           options = default_options.merge(options)
           response = Typhoeus::Request.get(from, options)
-          if response.success?
-            instantiate_collection(JSON.parse(response.body))
-          else
-            raise response.body
-          end
+          handle_response(response)
+          instantiate_collection(JSON.parse(response.body))
         end
     end
   end
