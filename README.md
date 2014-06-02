@@ -101,13 +101,20 @@ user.email #=> "foo@bar.com"
 
 ### CRUD
 
-Provide an api endpoint for your models and Active Service will handle CRUD operations with your service backend.
+Provide a base uri for your models and Active Service will handle CRUD operations with your service backend.
 
 ```ruby
 class User < ActiveService::Base
 
-  self.base_uri = "http://api.com/v1/users"
+  self.base_uri = "http://api.com/v1"
 end
+```
+
+You can also configure Active Service with a base_uri for all your models.
+
+```ruby
+# config/environments/development.rb
+ActiveService::Config.base_uri = "http://api.com/v1"
 ```
 
 #### Read
