@@ -101,7 +101,7 @@ user.email #=> "foo@bar.com"
 
 ### CRUD
 
-Provide a base uri for your models and Active Service will handle CRUD operations with your service backend.
+Provide a base uri for your model and Active Service will handle CRUD operations with your service backend.
 
 ```ruby
 class User < ActiveService::Base
