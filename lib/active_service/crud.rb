@@ -133,7 +133,7 @@ module ActiveService
       # resource_name is derived from the model name's collection method
       # (e.g. User => users)
       def collection_name
-        @resource_name ||= model_name.collection
+        @collection_name ||= model_name.collection
       end
 
       def element_name
