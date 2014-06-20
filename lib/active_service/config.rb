@@ -6,10 +6,14 @@ module ActiveService
   class Config
     class << self      
       attr_accessor :hydra, :base_uri, :headers
-      attr_writer   :default_collection_parser
+      attr_writer   :default_collection_parser, :verify_ssl
       
       def default_collection_parser
         @default_collection_parser ||= ActiveService::Collection
+      end
+
+      def verify_ssl
+        @verify_ssl ||= true
       end
     end
   end
