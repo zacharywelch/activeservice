@@ -314,8 +314,7 @@ module ActiveService
       private
 
         def default_options
-          { headers: headers }
-          # , ssl_verifypeer: ActiveService::Config.verify_ssl }
+          { headers: headers , ssl_verifypeer: ActiveService::Config.verify_ssl }
         end
 
         def instantiate_record(record)
