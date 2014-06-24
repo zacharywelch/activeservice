@@ -22,7 +22,7 @@ Jeweler::Tasks.new do |gem|
   gem.email = "Zachary.Welch@careerbuilder.com"
   gem.authors = ["zwelchcb"]
   gem.add_dependency 'active_attr', '>=0'
-  gem.add_dependency 'typhoeus', '0.6.7'
+  gem.add_dependency 'typhoeus', '>=0'
 end
 Jeweler::RubygemsDotOrgTasks.new
 
