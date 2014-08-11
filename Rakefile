@@ -17,12 +17,12 @@ Jeweler::Tasks.new do |gem|
   gem.name = "active_service"
   gem.homepage = "http://github.com/zwelchcb/active_service"
   gem.license = "MIT"
-  gem.summary = %Q{ActiveService is an object-relational mapper for web services.}
-  gem.description = %Q{It facilitates the creation and use of business objects through a uniform interface similar to ActiveRecord. With ActiveRecord, objects are mapped to a database via SQL SELECT, INSERT, UPDATE, and DELETE statements. With ActiveService, objects are mapped to a resource via HTTP GET, POST, PUT and DELETE requests.}
+  gem.summary = %Q{An object-relational mapper for web services.}
+  gem.description = %Q{ActiveService is an ORM that maps REST resources to Ruby objects using an ActiveRecord-like interface.}
   gem.email = "Zachary.Welch@careerbuilder.com"
   gem.authors = ["zwelchcb"]
   gem.add_dependency 'active_attr', '>=0'
-  gem.add_dependency 'typhoeus', '0.6.7'
+  gem.add_dependency 'faraday', '>= 0.8', '< 1.0'
 end
 Jeweler::RubygemsDotOrgTasks.new
 

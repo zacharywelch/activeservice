@@ -1,0 +1,44 @@
+require 'active_model'
+require 'active_service/model/http'
+require 'active_service/model/attributes'
+require 'active_service/model/relation'
+require 'active_service/model/orm'
+require 'active_service/model/parse'
+require 'active_service/model/associations'
+require 'active_service/model/introspection'
+require 'active_service/model/paths'
+require 'active_service/model/nested_attributes'
+
+module ActiveService
+  module Model
+    extend ActiveSupport::Concern
+
+    # ActiveService modules
+    include ActiveService::Model::Attributes
+    include ActiveService::Model::ORM
+    include ActiveService::Model::HTTP
+    include ActiveService::Model::Parse
+    include ActiveService::Model::Introspection
+    include ActiveService::Model::Paths
+    include ActiveService::Model::Associations
+    include ActiveService::Model::NestedAttributes
+
+    included do
+      # Assign the default API
+      use_api ActiveService::API.default_api
+
+      # Define the default primary key
+      primary_key :id
+
+      # Define an id attribute (handled by primary_key?)
+      attribute :id
+      
+      # Include ActiveModel naming methods
+      extend ActiveModel::Translation
+      
+      # Configure ActiveModel callbacks
+      extend ActiveModel::Callbacks
+      define_model_callbacks :save, :create, :update, :destroy
+    end
+  end
+end
