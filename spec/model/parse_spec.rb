@@ -74,11 +74,11 @@ describe ActiveService::Model::Parse do
         api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
           builder.use Faraday::Request::UrlEncoded
           builder.adapter :test do |stub|
-            stub.post("/users") { |env| [200, {}, { :user => { :id => 1, :name => "Lindsay Fünke" } }.to_json] }
-            stub.get("/users") { |env| [200, {}, [{ :user => { :id => 1, :name => "Lindsay Fünke" } }].to_json] }
-            stub.get("/users/admins") { |env| [200, {}, [{ :user => { :id => 1, :name => "Lindsay Fünke" } }].to_json] }
-            stub.get("/users/1") { |env| [200, {}, { :user => { :id => 1, :name => "Lindsay Fünke" } }.to_json] }
-            stub.put("/users/1") { |env| [200, {}, { :user => { :id => 1, :name => "Tobias Fünke Jr." } }.to_json] }
+            stub.post("/users") { |env| ok! :user => { :id => 1, :name => "Lindsay Fünke" } }
+            stub.get("/users") { |env| ok! [{ :user => { :id => 1, :name => "Lindsay Fünke" } }] }
+            stub.get("/users/admins") { |env| ok! [{ :user => { :id => 1, :name => "Lindsay Fünke" } }] }
+            stub.get("/users/1") { |env| ok! :user => { :id => 1, :name => "Lindsay Fünke" } }
+            stub.put("/users/1") { |env| ok! :user => { :id => 1, :name => "Tobias Fünke Jr." } }
           end
         end
 
@@ -123,7 +123,7 @@ describe ActiveService::Model::Parse do
         api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
           builder.use Faraday::Request::UrlEncoded
           builder.adapter :test do |stub|
-            stub.post("/users") { |env| [200, {}, { :person => { :id => 1, :name => "Lindsay Fünke" } }.to_json] }
+            stub.post("/users") { |env| ok! :person => { :id => 1, :name => "Lindsay Fünke" } }
           end
         end
 
@@ -145,8 +145,8 @@ describe ActiveService::Model::Parse do
         api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
           builder.use Faraday::Request::UrlEncoded
           builder.adapter :test do |stub|
-            stub.post("/users") { |env| [200, {}, { :user => { :id => 1, :name => "Lindsay Fünke" } }.to_json] }
-            stub.get("/users") { |env| [200, {}, { :users => [ { :id => 1, :name => "Lindsay Fünke" } ] }.to_json] }
+            stub.post("/users") { |env| ok! :user => { :id => 1, :name => "Lindsay Fünke" } }
+            stub.get("/users") { |env| ok! :users => [ { :id => 1, :name => "Lindsay Fünke" } ] }
           end
         end
 
@@ -179,11 +179,11 @@ describe ActiveService::Model::Parse do
         api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
           builder.use Faraday::Request::UrlEncoded
           builder.adapter :test do |stub|
-            stub.post("/users") { |env| [200, {}, { :user => { :id => 1, :name => "Lindsay Fünke" } }.to_json] }
-            stub.get("/users") { |env| [200, {}, { :users => [ { :id => 1, :name => "Lindsay Fünke" } ] }.to_json] }
-            stub.get("/users/admins") { |env| [200, {}, { :users => [ { :id => 1, :name => "Lindsay Fünke" } ] }.to_json] }
-            stub.get("/users/1") { |env| [200, {}, { :user => { :id => 1, :name => "Lindsay Fünke" } }.to_json] }
-            stub.put("/users/1") { |env| [200, {}, { :user => { :id => 1, :name => "Tobias Fünke Jr." } }.to_json] }
+            stub.post("/users") { |env| ok! :user => { :id => 1, :name => "Lindsay Fünke" } }
+            stub.get("/users") { |env| ok! :users => [ { :id => 1, :name => "Lindsay Fünke" } ] }
+            stub.get("/users/admins") { |env| ok! :users => [ { :id => 1, :name => "Lindsay Fünke" } ] }
+            stub.get("/users/1") { |env| ok! :user => { :id => 1, :name => "Lindsay Fünke" } }
+            stub.put("/users/1") { |env| ok! :user => { :id => 1, :name => "Tobias Fünke Jr." } }
           end
         end
 
@@ -260,11 +260,11 @@ describe ActiveService::Model::Parse do
       api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
         builder.use Faraday::Request::UrlEncoded
         builder.adapter :test do |stub|
-          stub.get("/users") { |env| [200, {},  { :users => [{ :id => 1, :name => "Lindsay Fünke" }] }.to_json] }
-          stub.get("/users/admins") { |env| [200, {}, { :users => [{ :id => 1, :name => "Lindsay Fünke" }] }.to_json] }
-          stub.get("/users/1") { |env| [200, {}, { :users => [{ :id => 1, :name => "Lindsay Fünke" }] }.to_json] }
-          stub.post("/users") { |env| [200, {}, { :users => [{ :name => "Lindsay Fünke" }] }.to_json] }
-          stub.put("/users/1") { |env| [200, {}, { :users => [{ :id => 1, :name => "Tobias Fünke Jr." }] }.to_json] }
+          stub.get("/users") { |env| ok! :users => [{ :id => 1, :name => "Lindsay Fünke" }] }
+          stub.get("/users/admins") { |env| ok! :users => [{ :id => 1, :name => "Lindsay Fünke" }] }
+          stub.get("/users/1") { |env| ok! :users => [{ :id => 1, :name => "Lindsay Fünke" }] }
+          stub.post("/users") { |env| ok! :users => [{ :name => "Lindsay Fünke" }] }
+          stub.put("/users/1") { |env| ok! :users => [{ :id => 1, :name => "Tobias Fünke Jr." }] }
         end
       end
 
@@ -317,7 +317,7 @@ describe ActiveService::Model::Parse do
       api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
         builder.use Faraday::Request::UrlEncoded
         builder.adapter :test do |stub|
-          stub.post("/users") { |env| [200, {}, { :users => [{ :id => 1, :name => params(env)[:users][:name] }] }.to_json] }
+          stub.post("/users") { |env| ok! :users => [{ :id => 1, :name => params(env)[:users][:name] }] }
         end
       end
     end

@@ -74,8 +74,8 @@ describe ActiveService::Model::HTTP do
     before do
       api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
         builder.adapter :test do |stub|
-          stub.get("/users") { |env| [200, {}, [{ :id => 1 }].to_json] }
-          stub.post("/users") { |env| [200, {}, { :id => 1 }.to_json] }
+          stub.get("/users") { |env| ok! [{ :id => 1 }] }
+          stub.post("/users") { |env| ok! :id => 1 }
         end
       end
 

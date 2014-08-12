@@ -178,11 +178,11 @@ describe ActiveService::Model::Paths do
     before do
       ActiveService::API.setup :url => "https://api.example.com/" do |builder|
         builder.adapter :test do |stub|
-          stub.get("organizations/2/users") { |env| [200, {}, [{ :id => 1, :fullname => "Tobias Fünke", :organization_id => 2 }, { :id => 2, :fullname => "Lindsay Fünke", :organization_id => 2 }].to_json] }
-          stub.post("organizations/2/users") { |env| [200, {}, { :id => 1, :fullname => "Tobias Fünke", :organization_id => 2 }.to_json] }
-          stub.put("organizations/2/users/1") { |env| [200, {}, { :id => 1, :fullname => "Lindsay Fünke", :organization_id => 2 }.to_json] }
-          stub.get("organizations/2/users/1") { |env| [200, {}, { :id => 1, :fullname => "Tobias Fünke", :organization_id => 2, :active => true }.to_json] }
-          stub.delete("organizations/2/users/1") { |env| [200, {}, { :id => 1, :fullname => "Lindsay Fünke", :organization_id => 2, :active => false }.to_json] }
+          stub.get("organizations/2/users") { |env| ok! [{ :id => 1, :fullname => "Tobias Fünke", :organization_id => 2 }, { :id => 2, :fullname => "Lindsay Fünke", :organization_id => 2 }] }
+          stub.post("organizations/2/users") { |env| ok! :id => 1, :fullname => "Tobias Fünke", :organization_id => 2 }
+          stub.put("organizations/2/users/1") { |env| ok! :id => 1, :fullname => "Lindsay Fünke", :organization_id => 2 }
+          stub.get("organizations/2/users/1") { |env| ok! :id => 1, :fullname => "Tobias Fünke", :organization_id => 2, :active => true }
+          stub.delete("organizations/2/users/1") { |env| ok! :id => 1, :fullname => "Lindsay Fünke", :organization_id => 2, :active => false }
         end
       end
 
