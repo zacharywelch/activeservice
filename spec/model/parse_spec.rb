@@ -5,6 +5,7 @@ describe ActiveService::Model::Parse do
   context "when include_root_in_json is set" do
     before do
       ActiveService::API.setup :url => "https://api.example.com" do |builder|
+        builder.use Faraday::Request::UrlEncoded
         builder.adapter :test do |stub|
           stub.post("/users") { |env| ok! :user => { :id => 1, :name => params(env)[:user][:name] } }
           stub.post("/users/admins") { |env| ok! :user => { :id => 1, :name => params(env)[:user][:name] } }
@@ -71,6 +72,7 @@ describe ActiveService::Model::Parse do
     context "to true" do
       before do
         api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
+          builder.use Faraday::Request::UrlEncoded
           builder.adapter :test do |stub|
             stub.post("/users") { |env| [200, {}, { :user => { :id => 1, :name => "Lindsay Fünke" } }.to_json] }
             stub.get("/users") { |env| [200, {}, [{ :user => { :id => 1, :name => "Lindsay Fünke" } }].to_json] }
@@ -119,6 +121,7 @@ describe ActiveService::Model::Parse do
     context "to a symbol" do
       before do
         api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
+          builder.use Faraday::Request::UrlEncoded
           builder.adapter :test do |stub|
             stub.post("/users") { |env| [200, {}, { :person => { :id => 1, :name => "Lindsay Fünke" } }.to_json] }
           end
@@ -140,6 +143,7 @@ describe ActiveService::Model::Parse do
     context "in the parent class" do
       before do
         api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
+          builder.use Faraday::Request::UrlEncoded
           builder.adapter :test do |stub|
             stub.post("/users") { |env| [200, {}, { :user => { :id => 1, :name => "Lindsay Fünke" } }.to_json] }
             stub.get("/users") { |env| [200, {}, { :users => [ { :id => 1, :name => "Lindsay Fünke" } ] }.to_json] }
@@ -173,6 +177,7 @@ describe ActiveService::Model::Parse do
     context "to true with :format => :active_model_serializers" do
       before do
         api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
+          builder.use Faraday::Request::UrlEncoded
           builder.adapter :test do |stub|
             stub.post("/users") { |env| [200, {}, { :user => { :id => 1, :name => "Lindsay Fünke" } }.to_json] }
             stub.get("/users") { |env| [200, {}, { :users => [ { :id => 1, :name => "Lindsay Fünke" } ] }.to_json] }
@@ -222,6 +227,7 @@ describe ActiveService::Model::Parse do
   context "when to_params is set" do
     before do
       api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
+        builder.use Faraday::Request::UrlEncoded
         builder.adapter :test do |stub|
           stub.post("/users") { |env| ok! :id => 1, :name => params(env)['name'] }
           # stub.post("/users") { |env| ok! :id => 1, :name => "Lindsay Fünke" }          
@@ -232,12 +238,12 @@ describe ActiveService::Model::Parse do
         uses_api api
         attribute :name
         def to_params
-          { :name => "Lindsay Fünke" }
+          { :id => nil, :name => "Lindsay Fünke" }
         end
       end
     end
 
-    xit "changes the request parameters for one-line resource creation" do
+    it "changes the request parameters for one-line resource creation" do
       @user = User.create(:name => "Tobias Fünke")
       expect(@user.name).to eq "Lindsay Fünke"
     end
@@ -252,6 +258,7 @@ describe ActiveService::Model::Parse do
   context "when parse_root_in_json set json_api to true" do
     before do
       api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
+        builder.use Faraday::Request::UrlEncoded
         builder.adapter :test do |stub|
           stub.get("/users") { |env| [200, {},  { :users => [{ :id => 1, :name => "Lindsay Fünke" }] }.to_json] }
           stub.get("/users/admins") { |env| [200, {}, { :users => [{ :id => 1, :name => "Lindsay Fünke" }] }.to_json] }
@@ -308,6 +315,7 @@ describe ActiveService::Model::Parse do
   context "when include_root_in_json set json_api" do
     before do
       api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
+        builder.use Faraday::Request::UrlEncoded
         builder.adapter :test do |stub|
           stub.post("/users") { |env| [200, {}, { :users => [{ :id => 1, :name => params(env)[:users][:name] }] }.to_json] }
         end
