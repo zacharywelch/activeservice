@@ -291,4 +291,8 @@ describe ActiveService::Model::ORM do
       expect(@user).to be_destroyed
     end
   end  
+
+  context 'customizing HTTP methods' do
+    pending
+  end  
 end

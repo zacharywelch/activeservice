@@ -25,7 +25,7 @@ module ActiveService
             if json_api_format?
               data.fetch(parsed_root_element).first
             else
-              data.fetch(parsed_root_element) { data }
+              data.symbolize_keys.fetch(parsed_root_element) { data }
             end
           else
             data
@@ -67,13 +67,14 @@ module ActiveService
         # Return or change the value of `include_root_in_json`
         #
         # @example
-        #   class User < ActiveService::Base
+        #   class User
+        #     include Her::Model
         #     include_root_in_json true
         #   end
         def include_root_in_json(value, options = {})
           @include_root_in_json = value
           @include_root_in_json_format = options[:format]
-        end
+        end        
 
         # Return or change the value of `parse_root_in_json`
         #
@@ -157,7 +158,7 @@ module ActiveService
         # @private
         def extract_array(request_data)
           if active_model_serializers_format? || json_api_format?
-            request_data[pluralized_parsed_root_element]
+            request_data.symbolize_keys[pluralized_parsed_root_element]
           else
             request_data
           end
@@ -191,7 +192,7 @@ module ActiveService
         # @private
         def include_root_in_json?
           @include_root_in_json || (superclass.respond_to?(:include_root_in_json?) && superclass.include_root_in_json?)
-        end
+        end        
 
         # @private
         def parse_root_in_json?

@@ -4,9 +4,6 @@ module ActiveService
     module Attributes
       extend ActiveSupport::Concern
 
-      # ActiveAttr provides most of the functionality
-      include ActiveAttr::Model
-
       # Apply default scope to any new object
       def initialize(attributes={})                
         @destroyed = attributes.delete(:_destroyed) || false
@@ -40,7 +37,6 @@ module ActiveService
               resource = item_data
             else
               resource = klass.new(klass.parse(item_data))
-              # resource.run_callbacks :find
             end
             resource
           end
@@ -53,7 +49,7 @@ module ActiveService
         # @private
         def new_collection(parsed_data)
           initialize_collection(self, parsed_data)
-        end     
+        end
 
         # Initialize a new object with the "raw" parsed_data from the parsing middleware
         #

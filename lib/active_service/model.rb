@@ -1,6 +1,7 @@
 require 'active_model'
 require 'active_service/model/http'
 require 'active_service/model/attributes'
+require 'active_service/model/attributes'
 require 'active_service/model/relation'
 require 'active_service/model/orm'
 require 'active_service/model/parse'
@@ -8,10 +9,20 @@ require 'active_service/model/associations'
 require 'active_service/model/introspection'
 require 'active_service/model/paths'
 require 'active_service/model/nested_attributes'
+require 'active_service/model/serialization'
 
 module ActiveService
   module Model
     extend ActiveSupport::Concern
+
+    # ActiveAttr modules 
+    include ActiveAttr::BasicModel
+    include ActiveAttr::BlockInitialization
+    include ActiveAttr::Logger
+    include ActiveAttr::MassAssignment
+    include ActiveAttr::AttributeDefaults
+    include ActiveAttr::QueryAttributes
+    include ActiveAttr::TypecastedAttributes
 
     # ActiveService modules
     include ActiveService::Model::Attributes
@@ -22,6 +33,7 @@ module ActiveService
     include ActiveService::Model::Paths
     include ActiveService::Model::Associations
     include ActiveService::Model::NestedAttributes
+    include ActiveService::Model::Serialization
 
     included do
       # Assign the default API
