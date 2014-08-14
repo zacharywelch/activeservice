@@ -133,7 +133,6 @@ describe ActiveService::Model::Attributes do
     it "treats equal resources as equal for hash keys" do
       hash = { user => true }
       hash[User.find(1)] = false
-      puts hash.inspect
       expect(hash.size).to eql 1
       expect(hash).to eq({ user => false })
     end

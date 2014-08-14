@@ -131,7 +131,27 @@ describe ActiveService::Model::Paths do
     end
 
     context "children model" do
-      pending
+      before do
+        api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
+          builder.use Faraday::Request::UrlEncoded
+          builder.adapter :test do |stub|
+            stub.get("/users/foo") { |env| ok! :id => 'foo' }
+          end
+        end
+
+        spawn_model "Model" do 
+          uses_api api
+          include_root_in_json true
+        end
+
+        class User < Model; end
+        @spawned_models << :User
+      end
+
+      it "builds path using the children model name" do
+        expect(User.find('foo').id).to eq 'foo'
+        expect(User.find('foo').id).to eq 'foo'
+      end
     end
 
     context "nested model" do
@@ -176,51 +196,155 @@ describe ActiveService::Model::Paths do
 
   context "making subdomain HTTP requests" do
     before do
-      ActiveService::API.setup :url => "https://api.example.com/" do |builder|
+      api = ActiveService::API.setup :url => "https://api.example.com/" do |builder|
+        builder.use Faraday::Request::UrlEncoded
         builder.adapter :test do |stub|
-          stub.get("organizations/2/users") { |env| ok! [{ :id => 1, :fullname => "Tobias Fünke", :organization_id => 2 }, { :id => 2, :fullname => "Lindsay Fünke", :organization_id => 2 }] }
-          stub.post("organizations/2/users") { |env| ok! :id => 1, :fullname => "Tobias Fünke", :organization_id => 2 }
-          stub.put("organizations/2/users/1") { |env| ok! :id => 1, :fullname => "Lindsay Fünke", :organization_id => 2 }
-          stub.get("organizations/2/users/1") { |env| ok! :id => 1, :fullname => "Tobias Fünke", :organization_id => 2, :active => true }
-          stub.delete("organizations/2/users/1") { |env| ok! :id => 1, :fullname => "Lindsay Fünke", :organization_id => 2, :active => false }
+          stub.get("organizations/2/users") { |env| ok! [{ :id => 1, :name => "Tobias Fünke", :organization_id => 2 }, { :id => 2, :name => "Lindsay Fünke", :organization_id => 2 }] }
+          stub.post("organizations/2/users") { |env| ok! :id => 1, :name => "Tobias Fünke", :organization_id => 2 }
+          stub.put("organizations/2/users/1") { |env| ok! :id => 1, :name => "Lindsay Fünke", :organization_id => 2 }
+          stub.get("organizations/2/users/1") { |env| ok! :id => 1, :name => "Tobias Fünke", :organization_id => 2, :active => true }
+          stub.delete("organizations/2/users/1") { |env| ok! :id => 1, :name => "Lindsay Fünke", :organization_id => 2, :active => false }
         end
       end
 
       spawn_model "User" do
+        uses_api api
         collection_path "organizations/:organization_id/users"
         attribute :id
-        attribute :fullname
+        attribute :name
         attribute :organization_id
         attribute :active
       end
     end
 
     describe "fetching a resource" do
-      pending
+      it "maps a single resource to a Ruby object" do
+        @user = User.find(1, :_organization_id => 2)
+        expect(@user.id).to be 1
+        expect(@user.name).to eq "Tobias Fünke"
+      end
+
+      it "maps a single resource using a scope to a Ruby object" do
+        User.scope :for_organization, lambda { |o| where(:organization_id => o) }
+        @user = User.for_organization(2).find(1)
+        expect(@user.id).to be 1
+        expect(@user.name).to eq "Tobias Fünke"
+      end
     end
 
     describe "fetching a collection" do
-      pending
+      it "maps a collection of resources to an array of Ruby objects" do
+        @users = User.where(:_organization_id => 2)
+        expect(@users.length).to be 2
+        expect(@users.first.name).to eq "Tobias Fünke"
+      end
     end
 
     describe "handling new resource" do
-      pending
+      it "handles new resource" do
+        @new_user = User.new(:name => "Tobias Fünke", :organization_id => 2)
+        expect(@new_user.new?).to be_truthy
+
+        @existing_user = User.find(1, :_organization_id => 2)
+        expect(@existing_user.new?).to be_falsey
+      end
     end
 
     describe "creating resources" do
-      pending
+      it "handle one-line resource creation" do
+        @user = User.create(:name => "Tobias Fünke", :organization_id => 2)
+        expect(@user.id).to be 1
+        expect(@user.name).to eq "Tobias Fünke"
+      end
+
+      it "handle resource creation through Model.new + #save" do
+        @user = User.new(:name => "Tobias Fünke", :organization_id => 2)
+        @user.save
+        expect(@user.name).to eq "Tobias Fünke"
+      end
     end
 
     context "updating resources" do
-      pending
+      it "handle resource data update without saving it" do
+        @user = User.find(1, :_organization_id => 2)
+        expect(@user.name).to eq "Tobias Fünke"
+        @user.name = "Kittie Sanchez"
+        expect(@user.name).to eq "Kittie Sanchez"
+      end
+
+      it "handle resource update through #save on an existing resource" do
+        @user = User.find(1, :_organization_id => 2)
+        @user.name = "Lindsay Fünke"
+        @user.save
+        expect(@user.name).to eq "Lindsay Fünke"
+      end
     end
 
     context "deleting resources" do
-      pending
-    end
+      it "handle resource deletion through the .destroy class method" do
+        @user = User.destroy(1, :_organization_id => 2)
+        expect(@user.active).to be_falsey
+      end
+
+      it "handle resource deletion through #destroy on an existing resource" do
+        @user = User.find(1, :_organization_id => 2)
+        @user.destroy
+        expect(@user.active).to be_falsey
+      end
+    end  
   end
 
   context "making path HTTP requests" do
-    pending
+    before do
+      api = ActiveService::API.setup :url => "https://example.com/api/" do |builder|
+        builder.use Faraday::Request::UrlEncoded
+        builder.adapter :test do |stub|
+          stub.get("/api/organizations/2/users") { |env| ok! [{ :id => 1, :name => "Tobias Fünke", :organization_id => 2 }, { :id => 2, :name => "Lindsay Fünke", :organization_id => 2 }] }
+          stub.get("/api/organizations/2/users/1") { |env| ok! :id => 1, :name => "Tobias Fünke", :organization_id => 2, :active => true }
+        end
+      end
+
+      spawn_model "User" do
+        uses_api api
+        collection_path "organizations/:organization_id/users"
+        attribute :name
+        attribute :organization_id
+        attribute :active
+      end
+    end
+
+    describe "fetching a resource" do
+      it "maps a single resource to a Ruby object" do
+        @user = User.find(1, :organization_id => 2)
+        expect(@user.id).to be 1
+        expect(@user.name).to eq "Tobias Fünke"
+      end
+    end
+
+    describe "fetching a collection" do
+      it "maps a collection of resources to an array of Ruby objects" do
+        @users = User.where(:organization_id => 2)
+        expect(@users.length).to be 2
+        expect(@users.first.name).to eq "Tobias Fünke"
+      end
+    end
+
+    describe "fetching a resource with absolute path" do
+      it "maps a single resource to a Ruby object" do
+        User.element_path '/api/' + User.element_path
+        @user = User.find(1, :organization_id => 2)
+        expect(@user.id).to be 1
+        expect(@user.name).to eq "Tobias Fünke"
+      end
+    end
+
+    describe "fetching a collection with absolute path" do
+      it "maps a collection of resources to an array of Ruby objects" do
+        User.collection_path '/api/' + User.collection_path
+        @users = User.where(:organization_id => 2)
+        expect(@users.length).to be 2
+        expect(@users.first.name).to eq "Tobias Fünke"
+      end
+    end
   end
 end

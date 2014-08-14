@@ -75,7 +75,15 @@ describe ActiveService::Model::HTTP do
       api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
         builder.adapter :test do |stub|
           stub.get("/users") { |env| ok! [{ :id => 1 }] }
+          stub.get("/users/1") { |env| [200, {}, { :id => 1 }.to_json] }
           stub.post("/users") { |env| ok! :id => 1 }
+          stub.get("/users/popular") do |env|
+            if env[:params]["page"] == "2"
+              ok! [{ :id => 3 }, { :id => 4 }]
+            else
+              ok! [{ :id => 1 }, { :id => 2 }]
+            end
+          end          
         end
       end
 
@@ -99,33 +107,25 @@ describe ActiveService::Model::HTTP do
       end
     end
 
-    describe :post_raw do
-      context "with a block" do
-        specify do
-          User.post_raw("/users", { id: 1 }) do |response|
-            expect(response.body).to eq({ :id => 1 }.to_json)
-          end
-        end
-      end
-
-      context "with a return value" do
-        subject { User.post_raw("/users", { id: 1 }) }
-        specify { expect(subject.body).to eq({ :id => 1 }.to_json) }
-      end
-    end
-
     describe :get_collection do
-      context "with a String path" do
-        pending
-      end
+      pending
+      # context "with a String path" do
+      #   subject { User.get_collection("/users/popular") }
+      #   its(:length) { should == 2 }
+      #   specify { expect(subject.first.id).to be 1 }
+      # end
 
-      context "with a Symbol" do
-        pending
-      end
+      # context "with a Symbol" do
+      #   subject { User.get_collection(:popular) }
+      #   its(:length) { should == 2 }
+      #   specify { subject.first.id.should == 1 }
+      # end
 
-      context "with extra parameters" do
-        pending
-      end
+      # context "with extra parameters" do
+      #   subject { User.get_collection(:popular, :page => 2) }
+      #   its(:length) { should == 2 }
+      #   specify { subject.first.id.should == 3 }
+      # end
     end
 
     describe :get_resource do
@@ -141,6 +141,21 @@ describe ActiveService::Model::HTTP do
     describe :get_raw do
       pending
     end
+
+    describe :post_raw do
+      context "with a block" do
+        specify do
+          User.post_raw("/users", { id: 1 }) do |response|
+            expect(response.body).to eq({ :id => 1 }.to_json)
+          end
+        end
+      end
+
+      context "with a return value" do
+        subject { User.post_raw("/users", { id: 1 }) }
+        specify { expect(subject.body).to eq({ :id => 1 }.to_json) }
+      end
+    end    
   end
 
   context "setting custom HTTP requests" do
