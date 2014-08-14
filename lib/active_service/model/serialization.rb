@@ -1,5 +1,3 @@
-require 'active_support/json'
-
 module ActiveService
   module Model
     # This module monkey patches ActiveModel's basic serialization functionality 

@@ -48,7 +48,7 @@ describe ActiveService::Model::Relation do
         expect(@user.id).to eq 2
       end
 
-      xit "does not reuse relations" do
+      it "does not reuse relations" do
         expect(User.all.size).to be 2
         expect(User.create(:name => 'George Michael Bluth').id).to be 3
         expect(User.all.size).to be 3

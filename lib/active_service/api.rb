@@ -85,9 +85,7 @@ module ActiveService
       self
     end
 
-    # Define a custom parsing procedure. The procedure is passed the response object and is
-    # expected to return a hash with three keys: a main data Hash, an errors Hash
-    # and a metadata Hash.
+    # Define a custom parsing procedure. The procedure is passed the response object
     #
     # @private
     def request(opts={})

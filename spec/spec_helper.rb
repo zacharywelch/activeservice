@@ -3,7 +3,6 @@ $:.unshift File.join(File.dirname(__FILE__), *%w[.. lib])
 require 'rspec'
 require 'rspec/its'
 require 'active_service'
-require 'active_support/core_ext/object/json'
 
 # Requires everything in 'spec/support'
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}

@@ -24,6 +24,13 @@ module ActiveService
         self == other
       end
 
+      # Delegate to @attributes, allowing models to act correctly in code like:
+      #     [ Model.find(1), Model.find(1) ].uniq # => [ Model.find(1) ]
+      # @private
+      def hash
+        @attributes.hash
+      end      
+
       protected
 
       module ClassMethods

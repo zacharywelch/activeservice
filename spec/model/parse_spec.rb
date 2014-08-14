@@ -230,7 +230,6 @@ describe ActiveService::Model::Parse do
         builder.use Faraday::Request::UrlEncoded
         builder.adapter :test do |stub|
           stub.post("/users") { |env| ok! :id => 1, :name => params(env)['name'] }
-          # stub.post("/users") { |env| ok! :id => 1, :name => "Lindsay Fünke" }          
         end
       end
 
@@ -248,7 +247,7 @@ describe ActiveService::Model::Parse do
       expect(@user.name).to eq "Lindsay Fünke"
     end
 
-    xit "changes the request parameters for Model.new + #save" do
+    it "changes the request parameters for Model.new + #save" do
       @user = User.new(:name => "Tobias Fünke")
       @user.save
       expect(@user.name).to eq "Lindsay Fünke"
@@ -263,7 +262,7 @@ describe ActiveService::Model::Parse do
           stub.get("/users") { |env| ok! :users => [{ :id => 1, :name => "Lindsay Fünke" }] }
           stub.get("/users/admins") { |env| ok! :users => [{ :id => 1, :name => "Lindsay Fünke" }] }
           stub.get("/users/1") { |env| ok! :users => [{ :id => 1, :name => "Lindsay Fünke" }] }
-          stub.post("/users") { |env| ok! :users => [{ :name => "Lindsay Fünke" }] }
+          stub.post("/users") { |env| ok! :users => [{ :id => 1, :name => "Lindsay Fünke" }] }
           stub.put("/users/1") { |env| ok! :users => [{ :id => 1, :name => "Tobias Fünke Jr." }] }
         end
       end
@@ -277,7 +276,7 @@ describe ActiveService::Model::Parse do
       end
     end
 
-    xit "parse the data from the JSON root element after .create" do
+    it "parse the data from the JSON root element after .create" do
       @new_user = User.create(:name => "Lindsay Fünke")
       expect(@new_user.name).to eq "Lindsay Fünke"
     end
@@ -297,14 +296,14 @@ describe ActiveService::Model::Parse do
       expect(@user.name).to eq "Lindsay Fünke"
     end
 
-    xit "parse the data from the JSON root element after .save" do
+    it "parse the data from the JSON root element after .save" do
       @user = User.find(1)
       @user.name = "Tobias Fünke"
       @user.save
       expect(@user.name).to eq "Tobias Fünke Jr."
     end
 
-    xit "parse the data from the JSON root element after new/save" do
+    it "parse the data from the JSON root element after new/save" do
       @user = User.new
       @user.name = "Lindsay Fünke (before save)"
       @user.save
