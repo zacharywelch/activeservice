@@ -9,6 +9,9 @@ module ActiveService
       end
     end
 
+    class ParserError < StandardError
+    end
+
     # Base class for response errors
     class ResponseError < StandardError
       attr_reader :code
