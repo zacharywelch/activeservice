@@ -2,6 +2,7 @@ $:.unshift File.join(File.dirname(__FILE__), *%w[.. lib])
 
 require 'rspec'
 require 'rspec/its'
+require 'faraday_middleware'
 require 'active_service'
 
 # Requires everything in 'spec/support'

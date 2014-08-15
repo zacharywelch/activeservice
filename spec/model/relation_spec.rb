@@ -6,6 +6,7 @@ describe ActiveService::Model::Relation do
     context "for base classes" do
       before do
         api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
+          builder.use ActiveService::Middleware::ParseJSON
           builder.adapter :test do |stub|
             stub.get("/users?foo=1&bar=2") { |env| ok! [{ :id => 2, :name => "Tobias Fünke" }] }
             stub.get("/users?admin=1") { |env| ok! [{ :id => 1, :name => "Tobias Fünke" }] }
@@ -58,6 +59,7 @@ describe ActiveService::Model::Relation do
     context "for parent class" do
       before do
         api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
+          builder.use ActiveService::Middleware::ParseJSON
           builder.adapter :test do |stub|
             stub.get("/users?page=2") { |env| ok! [{ :id => 1, :name => "Tobias Fünke" }, { :id => 2, :name => "Lindsay Fünke" }] }
           end
@@ -82,6 +84,7 @@ describe ActiveService::Model::Relation do
   describe :create do
     before do
       api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
+        builder.use ActiveService::Middleware::ParseJSON
         builder.adapter :test do |stub|
           stub.post("/users") { |env| ok! :id => 1, :name => "Tobias Fünke", :email => "tobias@bluth.com" }
         end
@@ -130,6 +133,7 @@ describe ActiveService::Model::Relation do
   describe :scope do
     before do
       api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
+        builder.use ActiveService::Middleware::ParseJSON
         builder.adapter :test do |stub|
           stub.get("/users?what=4&where=3") { |env| ok! [{ :id => 3, :name => "Maeby Fünke" }] }
           stub.get("/users?what=2") { |env| ok! [{ :id => 2, :name => "Lindsay Fünke" }] }
@@ -182,6 +186,7 @@ describe ActiveService::Model::Relation do
     context "for fetched resources" do
       before do
         api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
+          builder.use ActiveService::Middleware::ParseJSON
           builder.adapter :test do |stub|
             stub.post("/users") { |env| ok! :id => 3, :active => true }
           end
@@ -202,6 +207,7 @@ describe ActiveService::Model::Relation do
     context "for fetched collections" do
       before do
         api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
+          builder.use ActiveService::Middleware::ParseJSON
           builder.adapter :test do |stub|
             stub.get("/users?active=true") { |env| ok! [{ :id => 3, :active => (params(env)[:active] == "true" ? true : false) }] }
           end
@@ -223,6 +229,7 @@ describe ActiveService::Model::Relation do
   describe :map do
     before do
       api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
+        builder.use ActiveService::Middleware::ParseJSON
         builder.adapter :test do |stub|
           stub.get("/users") do |env|
             ok! [{ :id => 1, :name => "Tobias Fünke" }, { :id => 2, :name => "Lindsay Fünke" }]

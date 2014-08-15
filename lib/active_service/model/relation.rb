@@ -67,7 +67,8 @@ module ActiveService
         @_fetch ||= begin
           path = @parent.build_request_path(@params)
           @parent.request(@params.merge(:_method => :get, :_path => path)) do |response|
-            @parent.new_collection(JSON.parse(response.body))
+            # @parent.new_collection(JSON.parse(response.body))
+            @parent.new_collection(response.body)
           end
         end
       end
@@ -93,7 +94,8 @@ module ActiveService
           
           @parent.request(request_params) do |response|
             if response.success?
-              resource = @parent.new_from_parsed_data(JSON.parse(response.body))
+              # resource = @parent.new_from_parsed_data(JSON.parse(response.body))
+              resource = @parent.new_from_parsed_data(response.body)
             else
               return nil
             end
@@ -154,7 +156,7 @@ module ActiveService
       # @private
       def clear_fetch_cache!
         instance_variable_set(:@_fetch, nil)
-      end                  
+      end  
     end
   end
 end

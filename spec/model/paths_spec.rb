@@ -134,6 +134,7 @@ describe ActiveService::Model::Paths do
       before do
         api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
           builder.use Faraday::Request::UrlEncoded
+          builder.use ActiveService::Middleware::ParseJSON          
           builder.adapter :test do |stub|
             stub.get("/users/foo") { |env| ok! :id => 'foo' }
           end
@@ -198,6 +199,7 @@ describe ActiveService::Model::Paths do
     before do
       api = ActiveService::API.setup :url => "https://api.example.com/" do |builder|
         builder.use Faraday::Request::UrlEncoded
+        builder.use ActiveService::Middleware::ParseJSON
         builder.adapter :test do |stub|
           stub.get("organizations/2/users") { |env| ok! [{ :id => 1, :name => "Tobias Fünke", :organization_id => 2 }, { :id => 2, :name => "Lindsay Fünke", :organization_id => 2 }] }
           stub.post("organizations/2/users") { |env| ok! :id => 1, :name => "Tobias Fünke", :organization_id => 2 }
@@ -298,6 +300,7 @@ describe ActiveService::Model::Paths do
     before do
       api = ActiveService::API.setup :url => "https://example.com/api/" do |builder|
         builder.use Faraday::Request::UrlEncoded
+        builder.use ActiveService::Middleware::ParseJSON
         builder.adapter :test do |stub|
           stub.get("/api/organizations/2/users") { |env| ok! [{ :id => 1, :name => "Tobias Fünke", :organization_id => 2 }, { :id => 2, :name => "Lindsay Fünke", :organization_id => 2 }] }
           stub.get("/api/organizations/2/users/1") { |env| ok! :id => 1, :name => "Tobias Fünke", :organization_id => 2, :active => true }

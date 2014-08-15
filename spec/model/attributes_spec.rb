@@ -73,7 +73,8 @@ describe ActiveService::Model::Attributes do
   context "checking resource equality" do
     before do
       api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
-        builder.use Faraday::Request::UrlEncoded
+        builder.request :url_encoded
+        builder.use ActiveService::Middleware::ParseJSON
         builder.adapter :test do |stub|
           stub.get("/users/1") { |env| ok! :id => 1, :name => "Lindsay Fünke" }
           stub.get("/users/2") { |env| ok! :id => 1, :name => "Tobias Fünke" }

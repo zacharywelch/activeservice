@@ -6,6 +6,7 @@ describe ActiveService::Model::ORM do
   context "mapping data to Ruby objects" do
     before do
       api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
+        builder.use ActiveService::Middleware::ParseJSON
         builder.adapter :test do |stub|
           stub.get("/users/1") { |env| ok! :id => 1, :name => "Tobias Fünke" }
           stub.get("/users") { |env| ok! [{ :id => 1, :name => "Tobias Fünke" }, { :id => 2, :name => "Lindsay Fünke" }] }
@@ -16,6 +17,11 @@ describe ActiveService::Model::ORM do
         uses_api api
         attribute :name
       end
+
+      spawn_model "AdminUser" do
+        uses_api api
+        primary_key :admin_id
+      end      
     end
 
     it "maps a single resource to a Ruby object" do
@@ -39,12 +45,12 @@ describe ActiveService::Model::ORM do
       expect(@existing_user.new?).to be_falsey
     end
 
-    xit 'handles new resource with custom primary key' do
-      @new_user = AdminUser.new(:name => 'Lindsay Fünke', :id => -1)
-      @new_user.should be_new
+    xit "handles new resource with custom primary key" do
+      @new_user = AdminUser.new(:name => "Lindsay Fünke", :id => -1)
+      expect(@new_user).to be_new
 
       @existing_user = AdminUser.find(1)
-      @existing_user.should_not be_new
+      expect(@existing_user).to be_new
     end
   end
 
@@ -52,6 +58,7 @@ describe ActiveService::Model::ORM do
     before do
       api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
         builder.use Faraday::Request::UrlEncoded
+        builder.use ActiveService::Middleware::ParseJSON
         builder.adapter :test do |stub|
           stub.get("/users/1") { |env| ok! :id => 1, :email => "tfunke@example.com" }
           stub.put("/users/1") { |env| error! :email => ["is invalid"] }
@@ -82,6 +89,15 @@ describe ActiveService::Model::ORM do
       expect(@user.errors.count).to be 1
     end
 
+    it "handles new errors through #save on an existing resource" do
+      @user = User.find(1)
+      @user.email = "invalid@email"
+      @user.save
+      expect(@user.errors.count).to be 1
+      @user.save
+      expect(@user.errors.count).to be 1
+    end    
+
     it "handle errors through #update_attributes" do
       @user = User.find(1)
       @user.update_attributes(:email => "invalid@email")
@@ -104,6 +120,7 @@ describe ActiveService::Model::ORM do
   context "finding resources" do
     before do
       api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
+        builder.use ActiveService::Middleware::ParseJSON
         builder.adapter :test do |stub|
           stub.get("/users/1") { |env| ok! :id => 1, :name => "Tobias Fünke" }
           stub.get("/users/2") { |env| ok! :id => 2, :name => "Lindsay Fünke" }
@@ -155,17 +172,17 @@ describe ActiveService::Model::ORM do
       expect(@users[1].id).to be 2
     end
 
-    it 'handles finding with id parameter as an array' do
+    it "handles finding with id parameter as an array" do
       @users = User.where(id: [1, 2])
-      expect(@users).to be_kind_of(Array)
+      expect(@users).to be_kind_of(ActiveService::Collection)
       expect(@users.length).to be 2
       expect(@users[0].id).to be 1
       expect(@users[1].id).to be 2      
     end
 
     it "handles finding with other parameters" do
-      @users = User.where(:name => "foo").all
-      expect(@users).to be_kind_of(Array)
+      @users = User.where(:name => "foo")
+      expect(@users).to be_kind_of(ActiveService::Collection)
       expect(@users.first.id).to be 3
       expect(@users.first.name).to eq "foo"
     end
@@ -195,6 +212,7 @@ describe ActiveService::Model::ORM do
     context "when request_new_object_on_build is set" do
       before do
         api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
+          builder.use ActiveService::Middleware::ParseJSON
           builder.adapter :test do |stub|
             stub.get("/users/new") { |env| ok! :id => nil, :name => params(env)[:name], :email => "tobias@bluthcompany.com" }
           end
@@ -221,6 +239,7 @@ describe ActiveService::Model::ORM do
   context "creating resources" do
     before do
       api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
+        builder.use ActiveService::Middleware::ParseJSON
         builder.adapter :test do |stub|
           stub.post("/users") { |env| ok! :id => 1, :name => "Tobias Fünke" }
           stub.post("/companies") { |env| error! name: ["can't be blank"] }
@@ -268,7 +287,7 @@ describe ActiveService::Model::ORM do
     end
 
     it "don't overwrite data if response is empty" do
-      @company = Company.new(:name => 'Company Inc.')
+      @company = Company.new(:name => "Company Inc.")
       expect(@company.save).to be_falsey
       expect(@company.name).to eq "Company Inc."
     end    
@@ -277,6 +296,7 @@ describe ActiveService::Model::ORM do
   context "updating resources" do
     before do
       api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
+        builder.use ActiveService::Middleware::ParseJSON
         builder.adapter :test do |stub|
           stub.get("/users/1") { |env| ok! :id => 1, :name => "Tobias Fünke" }
           stub.put("/users/1") { |env| ok! :id => 1, :name => "Lindsay Fünke" }
@@ -314,6 +334,7 @@ describe ActiveService::Model::ORM do
   context "deleting resources" do
     before do
       api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
+        builder.use ActiveService::Middleware::ParseJSON
         builder.adapter :test do |stub|
           stub.get("/users/1") { |env| ok! :id => 1, :name => "Tobias Fünke", :active => true }
           stub.delete("/users/1") { |env| ok! :id => 1, :name => "Tobias Fünke", :active => false }
@@ -341,7 +362,76 @@ describe ActiveService::Model::ORM do
     end
   end  
 
-  context 'customizing HTTP methods' do
-    pending
+  context "customizing HTTP methods" do
+    context "create" do
+      before do
+        api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
+          builder.use Faraday::Request::UrlEncoded
+          builder.use ActiveService::Middleware::ParseJSON
+          builder.adapter :test do |stub|
+            stub.put("/users") { |env| [200, {}, { :id => 1, :name => "Tobias Fünke" }.to_json] }
+          end        
+        end
+
+        spawn_model "Foo::User" do
+          uses_api api
+          attribute :name
+          attribute :email
+          method_for :create, "PUT"
+        end
+      end
+
+      after { Foo::User.method_for :create, :post }
+
+      context "for top-level class" do
+        it "uses the custom method (PUT) instead of default method (POST)" do
+          user = Foo::User.new(:name => "Tobias Fünke")
+          expect(user).to be_new
+          expect(user.save).to be_truthy
+        end
+      end
+
+      context "for children class" do
+        before do
+          class User < Foo::User; end
+          @spawned_models << :User
+        end
+
+        it "uses the custom method (PUT) instead of default method (POST)" do
+          user = User.new(:name => "Tobias Fünke")
+          expect(user).to be_new
+          expect(user.save).to be_truthy
+        end
+      end
+    end
+
+    context "update" do
+      before do
+        api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
+          builder.use ActiveService::Middleware::ParseJSON
+          builder.adapter :test do |stub|
+            stub.get("/users/1") { |env| [200, {}, { :id => 1, :name => "Lindsay Fünke" }.to_json] }
+            stub.post("/users/1") { |env| [200, {}, { :id => 1, :name => "Tobias Fünke" }.to_json] }
+          end        
+        end
+        
+        spawn_model "User" do
+          uses_api api
+          attribute :name
+          attribute :email
+          method_for :update, :post
+        end
+      end
+
+      after { User.method_for :update, :put }
+
+      it "uses the custom method (POST) instead of default method (PUT)" do
+        user = User.find(1)
+        expect(user.name).to eq "Lindsay Fünke"
+        user.name = "Toby Fünke"
+        user.save
+        expect(user.name).to eq "Tobias Fünke"
+      end
+    end
   end  
 end

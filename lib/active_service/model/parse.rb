@@ -128,6 +128,23 @@ module ActiveService
           end
         end
 
+        # Define the collection parser that will be used to map resource collections
+        #
+        # @example
+        #  class User < ActiveService::Base
+        #    collection_parser PaginationCollection
+        #  end
+        #
+        # @param [Symbol] value
+        def collection_parser(value = nil)
+          @collection_parser ||= begin
+            superclass.collection_parser if superclass.respond_to?(:collection_parser)
+          end
+
+          return @collection_parser unless value
+          @collection_parser = value
+        end        
+
         # @private
         def root_element_included?(data)
           data.keys.to_s.include? @root_element.to_s
@@ -157,11 +174,11 @@ module ActiveService
         #   users.first.name # => "Tobias"
         #
         # @private
-        def extract_array(request_data)
-          if active_model_serializers_format? || json_api_format?
-            request_data.symbolize_keys[pluralized_parsed_root_element]
+        def extract_array(data)
+          if data.is_a?(Hash) && data.keys.size == 1
+            data.values.first
           else
-            request_data
+            data
           end
         end
 

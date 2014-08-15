@@ -7,9 +7,9 @@ describe ActiveService::Model::HTTP do
     let(:api2) { ActiveService::API.new :url => "https://api2.example.com" }
 
     before do
+      ActiveService::API.setup :url => "https://api.example.com"
       spawn_model "User"
       spawn_model "Comment"
-      ActiveService::API.setup :url => "https://api.example.com"
     end
 
     context "when binding a model to an instance of ActiveService::API" do
@@ -72,7 +72,8 @@ describe ActiveService::Model::HTTP do
 
   context "making HTTP requests" do
     before do
-      api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
+      api = ActiveService::API.new :url => "https://api.example.com" do |builder|
+        builder.use ActiveService::Middleware::ParseJSON        
         builder.adapter :test do |stub|
           stub.get("/users") { |env| ok! [{ :id => 1 }] }
           stub.get("/users/1") { |env| [200, {}, { :id => 1 }.to_json] }
@@ -92,88 +93,112 @@ describe ActiveService::Model::HTTP do
       end
     end
 
+    describe :get do
+      subject { User.get(:popular) }
+      its(:length) { should == 2 }
+      specify { expect(subject.first.id).to be 1 }
+    end
+
     describe :get_raw do
       context "with a block" do
         specify do
           User.get_raw("/users") do |response|
-            expect(response.body).to eq [{ :id => 1 }].to_json
+            expect(response.body).to eq [{ :id => 1 }]
           end
         end
       end
 
       context "with a return value" do
         subject { User.get_raw("/users") }
-        specify { expect(subject.body).to eq [{ :id => 1 }].to_json }
+        specify { expect(subject.body).to eq [{ :id => 1 }] }
       end
     end
 
     describe :get_collection do
-      pending
-      # context "with a String path" do
-      #   subject { User.get_collection("/users/popular") }
-      #   its(:length) { should == 2 }
-      #   specify { expect(subject.first.id).to be 1 }
-      # end
+      context "with a String path" do
+        subject { User.get_collection("/users/popular") }
+        its(:length) { should == 2 }
+        specify { expect(subject.first.id).to be 1 }
+      end
 
-      # context "with a Symbol" do
-      #   subject { User.get_collection(:popular) }
-      #   its(:length) { should == 2 }
-      #   specify { subject.first.id.should == 1 }
-      # end
+      context "with a Symbol" do
+        subject { User.get_collection(:popular) }
+        its(:length) { should == 2 }
+        specify { expect(subject.first.id).to be 1 }
+      end
 
-      # context "with extra parameters" do
-      #   subject { User.get_collection(:popular, :page => 2) }
-      #   its(:length) { should == 2 }
-      #   specify { subject.first.id.should == 3 }
-      # end
+      context "with extra parameters" do
+        subject { User.get_collection(:popular, :page => 2) }
+        its(:length) { should == 2 }
+        specify { expect(subject.first.id).to be 3 }
+      end
     end
 
     describe :get_resource do
       context "with a String path" do
-        pending
+        subject { User.get_resource("/users/1") }
+        its(:id) { should == 1 }
       end
 
       context "with a Symbol" do
-        pending
+        subject { User.get_resource(:"1") }
+        its(:id) { should == 1 }
       end
-    end
-
-    describe :get_raw do
-      pending
     end
 
     describe :post_raw do
       context "with a block" do
         specify do
           User.post_raw("/users", { id: 1 }) do |response|
-            expect(response.body).to eq({ :id => 1 }.to_json)
+            expect(response.body).to eq({ :id => 1 })
           end
         end
       end
 
       context "with a return value" do
         subject { User.post_raw("/users", { id: 1 }) }
-        specify { expect(subject.body).to eq({ :id => 1 }.to_json) }
+        specify { expect(subject.body).to eq({ :id => 1 }) }
       end
     end    
   end
 
   context "setting custom HTTP requests" do
+    before do
+      api = ActiveService::API.new :url => "https://api.example.com" do |connection|
+        connection.use ActiveService::Middleware::ParseJSON
+        connection.adapter :test do |stub|
+          stub.get("/users/popular") { |env| [200, {}, [{ :id => 1 }, { :id => 2 }].to_json] }
+          stub.post("/users/from_default") { |env| [200, {}, { :id => 4 }.to_json] }
+        end
+      end
+
+      spawn_model "User" do
+        uses_api api
+      end
+    end
+
+    subject { User }
+
     describe :custom_get do
       context "without cache" do
-        pending
-        
+        before { User.custom_get :popular, :recent }
+        it { should respond_to(:popular) }
+        it { should respond_to(:recent) }
+
         context "making the HTTP request" do
-          pending
+          subject { User.popular }
+          its(:length) { should == 2 }
         end
       end
     end
 
     describe :custom_post do
-      pending
-      
+      before { User.custom_post :from_default }
+      it { should respond_to(:from_default) }
+
       context "making the HTTP request" do
-        pending
+        subject { User.from_default(:name => "Tobias Fünke") }
+        its(:id) { should == 4 }
       end
     end
   end

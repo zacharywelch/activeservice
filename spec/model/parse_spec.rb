@@ -3,19 +3,19 @@ require File.join(File.dirname(__FILE__), "../spec_helper.rb")
 
 describe ActiveService::Model::Parse do
   context "when include_root_in_json is set" do
-    before do
-      ActiveService::API.setup :url => "https://api.example.com" do |builder|
-        builder.use Faraday::Request::UrlEncoded
-        builder.adapter :test do |stub|
-          stub.post("/users") { |env| ok! :user => { :id => 1, :name => params(env)[:user][:name] } }
-          stub.post("/users/admins") { |env| ok! :user => { :id => 1, :name => params(env)[:user][:name] } }
-        end
-      end
-    end
-
     context "to true" do
       before do
+        api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
+          builder.use Faraday::Request::UrlEncoded
+          builder.use ActiveService::Middleware::ParseJSON
+          builder.adapter :test do |stub|
+            stub.post("/users") { |env| ok! :user => { :id => 1, :name => params(env)[:user][:name] } }
+            stub.post("/users/admins") { |env| ok! :user => { :id => 1, :name => params(env)[:user][:name] } }
+          end
+        end
+
         spawn_model "User" do
+          uses_api api
           attribute :name
           include_root_in_json true
           parse_root_in_json true
@@ -28,7 +28,7 @@ describe ActiveService::Model::Parse do
         expect(@new_user.to_params).to eq({ :user => { :id => nil, :name => "Tobias Fünke" } })
       end
 
-      xit "wraps params in the element name in `.create`" do
+      it "wraps params in the element name in `.create`" do
         @new_user = User.admins(:name => "Tobias Fünke")
         expect(@new_user.name).to eq "Tobias Fünke"
       end
@@ -73,6 +73,7 @@ describe ActiveService::Model::Parse do
       before do
         api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
           builder.use Faraday::Request::UrlEncoded
+          builder.use ActiveService::Middleware::ParseJSON
           builder.adapter :test do |stub|
             stub.post("/users") { |env| ok! :user => { :id => 1, :name => "Lindsay Fünke" } }
             stub.get("/users") { |env| ok! [{ :user => { :id => 1, :name => "Lindsay Fünke" } }] }
@@ -95,7 +96,7 @@ describe ActiveService::Model::Parse do
         expect(@new_user.name).to eq "Lindsay Fünke"
       end
 
-      xit "parse the data from the JSON root element after an arbitrary HTTP request" do
+      it "parse the data from the JSON root element after an arbitrary HTTP request" do
         @new_user = User.admins
         expect(@new_user.first.name).to eq "Lindsay Fünke"
       end
@@ -122,6 +123,7 @@ describe ActiveService::Model::Parse do
       before do
         api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
           builder.use Faraday::Request::UrlEncoded
+          builder.use ActiveService::Middleware::ParseJSON
           builder.adapter :test do |stub|
             stub.post("/users") { |env| ok! :person => { :id => 1, :name => "Lindsay Fünke" } }
           end
@@ -144,6 +146,7 @@ describe ActiveService::Model::Parse do
       before do
         api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
           builder.use Faraday::Request::UrlEncoded
+          builder.use ActiveService::Middleware::ParseJSON
           builder.adapter :test do |stub|
             stub.post("/users") { |env| ok! :user => { :id => 1, :name => "Lindsay Fünke" } }
             stub.get("/users") { |env| ok! :users => [ { :id => 1, :name => "Lindsay Fünke" } ] }
@@ -178,6 +181,7 @@ describe ActiveService::Model::Parse do
       before do
         api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
           builder.use Faraday::Request::UrlEncoded
+          builder.use ActiveService::Middleware::ParseJSON
           builder.adapter :test do |stub|
             stub.post("/users") { |env| ok! :user => { :id => 1, :name => "Lindsay Fünke" } }
             stub.get("/users") { |env| ok! :users => [ { :id => 1, :name => "Lindsay Fünke" } ] }
@@ -200,9 +204,9 @@ describe ActiveService::Model::Parse do
         expect(@new_user.name).to eq "Lindsay Fünke"
       end
 
-      xit "parse the data from the JSON root element after an arbitrary HTTP request" do
+      it "parse the data from the JSON root element after an arbitrary HTTP request" do
         @users = User.admins
-        @users.first.name.should == "Lindsay Fünke"
+        expect(@users.first.name).to eq "Lindsay Fünke"
       end
 
       it "parse the data from the JSON root element after .all" do
@@ -228,6 +232,7 @@ describe ActiveService::Model::Parse do
     before do
       api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
         builder.use Faraday::Request::UrlEncoded
+        builder.use ActiveService::Middleware::ParseJSON
         builder.adapter :test do |stub|
           stub.post("/users") { |env| ok! :id => 1, :name => params(env)['name'] }
         end
@@ -258,6 +263,7 @@ describe ActiveService::Model::Parse do
     before do
       api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
         builder.use Faraday::Request::UrlEncoded
+        builder.use ActiveService::Middleware::ParseJSON
         builder.adapter :test do |stub|
           stub.get("/users") { |env| ok! :users => [{ :id => 1, :name => "Lindsay Fünke" }] }
           stub.get("/users/admins") { |env| ok! :users => [{ :id => 1, :name => "Lindsay Fünke" }] }
@@ -281,9 +287,9 @@ describe ActiveService::Model::Parse do
       expect(@new_user.name).to eq "Lindsay Fünke"
     end
 
-    xit "parse the data from the JSON root element after an arbitrary HTTP request" do
+    it "parse the data from the JSON root element after an arbitrary HTTP request" do
       @new_user = User.admins
-      @new_user.first.name.should == "Lindsay Fünke"
+      expect(@new_user.first.name).to eq "Lindsay Fünke"
     end
 
     it "parse the data from the JSON root element after .all" do
@@ -315,6 +321,7 @@ describe ActiveService::Model::Parse do
     before do
       api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
         builder.use Faraday::Request::UrlEncoded
+        builder.use ActiveService::Middleware::ParseJSON
         builder.adapter :test do |stub|
           stub.post("/users") { |env| ok! :users => [{ :id => 1, :name => params(env)[:users][:name] }] }
         end

@@ -38,19 +38,28 @@ module ActiveService
     included do
       # Assign the default API
       use_api ActiveService::API.default_api
+      method_for :create, :post
+      method_for :update, :put
+      method_for :find, :get
+      method_for :destroy, :delete
+      method_for :new, :get
 
       # Define the default primary key
       primary_key :id
 
       # Define an id attribute (handled by primary_key?)
       attribute :id
-      
+
+      # Define the default collection parser
+      collection_parser ActiveService::Collection
+            
       # Include ActiveModel naming methods
       extend ActiveModel::Translation
       
       # Configure ActiveModel callbacks
       extend ActiveModel::Callbacks
       define_model_callbacks :save, :create, :update, :destroy
+      before_save { !destroyed? && valid? }
     end
   end
 end

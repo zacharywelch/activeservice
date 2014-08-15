@@ -64,17 +64,18 @@ describe ActiveService::API do
         specify { expect(response).to eq("Foo, it is page 2.") }
       end
 
-      context "parsing a request with the default parser" do
+      context "parsing a request with the middleware json parser" do
         let(:response) { subject.request(:_method => :get, :_path => "users/1").body }
         before do
           subject.setup :url => "https://api.example.com" do |builder|
+            builder.use ActiveService::Middleware::ParseJSON
             builder.adapter :test do |stub|
-              stub.get("/users/1") { |env| [200, {}, { :id => 1, :name => "Foo Bar" }.to_json] }
+              stub.get("/users/1") { |env| [200, {}, { id: 1, name: "Foo Bar" }.to_json] }
             end
           end
         end
         specify do
-          expect(response).to eq({ :id => 1, :name => "Foo Bar" }.to_json)
+          expect(response).to eq({ :id => 1, :name => "Foo Bar" })
         end
       end
 

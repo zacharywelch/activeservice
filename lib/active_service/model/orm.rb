@@ -82,7 +82,8 @@ module ActiveService
       def destroy
         run_callbacks :destroy do
           self.class.request(:_method => :delete, :_path => request_path) do |response|
-            data = JSON.parse(response.body)
+            # data = JSON.parse(response.body)
+            data = response.body
             assign_attributes(self.class.parse(data)) if data.any?
             @destroyed = true
           end
@@ -98,7 +99,8 @@ module ActiveService
       # the JSON result is used to set the model attributes.
       def create
         run_callbacks :create do
-          self.class.post_raw(request_path, to_params) do |response|
+          method = self.class.method_for(:create)
+          self.class.request(to_params.merge(:_method => method, :_path => request_path)) do |response|
             load_attributes_from_response(response)
           end
         end
@@ -110,7 +112,8 @@ module ActiveService
       # is used to set the model attributes.
       def update
         run_callbacks :update do
-          self.class.put_raw(request_path, to_params) do |response|
+          method = self.class.method_for(:update)
+          self.class.request(to_params.merge(:_method => method, :_path => request_path)) do |response|
             load_attributes_from_response(response)
           end
         end
@@ -122,7 +125,8 @@ module ActiveService
       # to set the errors array on the model. Any other HTTP errors will raise 
       # an exception with the response body as its message
       def load_attributes_from_response(response)
-        data = JSON.parse(response.body)
+        # data = JSON.parse(response.body)
+        data = response.body
         self.class.handle_response(response)
         assign_attributes(self.class.parse(data)) unless data.empty?
         self
@@ -133,6 +137,7 @@ module ActiveService
 
       # Assign resource errors to ActiveModel errors array 
       def assign_errors(items)
+        errors.clear
         items.each do |attr, attr_errors|
           attr_errors.each { |error| errors.add(attr, error) }
         end
@@ -203,7 +208,8 @@ module ActiveService
           resource = nil
           self.request(params.merge(:_method => :get, :_path => path)) do |response|
             if response.success?
-              resource = self.new_from_parsed_data(JSON.parse(response.body))
+              # resource = self.new_from_parsed_data(JSON.parse(response.body))
+              resource = self.new_from_parsed_data(response.body)
             end
           end
           resource
@@ -218,9 +224,24 @@ module ActiveService
         def destroy(id, params = {})          
           path = build_request_path(params.merge(primary_key => id))
           request(params.merge(:_method => :delete, :_path => path)) do |response|
-            new(parse(JSON.parse(response.body)).merge(:_destroyed => true))
+            # new(parse(JSON.parse(response.body)).merge(:_destroyed => true))
+            new(parse(response.body).merge(:_destroyed => true))
           end
         end
+
+        # Return or change the HTTP method used to create or update records
+        #
+        # @param [Symbol, String] action The behavior in question (`:create` or `:update`)
+        # @param [Symbol, String] method The HTTP method to use (`'PUT'`, `:post`, etc.)
+        def method_for(action = nil, method = nil)
+          @method_for ||= (superclass.respond_to?(:method_for) ? superclass.method_for : {})
+          return @method_for if action.nil?
+
+          action = action.to_s.downcase.to_sym
+
+          return @method_for[action] if method.nil?
+          @method_for[action] = method.to_s.downcase.to_sym
+        end        
 
         private
         # @private
