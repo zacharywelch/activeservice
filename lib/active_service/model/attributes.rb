@@ -29,9 +29,7 @@ module ActiveService
       # @private
       def hash
         @attributes.hash
-      end      
-
-      protected
+      end  
 
       module ClassMethods
         
