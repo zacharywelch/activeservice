@@ -69,8 +69,8 @@ module ActiveService
       #   @user = User.find(1)
       #   @user.update_attributes(:name => "Tobias Fünke")
       #   # Called via PUT "/users/1"
-      def update_attributes(attributes, options = {})
-        assign_attributes(attributes, options) && save
+      def update_attributes(attributes)
+        assign_attributes(attributes) && save
       end
 
       # Destroy a resource
@@ -82,7 +82,6 @@ module ActiveService
       def destroy
         run_callbacks :destroy do
           self.class.request(:_method => :delete, :_path => request_path) do |response|
-            # data = JSON.parse(response.body)
             data = response.body
             assign_attributes(self.class.parse(data)) if data.any?
             @destroyed = true
@@ -125,7 +124,6 @@ module ActiveService
       # to set the errors array on the model. Any other HTTP errors will raise 
       # an exception with the response body as its message
       def load_attributes_from_response(response)
-        # data = JSON.parse(response.body)
         data = response.body
         self.class.handle_response(response)
         assign_attributes(self.class.parse(data)) unless data.empty?
@@ -208,7 +206,6 @@ module ActiveService
           resource = nil
           self.request(params.merge(:_method => :get, :_path => path)) do |response|
             if response.success?
-              # resource = self.new_from_parsed_data(JSON.parse(response.body))
               resource = self.new_from_parsed_data(response.body)
             end
           end
@@ -224,7 +221,6 @@ module ActiveService
         def destroy(id, params = {})          
           path = build_request_path(params.merge(primary_key => id))
           request(params.merge(:_method => :delete, :_path => path)) do |response|
-            # new(parse(JSON.parse(response.body)).merge(:_destroyed => true))
             new(parse(response.body).merge(:_destroyed => true))
           end
         end

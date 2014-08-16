@@ -153,42 +153,42 @@ describe ActiveService::Model::Associations do
     let(:user_with_included_data_after_destroy) { User.new(:id => 5).destroy }
     let(:comment_without_included_parent_data) { Comment.new(:id => 7, :user_id => 1) }
 
-    xit "maps an array of included data through has_many" do
-      @user_with_included_data.comments.first.should be_a(Comment)
-      # @user_with_included_data.comments.length.should == 2
-      # @user_with_included_data.comments.first.id.should == 2
-      # @user_with_included_data.comments.first.body.should == "Tobias, you blow hard!"
+    it "maps an array of included data through has_many" do
+      expect(@user_with_included_data.comments.first).to be_a(Comment)
+      expect(@user_with_included_data.comments.length).to be 2
+      expect(@user_with_included_data.comments.first.id).to be 2
+      expect(@user_with_included_data.comments.first.body).to eq "Tobias, you blow hard!"
     end
 
-    xit "does not refetch the parents models data if they have been fetched before" do
-      @user_with_included_data.comments.first.user.object_id.should == @user_with_included_data.object_id
+    it "does not refetch the parents models data if they have been fetched before" do
+      expect(@user_with_included_data.comments.first.user.object_id).to eq @user_with_included_data.object_id
     end
 
-    xit "does fetch the parent models data only once" do
-      comment_without_included_parent_data.user.object_id.should == comment_without_included_parent_data.user.object_id
+    it "does fetch the parent models data only once" do
+      expect(comment_without_included_parent_data.user.object_id).to eq comment_without_included_parent_data.user.object_id
     end
 
-    xit "does fetch the parent models data that was cached if called with parameters" do
-      comment_without_included_parent_data.user.object_id.should_not == comment_without_included_parent_data.user.where(:a => 2).object_id
+    it "does fetch the parent models data that was cached if called with parameters" do
+      expect(comment_without_included_parent_data.user.object_id).to_not eq comment_without_included_parent_data.user.where(:a => 2).object_id
     end
 
-    xit "uses the given inverse_of key to set the parent model" do
-      @user_with_included_data.posts.first.admin.object_id.should == @user_with_included_data.object_id
+    it "uses the given inverse_of key to set the parent model" do
+      expect(@user_with_included_data.posts.first.admin.object_id).to eq @user_with_included_data.object_id
     end
 
-    xit "fetches data that was not included through has_many" do
-      @user_without_included_data.comments.first.should be_a(Comment)
-      @user_without_included_data.comments.length.should == 2
-      @user_without_included_data.comments.first.id.should == 4
-      @user_without_included_data.comments.first.body.should == "They're having a FIRESALE?"
+    it "fetches data that was not included through has_many" do
+      expect(@user_without_included_data.comments.first).to be_a(Comment)
+      expect(@user_without_included_data.comments.length).to be 2
+      expect(@user_without_included_data.comments.first.id).to be 4
+      expect(@user_without_included_data.comments.first.body).to eq "They're having a FIRESALE?"
     end
 
-    xit "fetches has_many data even if it was included, only if called with parameters" do
-      @user_with_included_data.comments.where(:foo_id => 1).length.should == 1
+    it "fetches has_many data even if it was included, only if called with parameters" do
+      expect(@user_with_included_data.comments.where(:foo_id => 1).length).to be 1
     end
 
-    xit "fetches data that was not included through has_many only once" do
-      @user_without_included_data.comments.first.object_id.should == @user_without_included_data.comments.first.object_id
+    it "fetches data that was not included through has_many only once" do
+      expect(@user_without_included_data.comments.first.object_id).to eq @user_without_included_data.comments.first.object_id
     end
 
     xit "fetches data that was cached through has_many if called with parameters" do

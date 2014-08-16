@@ -80,15 +80,9 @@ module ActiveService
 
         # @private
         def fetch
-          puts "super = #{super}, super class = #{super.class}"
           super.tap do |o|
-            puts "o = #{o}"
             inverse_of = @opts[:inverse_of] || @parent.singularized_resource_name
-            puts "inverse_of = #{inverse_of}"
-            o.each do |entry| 
-              puts "entry = #{entry}"
-              entry.send("#{inverse_of}=", @parent)
-            end
+            o.each { |entry| entry.send("#{inverse_of}=", @parent) }
           end
         end
 

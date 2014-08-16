@@ -32,7 +32,7 @@ module ActiveService
     #
     # @private
     def [](attribute_name)
-      read_attribute(attribute_name) ||
+      get_attribute(attribute_name) ||
       get_association(attribute_name)
     end
 

@@ -89,7 +89,6 @@ module ActiveService
               path = build_request_path_from_string_or_symbol(path, params)
               params = to_params(params) unless #{method.to_sym.inspect} == :get
               send(:'#{method}_raw', path, params) do |response|
-                # parsed_data = JSON.parse(response.body)
                 parsed_data = response.body
                 if parsed_data.is_a?(Array) || active_model_serializers_format? || json_api_format?
                   new_collection(parsed_data)
@@ -107,7 +106,6 @@ module ActiveService
             def #{method}_collection(path, params={})
               path = build_request_path_from_string_or_symbol(path, params)
               send(:'#{method}_raw', build_request_path_from_string_or_symbol(path, params), params) do |response|
-                # new_collection(JSON.parse(response.body))
                 new_collection(response.body)
               end
             end
@@ -115,9 +113,7 @@ module ActiveService
             def #{method}_resource(path, params={})
               path = build_request_path_from_string_or_symbol(path, params)
               send(:"#{method}_raw", path, params) do |response|
-                # parsed_data = JSON.parse(response.body)                
-                parsed_data = response.body
-                new(parse(parsed_data))
+                new(parse(response.body))
               end
             end
 

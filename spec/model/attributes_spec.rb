@@ -36,22 +36,22 @@ describe ActiveService::Model::Attributes do
       expect(@new_user).to respond_to :name?
     end
 
-    it "handles has_attribute?" do
-      expect(User).not_to have_attribute(:unknown_method_for_a_user)
-      expect(User).to have_attribute(:name)
+    it "handles has_attribute? for getter" do
+      @new_user = User.new(:name => 'Mayonegg')
+      expect(@new_user).not_to have_attribute(:unknown_method_for_a_user)
+      expect(@new_user).to have_attribute(:name)      
     end
 
-    it "handles [] for getter" do
+    it "handles get_attribute for getter" do
       @new_user = User.new(:name => 'Mayonegg')
-      expect { @new_user[:unknown_method_for_a_user] }.to raise_error(ActiveAttr::UnknownAttributeError)
-      expect(@new_user[:name]).to eq 'Mayonegg'
+      expect(@new_user.get_attribute(:unknown_method_for_a_user)).to be_nil
+      expect(@new_user.get_attribute(:name)).to eq 'Mayonegg'
     end
 
     it "handles get_attribute for getter with dash" do
-      User.attribute :'life-span'
       @new_user = User.new(:'life-span' => '3 years')
-      expect { @new_user[:unknown_method_for_a_user] }.to raise_error(ActiveAttr::UnknownAttributeError)
-      expect(@new_user[:'life-span']).to eq '3 years'
+      expect(@new_user.get_attribute(:unknown_method_for_a_user)).to be_nil
+      expect(@new_user.get_attribute(:'life-span')).to eq '3 years'
     end
   end
 

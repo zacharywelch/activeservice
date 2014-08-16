@@ -35,7 +35,6 @@ module ActiveService
 
         # @private
         def assign_single_nested_attributes(attributes)
-          puts "assign_single_nested_attributes"
           if @parent.attributes[@name].blank?
             @parent.attributes[@name] = @klass.new(@klass.parse(attributes))
           else

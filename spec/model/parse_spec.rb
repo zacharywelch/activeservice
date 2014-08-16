@@ -25,7 +25,7 @@ describe ActiveService::Model::Parse do
 
       it "wraps params in the element name in `to_params`" do
         @new_user = User.new(:name => "Tobias Fünke")
-        expect(@new_user.to_params).to eq({ :user => { :id => nil, :name => "Tobias Fünke" } })
+        expect(@new_user.to_params).to eq({ :user => { :name => "Tobias Fünke" } })
       end
 
       it "wraps params in the element name in `.create`" do
@@ -45,7 +45,7 @@ describe ActiveService::Model::Parse do
 
       it "wraps params in the specified value" do
         @new_user = User.new(:name => "Tobias Fünke")
-        expect(@new_user.to_params).to eq({ :person => { :id => nil, :name => "Tobias Fünke" } })
+        expect(@new_user.to_params).to eq({ :person => { :name => "Tobias Fünke" } })
       end
     end
 
@@ -63,7 +63,7 @@ describe ActiveService::Model::Parse do
 
       it "wraps params with the class name" do
         @new_user = User.new(:name => "Tobias Fünke")
-        expect(@new_user.to_params).to eq({ :user => { :id => nil, :name => "Tobias Fünke" } })
+        expect(@new_user.to_params).to eq({ :user => { :name => "Tobias Fünke" } })
       end
     end
   end
@@ -341,7 +341,7 @@ describe ActiveService::Model::Parse do
 
       it "wraps params in the element name in `to_params`" do
         @new_user = User.new(:name => "Tobias Fünke")
-        expect(@new_user.to_params).to eq({ :users => [{ :id => nil, :name => "Tobias Fünke" }] })
+        expect(@new_user.to_params).to eq({ :users => [{ :name => "Tobias Fünke" }] })
       end
 
       it "wraps params in the element name in `.where`" do
