@@ -15,12 +15,14 @@ module ActiveService
   module Model
     extend ActiveSupport::Concern
 
-    # ActiveModel modules 
-    include ActiveModel::AttributeMethods
-    include ActiveModel::Validations
-    include ActiveModel::Validations::Callbacks
-    include ActiveModel::Conversion
-    include ActiveModel::Dirty
+    # ActiveAttr modules 
+    include ActiveAttr::BasicModel
+    include ActiveAttr::BlockInitialization
+    include ActiveAttr::Logger
+    include ActiveAttr::MassAssignment
+    include ActiveAttr::AttributeDefaults
+    include ActiveAttr::QueryAttributes
+    include ActiveAttr::TypecastedAttributes
 
     # ActiveService modules
     include ActiveService::Model::Attributes

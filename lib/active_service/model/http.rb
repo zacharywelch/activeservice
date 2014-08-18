@@ -91,6 +91,7 @@ module ActiveService
               send(:'#{method}_raw', path, params) do |response|
                 parsed_data = response.body
                 if parsed_data.is_a?(Array) || active_model_serializers_format? || json_api_format?
+                  puts 'new collection for ' + parsed_data.to_s
                   new_collection(parsed_data)
                 else
                   new(parse(parsed_data))

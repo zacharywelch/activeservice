@@ -5,6 +5,7 @@ module ActiveService
 
         # @private
         def self.install_proxy_methods(target_name, *names)
+          puts "installing proxy methods for #{names}"
           names.each do |name|
             module_eval <<-RUBY, __FILE__, __LINE__ + 1
               def #{name}(*args, &block)
@@ -28,6 +29,7 @@ module ActiveService
 
         # @private
         def method_missing(name, *args, &block)
+          # puts "method_missing for from association_proxy.rb"
           if :object_id == name # avoid redefining object_id
             return association.fetch.object_id
           end

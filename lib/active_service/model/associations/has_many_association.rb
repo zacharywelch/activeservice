@@ -17,9 +17,11 @@ module ActiveService
 
           klass.class_eval <<-RUBY, __FILE__, __LINE__ + 1
             def #{name}
+              puts "#{name.to_s} has_many getter called"
               cached_name = :"@association_#{name}"
 
               cached_data = (instance_variable_defined?(cached_name) && instance_variable_get(cached_name))
+              puts "#{name.to_s} has_many getter called, cached_data found" if cached_data 
               cached_data || instance_variable_set(cached_name, ActiveService::Model::Associations::HasManyAssociation.proxy(self, #{opts.inspect}))
             end
           RUBY
@@ -80,6 +82,7 @@ module ActiveService
 
         # @private
         def fetch
+          puts "fetch called from has_many_association.rb"
           super.tap do |o|
             inverse_of = @opts[:inverse_of] || @parent.singularized_resource_name
             o.each { |entry| entry.send("#{inverse_of}=", @parent) }
