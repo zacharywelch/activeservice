@@ -37,6 +37,7 @@ module ActiveService
         # @todo add filtered attributes and associations
         def to_params(attributes)
           filtered_attributes = attributes.dup.symbolize_keys          
+          filtered_attributes.merge!(embeded_params(attributes))          
           if include_root_in_json?
             if json_api_format?
               { included_root_element => [filtered_attributes] }

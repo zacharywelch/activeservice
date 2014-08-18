@@ -191,72 +191,72 @@ describe ActiveService::Model::Associations do
       expect(@user_without_included_data.comments.first.object_id).to eq @user_without_included_data.comments.first.object_id
     end
 
-    xit "fetches data that was cached through has_many if called with parameters" do
-      @user_without_included_data.comments.first.object_id.should_not == @user_without_included_data.comments.where(:foo_id => 1).first.object_id
+    it "fetches data that was cached through has_many if called with parameters" do
+      expect(@user_without_included_data.comments.first.object_id).to_not eq @user_without_included_data.comments.where(:foo_id => 1).first.object_id
     end
 
-    xit "maps an array of included data through has_one" do
-      @user_with_included_data.role.should be_a(Role)
-      @user_with_included_data.role.object_id.should == @user_with_included_data.role.object_id
-      @user_with_included_data.role.id.should == 1
-      @user_with_included_data.role.body.should == "Admin"
+    it "maps an array of included data through has_one" do
+      expect(@user_with_included_data.role).to be_a(Role)
+      expect(@user_with_included_data.role.object_id).to eq @user_with_included_data.role.object_id
+      expect(@user_with_included_data.role.id).to be 1
+      expect(@user_with_included_data.role.body).to eq "Admin"
     end
 
-    xit "fetches data that was not included through has_one" do
-      @user_without_included_data.role.should be_a(Role)
-      @user_without_included_data.role.id.should == 2
-      @user_without_included_data.role.body.should == "User"
+    it "fetches data that was not included through has_one" do
+      expect(@user_without_included_data.role).to be_a(Role)
+      expect(@user_without_included_data.role.id).to be 2
+      expect(@user_without_included_data.role.body).to eq "User"
     end
 
-    xit "fetches has_one data even if it was included, only if called with parameters" do
-      @user_with_included_data.role.where(:foo_id => 2).id.should == 3
+    it "fetches has_one data even if it was included, only if called with parameters" do
+      expect(@user_with_included_data.role.where(:foo_id => 2).id).to be 3
     end
 
-    xit "maps an array of included data through belongs_to" do
-      @user_with_included_data.organization.should be_a(Organization)
-      @user_with_included_data.organization.id.should == 1
-      @user_with_included_data.organization.name.should == "Bluth Company"
+    it "maps an array of included data through belongs_to" do
+      expect(@user_with_included_data.organization).to be_a(Organization)
+      expect(@user_with_included_data.organization.id).to be 1
+      expect(@user_with_included_data.organization.name).to eq "Bluth Company"
     end
 
-    xit "fetches data that was not included through belongs_to" do
-      @user_without_included_data.organization.should be_a(Organization)
-      @user_without_included_data.organization.id.should == 2
-      @user_without_included_data.organization.name.should == "Bluth Company"
+    it "fetches data that was not included through belongs_to" do
+      expect(@user_without_included_data.organization).to be_a(Organization)
+      expect(@user_without_included_data.organization.id).to be 2
+      expect(@user_without_included_data.organization.name).to eq "Bluth Company"
     end
 
-    xit "fetches belongs_to data even if it was included, only if called with parameters" do
-      @user_with_included_data.organization.where(:foo_id => 1).name.should == "Bluth Company Foo"
+    it "fetches belongs_to data even if it was included, only if called with parameters" do
+      expect(@user_with_included_data.organization.where(:foo_id => 1).name).to eq "Bluth Company Foo"
     end
 
-    xit "can tell if it has a association" do
-      @user_without_included_data.has_association?(:unknown_association).should be false
-      @user_without_included_data.has_association?(:organization).should be true
+    it "can tell if it has a association" do
+      expect(@user_without_included_data.has_association?(:unknown_association)).to be false
+      expect(@user_without_included_data.has_association?(:organization)).to be true
     end
 
-    xit "fetches the resource corresponding to a named association" do
-      @user_without_included_data.get_association(:unknown_association).should be_nil
-      @user_without_included_data.get_association(:organization).name.should == "Bluth Company"
+    it "fetches the resource corresponding to a named association" do
+      expect(@user_without_included_data.get_association(:unknown_association)).to be_nil
+      expect(@user_without_included_data.get_association(:organization).name).to eq "Bluth Company"
     end
 
-    xit "pass query string parameters when additional arguments are passed" do
-      @user_without_included_data.organization.where(:admin => true).name.should == "Bluth Company (admin)"
-      @user_without_included_data.organization.name.should == "Bluth Company"
+    it "pass query string parameters when additional arguments are passed" do
+      expect(@user_without_included_data.organization.where(:admin => true).name).to eq "Bluth Company (admin)"
+      expect(@user_without_included_data.organization.name).to eq "Bluth Company"
     end
 
-    xit "fetches data with the specified id when calling find" do
+    it "fetches data with the specified id when calling find" do
       comment = @user_without_included_data.comments.find(5)
-      comment.id.should eq(5)
+      expect(comment.id).to be 5
     end
 
-    xit "'s associations responds to #empty?" do
-      @user_without_included_data.organization.respond_to?(:empty?).should be_truthy
-      @user_without_included_data.organization.should_not be_empty
+    it "'s associations responds to #empty?" do
+      expect(@user_without_included_data.organization.respond_to?(:empty?)).to be_truthy
+      expect(@user_without_included_data.organization).to_not be_empty
     end
 
-    xit 'includes has_many relationships in params by default' do
+    it 'includes has_many relationships in params by default' do
       params = @user_with_included_data.to_params
-      params[:comments].should be_kind_of(Array)
-      params[:comments].length.should eq(2)
+      expect(params[:comments]).to be_kind_of(Array)
+      expect(params[:comments].length).to be 2
     end
 
     [:create, :save_existing, :destroy].each do |type|
@@ -264,16 +264,16 @@ describe ActiveService::Model::Associations do
         let(:subject) { self.send("user_with_included_data_after_#{type}")}
 
         xit "maps an array of included data through has_many" do
-          subject.comments.first.should be_a(Comment)
-          subject.comments.length.should == 1
-          subject.comments.first.id.should == 99
-          subject.comments.first.body.should == "Rodríguez, nasibisibusi?"
+          expect(subject.comments.first).to be_a(Comment)
+          expect(subject.comments.length).to be 1
+          expect(subject.comments.first.id).to be 99
+          expect(subject.comments.first.body).to eq "Rodríguez, nasibisibusi?"
         end
 
         xit "maps an array of included data through has_one" do
-          subject.role.should be_a(Role)
-          subject.role.id.should == 1
-          subject.role.body.should == "Admin"
+          expect(subject.role).to be_a(Role)
+          expect(subject.role.id).to be 1
+          expect(subject.role.body).to eq "Admin"
         end
       end
     end
@@ -281,8 +281,8 @@ describe ActiveService::Model::Associations do
 
   context "handling associations with details" do
     before do
-      ActiveService::API.setup :url => "https://api.example.com" do |builder|
-        builder.use ActiveService::Middleware::FirstLevelParseJSON
+      api = ActiveService::API.new :url => "https://api.example.com" do |builder|
+        builder.use ActiveService::Middleware::ParseJSON        
         builder.use Faraday::Request::UrlEncoded
         builder.adapter :test do |stub|
           stub.get("/users/1") { |env| [200, {}, { :id => 1, :name => "Tobias Fünke", :organization => { :id => 1, :name => "Bluth Company Inc." }, :organization_id => 1 }.to_json] }
@@ -294,10 +294,16 @@ describe ActiveService::Model::Associations do
       end
 
       spawn_model "User" do
+        uses_api api
+        attribute :name
+        attribute :organization_id
         belongs_to :company, :path => "/organizations/:id", :foreign_key => :organization_id, :data_key => :organization
       end
 
-      spawn_model "Company"
+      spawn_model "Company" do
+        uses_api api
+        attribute :name
+      end
 
       @user_with_included_data = User.find(1)
       @user_without_included_data = User.find(2)
@@ -305,24 +311,24 @@ describe ActiveService::Model::Associations do
       @user_with_included_data_but_no_fk = User.find(4)
     end
 
-    xit "maps an array of included data through belongs_to" do
-      @user_with_included_data.company.should be_a(Company)
-      @user_with_included_data.company.id.should == 1
-      @user_with_included_data.company.name.should == "Bluth Company Inc."
+    it "maps an array of included data through belongs_to" do
+      expect(@user_with_included_data.company).to be_a(Company)
+      expect(@user_with_included_data.company.id).to be 1
+      expect(@user_with_included_data.company.name).to eq "Bluth Company Inc."
     end
 
-    xit "does not map included data if it’s nil" do
-      @user_with_included_nil_data.company.should be_nil
+    it "does not map included data if it’s nil" do
+      expect(@user_with_included_nil_data.company).to be_nil
     end
 
-    xit "fetches data that was not included through belongs_to" do
-      @user_without_included_data.company.should be_a(Company)
-      @user_without_included_data.company.id.should == 1
-      @user_without_included_data.company.name.should == "Bluth Company"
+    it "fetches data that was not included through belongs_to" do
+      expect(@user_without_included_data.company).to be_a(Company)
+      expect(@user_without_included_data.company.id).to be 1
+      expect(@user_without_included_data.company.name).to eq "Bluth Company"
     end
 
-    xit "does not require foreugn key to have nested object" do
-      @user_with_included_data_but_no_fk.company.name.should == "Bluth Company Inc."
+    it "does not require foreugn key to have nested object" do
+      expect(@user_with_included_data_but_no_fk.company.name).to eq "Bluth Company Inc."
     end
   end
 
@@ -345,31 +351,31 @@ describe ActiveService::Model::Associations do
 
     subject { user_with_role.role }
 
-    xit "doesnt mask the object's basic methods" do
-      subject.class.should == Role
+    it "doesnt mask the object's basic methods" do
+      expect(subject.class).to eq Role
     end
 
-    xit "doesnt mask core methods like extend" do
+    it "doesnt mask core methods like extend" do
       committer = Module.new
       subject.extend  committer
-      associated_value.should be_kind_of committer
+      expect(associated_value).to be_kind_of committer
     end
 
-    xit "can return the association object" do
-      subject.association.should be_kind_of ActiveService::Model::Associations::Association
+    it "can return the association object" do
+      expect(subject.association).to be_kind_of ActiveService::Model::Associations::Association
     end
 
-    xit "still can call fetch via the association" do
-      subject.association.fetch.should eq associated_value
+    it "still can call fetch via the association" do
+      expect(subject.association.fetch).to eq associated_value
     end
 
-    xit "calls missing methods on associated value" do
-      subject.present?.should == "of_course"
+    it "calls missing methods on associated value" do
+      expect(subject.present?).to eq "of_course"
     end
 
-    xit "can use association methods like where" do
-      subject.where(role: 'committer').association.
-        params.should include :role
+    it "can use association methods like where" do
+      expect(subject.where(role: 'committer').association.
+        params).to include :role
     end
   end
 
@@ -382,16 +388,16 @@ describe ActiveService::Model::Associations do
     end
 
     context "with #build" do
-      xit "takes the parent primary key" do
+      it "takes the parent primary key" do
         @comment = User.new(:id => 10).comments.build(:body => "Hello!")
-        @comment.body.should == "Hello!"
-        @comment.user_id.should == 10
+        expect(@comment.body).to eq "Hello!"
+        expect(@comment.user_id).to be 10
       end
     end
 
     context "with #create" do
       before do
-        ActiveService::API.setup :url => "https://api.example.com" do |builder|
+        api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
           builder.use ActiveService::Middleware::FirstLevelParseJSON
           builder.use Faraday::Request::UrlEncoded
           builder.adapter :test do |stub|
@@ -400,30 +406,30 @@ describe ActiveService::Model::Associations do
           end
         end
 
-        User.use_api ActiveService::API.default_api
-        Comment.use_api ActiveService::API.default_api
+        User.use_api api
+        Comment.use_api api
       end
 
       xit "takes the parent primary key and saves the resource" do
         @user = User.find(10)
         @comment = @user.comments.create(:body => "Hello!")
-        @comment.id.should == 1
-        @comment.body.should == "Hello!"
-        @comment.user_id.should == 10
-        @user.comments.should == [@comment]
+        expect(@comment.id).to be 1
+        expect(@comment.body).to eq "Hello!"
+        expect(@comment.user_id).to be 10
+        expect(@user.comments).to eq [@comment]
       end
     end
 
     context "with #new" do
-      xit "creates nested models from hash attibutes" do
+      it "creates nested models from hash attibutes" do
         user = User.new(:name => "vic", :comments => [{:text => "hello"}])
-        user.comments.first.text.should == "hello"
+        expect(user.comments.first.text).to eq "hello"
       end
 
-      xit "assigns nested models if given as already constructed objects" do
+      it "assigns nested models if given as already constructed objects" do
         bye = Comment.new(:text => "goodbye")
         user = User.new(:name => 'vic', :comments => [bye])
-        user.comments.first.text.should == 'goodbye'
+        expect(user.comments.first.text).to eq 'goodbye'
       end
     end
   end
