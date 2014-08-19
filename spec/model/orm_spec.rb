@@ -119,7 +119,7 @@ describe ActiveService::Model::ORM do
 
   context "finding resources" do
     before do
-      api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
+      api = ActiveService::API.new :url => "https://api.example.com" do |builder|
         builder.use ActiveService::Middleware::ParseJSON
         builder.adapter :test do |stub|
           stub.get("/users/1") { |env| ok! :id => 1, :name => "Tobias Fünke" }
@@ -131,8 +131,8 @@ describe ActiveService::Model::ORM do
       end
 
       spawn_model "User" do
-        attribute :name
         use_api api
+        attribute :name
       end
     end
 
@@ -189,7 +189,7 @@ describe ActiveService::Model::ORM do
 
     it "handles finding with other parameters and scoped" do
       @users = User.scoped
-      expect(@users.where(:name => "foo")).to be_all { |u| u.name eq "foo" }
+      expect(@users.where(:name => "foo")).to be_all { |u| u.name == "foo" }
     end
   end
 

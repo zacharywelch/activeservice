@@ -17,7 +17,6 @@ module ActiveService
 
         # @private
         def self.proxy(parent, opts = {})
-          puts "proxy being created from association.rb"
           AssociationProxy.new new(parent, opts)
         end
 
@@ -45,20 +44,14 @@ module ActiveService
 
         # @private
         def fetch(opts = {})
-          puts "fetch called on association.rb, opts = #{opts}"
           attribute_value = @parent.attributes[@name]
           return @opts[:default].try(:dup) if @parent.attributes.include?(@name) && (attribute_value.nil? || !attribute_value.nil? && attribute_value.empty?) && @params.empty?
 
-          puts "fetch on association.rb, default not found..."
           return @cached_result unless @params.any? || @cached_result.nil?
-          puts "fetch on association.rb, @cached_result not found..."
           return @parent.attributes[@name] unless @params.any? || @parent.attributes[@name].blank?
-          puts "fetch on association.rb, @parent.attributes[@name] not found..."
-
+          
           path = build_association_path lambda { "#{@parent.request_path(@params)}#{@opts[:path]}" }
-          puts "fetch on association.rb, trying get on #{path}..."
           @klass.get(path, @params).tap do |result|
-            puts "get called during fetch, result = #{result}"
             @cached_result = result unless @params.any?
           end
         end
@@ -82,7 +75,6 @@ module ActiveService
         #   user = User.find(1)
         #   user.comments.where(:approved => 1) # Fetched via GET "/users/1/comments?approved=1
         def where(params = {})
-          # puts "where called from association.rb, params = #{params}"
           return self if params.blank? && @parent.attributes[@name].blank?
           AssociationProxy.new self.clone.tap { |a| a.params = a.params.merge(params) }
         end

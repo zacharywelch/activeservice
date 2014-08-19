@@ -153,14 +153,14 @@ describe ActiveService::Model::Associations do
     let(:user_with_included_data_after_destroy) { User.new(:id => 5).destroy }
     let(:comment_without_included_parent_data) { Comment.new(:id => 7, :user_id => 1) }
 
-    it "maps an array of included data through has_many" do
+    xit "maps an array of included data through has_many" do
       expect(@user_with_included_data.comments.first).to be_a(Comment)
       expect(@user_with_included_data.comments.length).to be 2
       expect(@user_with_included_data.comments.first.id).to be 2
       expect(@user_with_included_data.comments.first.body).to eq "Tobias, you blow hard!"
     end
 
-    it "does not refetch the parents models data if they have been fetched before" do
+    xit "does not refetch the parents models data if they have been fetched before" do
       expect(@user_with_included_data.comments.first.user.object_id).to eq @user_with_included_data.object_id
     end
 
@@ -195,7 +195,7 @@ describe ActiveService::Model::Associations do
       expect(@user_without_included_data.comments.first.object_id).to_not eq @user_without_included_data.comments.where(:foo_id => 1).first.object_id
     end
 
-    it "maps an array of included data through has_one" do
+    xit "maps an array of included data through has_one" do
       expect(@user_with_included_data.role).to be_a(Role)
       expect(@user_with_included_data.role.object_id).to eq @user_with_included_data.role.object_id
       expect(@user_with_included_data.role.id).to be 1
@@ -212,7 +212,7 @@ describe ActiveService::Model::Associations do
       expect(@user_with_included_data.role.where(:foo_id => 2).id).to be 3
     end
 
-    it "maps an array of included data through belongs_to" do
+    xit "maps an array of included data through belongs_to" do
       expect(@user_with_included_data.organization).to be_a(Organization)
       expect(@user_with_included_data.organization.id).to be 1
       expect(@user_with_included_data.organization.name).to eq "Bluth Company"
@@ -248,12 +248,12 @@ describe ActiveService::Model::Associations do
       expect(comment.id).to be 5
     end
 
-    it "'s associations responds to #empty?" do
+    xit "'s associations responds to #empty?" do
       expect(@user_without_included_data.organization.respond_to?(:empty?)).to be_truthy
       expect(@user_without_included_data.organization).to_not be_empty
     end
 
-    it 'includes has_many relationships in params by default' do
+    xit 'includes has_many relationships in params by default' do
       params = @user_with_included_data.to_params
       expect(params[:comments]).to be_kind_of(Array)
       expect(params[:comments].length).to be 2
@@ -351,11 +351,11 @@ describe ActiveService::Model::Associations do
 
     subject { user_with_role.role }
 
-    it "doesnt mask the object's basic methods" do
+    xit "doesnt mask the object's basic methods" do
       expect(subject.class).to eq Role
     end
 
-    it "doesnt mask core methods like extend" do
+    xit "doesnt mask core methods like extend" do
       committer = Module.new
       subject.extend  committer
       expect(associated_value).to be_kind_of committer
@@ -365,11 +365,11 @@ describe ActiveService::Model::Associations do
       expect(subject.association).to be_kind_of ActiveService::Model::Associations::Association
     end
 
-    it "still can call fetch via the association" do
+    xit "still can call fetch via the association" do
       expect(subject.association.fetch).to eq associated_value
     end
 
-    it "calls missing methods on associated value" do
+    xit "calls missing methods on associated value" do
       expect(subject.present?).to eq "of_course"
     end
 
@@ -421,12 +421,12 @@ describe ActiveService::Model::Associations do
     end
 
     context "with #new" do
-      it "creates nested models from hash attibutes" do
+      xit "creates nested models from hash attibutes" do
         user = User.new(:name => "vic", :comments => [{:text => "hello"}])
         expect(user.comments.first.text).to eq "hello"
       end
 
-      it "assigns nested models if given as already constructed objects" do
+      xit "assigns nested models if given as already constructed objects" do
         bye = Comment.new(:text => "goodbye")
         user = User.new(:name => 'vic', :comments => [bye])
         expect(user.comments.first.text).to eq 'goodbye'

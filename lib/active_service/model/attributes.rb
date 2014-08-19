@@ -16,25 +16,22 @@ module ActiveService
       # Handles missing methods
       #
       # @private
-      # def method_missing(method, *args, &blk)
-      #   if method.to_s =~ /[?=]$/ || @attributes.include?(method)
-      #     # Extract the attribute
-      #     attribute = method.to_s.sub(/[?=]$/, '')
-
-      #     # Create a new `attribute` methods set
-      #     self.class.attributes(*attribute)
-
-      #     # Resend the method!
-      #     send(method, *args, &blk)
-      #   else
-      #     super
-      #   end
-      # end
+      def method_missing(method, *args, &blk)
+        name = method.to_s.chop
+        if method.to_s =~ /[?=]$/ && has_association?(name)
+          (class << self; self; end).send(:define_method, method) do |value|
+            @attributes[:"#{name}"] = value
+          end
+          send method, *args, &blk
+        else
+          super
+        end
+      end
 
       # @private
-      # def respond_to_missing?(method, include_private = false)
-      #   method.to_s.end_with?('=') || method.to_s.end_with?('?') || @attributes.include?(method) || super
-      # end
+      def respond_to_missing?(method, include_private = false)
+        method.to_s =~ /[?=]$/ && has_association?(method.to_s.chop) || super
+      end
 
       # Assign new attributes to a resource
       #
@@ -144,11 +141,11 @@ module ActiveService
         # Use setter methods of model for each key / value pair in params
         # Return key / value pairs for which no setter method was defined on the model
         #
+        # @note Activeservice won't create attributes automatically
         # @private
         def use_setter_methods(model, params)
           params ||= {}
 
-          # @note: activeservice won't create attributes automatically
           params.inject({}) do |memo, (key, value)|
             writer = "#{key}="
             if model.respond_to? writer 

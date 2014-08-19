@@ -15,7 +15,7 @@ module ActiveService
       # @private
       def has_association?(association_name)
         associations = self.class.associations.values.flatten.map { |a| a[:name] }
-        associations.include?(association_name)
+        associations.include?(association_name.to_sym)
       end   
       
       # Returns the resource/collection corresponding to the association_name association.
