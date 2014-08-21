@@ -62,20 +62,20 @@ module ActiveService
         #   user.organization # => #<Organization id=2 name="Foo Inc.">
         def create(attributes = {})
           resource = build(attributes)
-          @parent.attributes[@name] = resource if resource.save
+          @owner.attributes[@name] = resource if resource.save
           resource
         end
 
         # @private
         def fetch
-          foreign_key_value = @parent.attributes[@opts[:foreign_key].to_sym]
-          data_key_value = @parent.attributes[@opts[:data_key].to_sym]
-          return @opts[:default].try(:dup) if (@parent.attributes.include?(@name) && @parent.attributes[@name].nil? && @params.empty?) || (@parent.persisted? && foreign_key_value.blank? && data_key_value.blank?)
+          foreign_key_value = @owner.attributes[@opts[:foreign_key].to_sym]
+          data_key_value = @owner.attributes[@opts[:data_key].to_sym]
+          return @opts[:default].try(:dup) if (@owner.attributes.include?(@name) && @owner.attributes[@name].nil? && @params.empty?) || (@owner.persisted? && foreign_key_value.blank? && data_key_value.blank?)
 
           return @cached_result unless @params.any? || @cached_result.nil?
-          return @parent.attributes[@name] unless @params.any? || @parent.attributes[@name].blank?
+          return @owner.attributes[@name] unless @params.any? || @owner.attributes[@name].blank?
 
-          path_params = @parent.attributes.merge(@params.merge(@klass.primary_key => foreign_key_value))
+          path_params = @owner.attributes.merge(@params.merge(@klass.primary_key => foreign_key_value))
           path = build_association_path lambda { @klass.build_request_path(path_params) }
           @klass.get(path, @params).tap do |result|
             @cached_result = result if @params.blank?

@@ -50,7 +50,7 @@ module ActiveService
         # TODO: This only merges the id of the parents, handle the case
         #       where this is more deeply nested
         def build(attributes = {})
-          @klass.build(attributes.merge(:"#{@parent.singularized_resource_name}_id" => @parent.id))
+          @klass.build(attributes.merge(:"#{@owner.singularized_resource_name}_id" => @owner.id))
         end
 
         # Create a new object, save it and add it to the associated collection
@@ -70,8 +70,8 @@ module ActiveService
           resource = build(attributes)
 
           if resource.save
-            @parent.attributes[@name] ||= ActiveService::Collection.new
-            @parent.attributes[@name] << resource
+            @owner.attributes[@name] ||= ActiveService::Collection.new
+            @owner.attributes[@name] << resource
           end
 
           resource
@@ -80,15 +80,15 @@ module ActiveService
         # @private
         def fetch
           super.tap do |o|
-            writer = "#{@opts[:inverse_of] || @parent.singularized_resource_name}="
-            o.each { |entry| entry.send(writer, @parent) }
+            writer = "#{@opts[:inverse_of] || @owner.singularized_resource_name}="
+            o.each { |entry| entry.send(writer, @owner) }
           end
         end
 
         # @private
         def assign_nested_attributes(attributes)
           data = attributes.is_a?(Hash) ? attributes.values : attributes
-          @parent.attributes[@name] = ActiveService::Model::Attributes.initialize_collection(@klass, data)
+          @owner.attributes[@name] = ActiveService::Model::Attributes.initialize_collection(@klass, data)
         end
       end
     end

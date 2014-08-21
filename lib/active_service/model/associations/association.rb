@@ -6,12 +6,12 @@ module ActiveService
         attr_accessor :params
 
         # @private
-        def initialize(parent, opts = {})
-          @parent = parent
+        def initialize(owner, opts = {})
+          @owner = owner
           @opts = opts
           @params = {}
 
-          @klass = @parent.class.nearby_class(@opts[:class_name])
+          @klass = @owner.class.nearby_class(@opts[:class_name])
           @name = @opts[:name]
         end
 
@@ -35,22 +35,22 @@ module ActiveService
 
         # @private
         def assign_single_nested_attributes(attributes)
-          if @parent.attributes[@name].blank?
-            @parent.attributes[@name] = @klass.new(@klass.parse(attributes))
+          if @owner.attributes[@name].blank?
+            @owner.attributes[@name] = @klass.new(@klass.parse(attributes))
           else
-            @parent.attributes[@name].assign_attributes(attributes)
+            @owner.attributes[@name].assign_attributes(attributes)
           end
         end
 
         # @private
         def fetch(opts = {})
-          attribute_value = @parent.attributes[@name]
-          return @opts[:default].try(:dup) if @parent.attributes.include?(@name) && (attribute_value.nil? || !attribute_value.nil? && attribute_value.empty?) && @params.empty?
+          attribute_value = @owner.attributes[@name]
+          return @opts[:default].try(:dup) if @owner.attributes.include?(@name) && (attribute_value.nil? || !attribute_value.nil? && attribute_value.empty?) && @params.empty?
 
           return @cached_result unless @params.any? || @cached_result.nil?
-          return @parent.attributes[@name] unless @params.any? || @parent.attributes[@name].blank?
+          return @owner.attributes[@name] unless @params.any? || @owner.attributes[@name].blank?
           
-          path = build_association_path lambda { "#{@parent.request_path(@params)}#{@opts[:path]}" }
+          path = build_association_path lambda { "#{@owner.request_path(@params)}#{@opts[:path]}" }
           @klass.get(path, @params).tap do |result|
             @cached_result = result unless @params.any?
           end
@@ -75,7 +75,7 @@ module ActiveService
         #   user = User.find(1)
         #   user.comments.where(:approved => 1) # Fetched via GET "/users/1/comments?approved=1
         def where(params = {})
-          return self if params.blank? && @parent.attributes[@name].blank?
+          return self if params.blank? && @owner.attributes[@name].blank?
           AssociationProxy.new self.clone.tap { |a| a.params = a.params.merge(params) }
         end
         alias all where
@@ -91,7 +91,7 @@ module ActiveService
         #   user.comments.find(3) # Fetched via GET "/users/1/comments/3
         def find(id)
           return nil if id.blank?
-          path = build_association_path lambda { "#{@parent.request_path(@params)}#{@opts[:path]}/#{id}" }
+          path = build_association_path lambda { "#{@owner.request_path(@params)}#{@opts[:path]}/#{id}" }
           @klass.get(path, @params)
         end
 

@@ -5,8 +5,8 @@ module ActiveService
       attr_accessor :params
 
       # @private
-      def initialize(parent)
-        @parent = parent
+      def initialize(owner)
+        @owner = owner
         @params = {}
       end
 
@@ -17,7 +17,7 @@ module ActiveService
 
       # Build a new resource
       def build(attributes = {})
-        @parent.build(@params.merge(attributes))
+        @owner.build(@params.merge(attributes))
       end
 
       # Add a query string parameter
@@ -65,9 +65,9 @@ module ActiveService
       # @private
       def fetch
         @_fetch ||= begin
-          path = @parent.build_request_path(@params)
-          @parent.request(@params.merge(:_method => :get, :_path => path)) do |response|
-            @parent.new_collection(response.body)
+          path = @owner.build_request_path(@params)
+          @owner.request(@params.merge(:_method => :get, :_path => path)) do |response|
+            @owner.new_collection(response.body)
           end
         end
       end
@@ -83,17 +83,17 @@ module ActiveService
       #   # Fetched via GET "/users/1" and GET "/users/2"
       def find(*ids)
         params = @params.merge(ids.last.is_a?(Hash) ? ids.pop : {})
-        ids = Array(params[@parent.primary_key]) if params.key?(@parent.primary_key)
+        ids = Array(params[@owner.primary_key]) if params.key?(@owner.primary_key)
         results = ids.flatten.compact.uniq.map do |id|
           resource = nil
           request_params = params.merge(
             :_method => :get,
-            :_path => @parent.build_request_path(params.merge(@parent.primary_key => id))
+            :_path => @owner.build_request_path(params.merge(@owner.primary_key => id))
           )
           
-          @parent.request(request_params) do |response|
+          @owner.request(request_params) do |response|
             if response.success?
-              resource = @parent.new_from_parsed_data(response.body)
+              resource = @owner.new_from_parsed_data(response.body)
             else
               return nil
             end
@@ -116,7 +116,7 @@ module ActiveService
       #   # Called via POST "/users/1" with `&email=tobias@bluth.com&fullname=Tobias+Fünke`
       def create(attributes = {})
         attributes ||= {}
-        resource = @parent.new(@params.merge(attributes))
+        resource = @owner.new(@params.merge(attributes))
         resource.save
 
         resource
