@@ -44,9 +44,7 @@ module ActiveService
 
         # @private
         def fetch(opts = {})
-          attribute_value = @owner.attributes[@name]
-          return @opts[:default].try(:dup) if @owner.attributes.include?(@name) && (attribute_value.nil? || !attribute_value.nil? && attribute_value.empty?) && @params.empty?
-
+          return @opts[:default].try(:dup) if use_default?
           return @cached_result unless @params.any? || @cached_result.nil?
           return @owner.attributes[@name] unless @params.any? || @owner.attributes[@name].blank?
           
@@ -95,6 +93,12 @@ module ActiveService
           @klass.get(path, @params)
         end
 
+        private 
+
+        def use_default?
+          attribute_value = @owner.attributes[@name]
+          ( @owner.new? || ( @owner.attributes.include?(@name) && (attribute_value.nil? || !attribute_value.nil? && attribute_value.empty?) ) ) && @params.empty?
+        end
       end
     end
   end
