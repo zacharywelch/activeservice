@@ -248,9 +248,14 @@ describe ActiveService::Model::Associations do
       expect(comment.id).to be 5
     end
 
-    xit "'s associations responds to #empty?" do
-      expect(@user_without_included_data.organization.respond_to?(:empty?)).to be_truthy
-      expect(@user_without_included_data.organization).to_not be_empty
+    it "'s has_many association responds to #empty?" do
+      expect(@user_without_included_data.comments.respond_to?(:empty?)).to be_truthy
+      expect(@user_without_included_data.comments).to_not be_empty
+    end
+
+    it "'s belongs_to association responds to #nil?" do
+      expect(@user_without_included_data.organization.respond_to?(:nil?)).to be_truthy
+      expect(@user_without_included_data.organization).to_not be_nil
     end
 
     xit 'includes has_many relationships in params by default' do
@@ -334,42 +339,52 @@ describe ActiveService::Model::Associations do
 
   context "object returned by the association method" do
     before do
+      api = ActiveService::API.new :url => "https://api.example.com" do |builder|
+        builder.use ActiveService::Middleware::ParseJSON        
+        builder.use Faraday::Request::UrlEncoded
+        builder.adapter :test do |stub|
+          stub.get("/users/1") { |env| [200, {}, { :id => 1, :name => "Tobias Fünke" }.to_json] }
+          stub.get("/users/1/role") { |env| [200, {}, { :id => 4, :name => "Therapist", :user_id => 1 }.to_json] }
+        end
+      end
+
       spawn_model "Role" do
+        uses_api api
+        belongs_to :user
         def present?
           "of_course"
         end
       end
       spawn_model "User" do
+        uses_api api
         has_one :role
       end
     end
 
-    let(:associated_value) { Role.new }
-    let(:user_with_role) do
-      User.new.tap { |user| user.role = associated_value }
-    end
+    let(:user_with_role) { User.find(1) }
+    let(:associated_value) { User.find(1).role }
 
     subject { user_with_role.role }
 
-    xit "doesnt mask the object's basic methods" do
+    it "doesnt mask the object's basic methods" do
       expect(subject.class).to eq Role
     end
 
-    xit "doesnt mask core methods like extend" do
+    it "doesnt mask core methods like extend" do
       committer = Module.new
-      subject.extend  committer
-      expect(associated_value).to be_kind_of committer
+      subject.extend committer
+      expect(subject).to be_kind_of committer
     end
 
     it "can return the association object" do
       expect(subject.association).to be_kind_of ActiveService::Model::Associations::Association
     end
 
-    xit "still can call fetch via the association" do
+    it "still can call fetch via the association" do
       expect(subject.association.fetch).to eq associated_value
     end
 
-    xit "calls missing methods on associated value" do
+    it "calls missing methods on associated value" do
       expect(subject.present?).to eq "of_course"
     end
 

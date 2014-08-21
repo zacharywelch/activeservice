@@ -97,7 +97,8 @@ module ActiveService
 
         def use_default?
           attribute_value = @owner.attributes[@name]
-          ( @owner.new? || ( @owner.attributes.include?(@name) && (attribute_value.nil? || !attribute_value.nil? && attribute_value.empty?) ) ) && @params.empty?
+          attribute_empty = @owner.attributes.include?(@name) && (attribute_value.nil? || !attribute_value.nil? && attribute_value.empty?)
+          ( @owner.new? || attribute_empty ) && @params.empty?
         end
       end
     end
