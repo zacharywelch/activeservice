@@ -4,11 +4,11 @@ module ActiveService
       class AssociationProxy < (ActiveSupport.const_defined?('ProxyObject') ? ActiveSupport::ProxyObject : ActiveSupport::BasicObject)
 
         # @private
-        def self.install_proxy_methods(target_name, *names)
+        def self.install_proxy_methods(target, *names)
           names.each do |name|
             module_eval <<-RUBY, __FILE__, __LINE__ + 1
               def #{name}(*args, &block)
-                #{target_name}.#{name}(*args, &block)
+                #{target}.#{name}(*args, &block)
               end
             RUBY
           end

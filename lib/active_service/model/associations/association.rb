@@ -16,8 +16,8 @@ module ActiveService
         end
 
         # @private
-        def self.proxy(parent, opts = {})
-          AssociationProxy.new new(parent, opts)
+        def self.proxy(owner, opts = {})
+          AssociationProxy.new new(owner, opts)
         end
 
         # @private
