@@ -396,7 +396,11 @@ describe ActiveService::Model::Associations do
 
   context "building and creating association data" do
     before do
-      spawn_model "Comment"
+      spawn_model "Comment" do
+        attribute :body    
+        attribute :user_id
+        belongs_to :user
+      end
       spawn_model "User" do
         has_many :comments
       end

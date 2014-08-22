@@ -1,8 +1,12 @@
+require 'active_service/model/attributes/nested_attributes'
+require 'active_service/model/attributes/attribute_map'
+
 module ActiveService
   module Model
     # This module handles attribute methods not provided by ActiveAttr
     module Attributes
       extend ActiveSupport::Concern
+      include ActiveService::Model::Attributes::NestedAttributes
 
       # Apply default scope to any new object
       def initialize(attributes={})  
@@ -49,7 +53,6 @@ module ActiveService
 
         # Then translate attributes of associations into association instances
         parsed_attributes = self.class.parse_associations(unset_attributes)
-
         # Then merge the parsed_data into @attributes.
         @attributes.merge!(parsed_attributes)
       end
@@ -156,6 +159,15 @@ module ActiveService
             end
             memo
           end
+        end
+
+        # Returns a mapping of attributes to fields
+        # 
+        # ActiveService can map fields from a response to attributes defined on a 
+        # model. <tt>attribute_map</tt> translates source fields to their model 
+        # attributes and vice-versa during HTTP requests.
+        def attribute_map
+          @attribute_map ||= ActiveService::Model::Attributes::AttributeMap.new(attributes.values)
         end
       end
     end

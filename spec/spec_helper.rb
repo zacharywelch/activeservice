@@ -2,8 +2,11 @@ $:.unshift File.join(File.dirname(__FILE__), *%w[.. lib])
 
 require 'rspec'
 require 'rspec/its'
+require 'simplecov'
 require 'faraday_middleware'
 require 'active_service'
+
+SimpleCov.start
 
 # Requires everything in 'spec/support'
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}

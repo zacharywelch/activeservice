@@ -50,13 +50,14 @@ module ActiveService
         #
         # @private
         def parse_associations(data)
+          data.select! { |key, value| association_keys.include? key }
           associations.each_pair do |type, definitions|
             definitions.each do |association|
               association_class = "active_service/model/associations/#{type}_association".classify.constantize
               data.merge! association_class.parse(association, self, data)
             end
           end
-
+          
           data
         end
 

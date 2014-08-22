@@ -1,5 +1,8 @@
 module ActiveService
   module Errors
+    class AssociationUnknownError < StandardError; end
+    class ParserError < StandardError; end
+
     class PathError < StandardError
       attr_reader :missing_parameter
 
@@ -7,9 +10,6 @@ module ActiveService
         super message
         @missing_parameter = missing_parameter
       end
-    end
-
-    class ParserError < StandardError
     end
 
     # Base class for response errors

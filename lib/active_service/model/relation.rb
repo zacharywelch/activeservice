@@ -31,6 +31,7 @@ module ActiveService
       #   # Fetched via GET "/users?approved=1"
       def where(params = {})
         return self if params.blank? && !@_fetch.nil?
+        params = @owner.attribute_map.map(params, :to => :source)
         self.clone.tap do |r|
           r.params = r.params.merge(params)
           r.clear_fetch_cache!

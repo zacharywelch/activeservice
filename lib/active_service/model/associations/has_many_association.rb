@@ -88,7 +88,7 @@ module ActiveService
         # @private
         def assign_nested_attributes(attributes)
           data = attributes.is_a?(Hash) ? attributes.values : attributes
-          @owner.attributes[@name] = ActiveService::Model::Attributes.initialize_collection(@klass, data)
+          @owner.attributes[@name] = @klass.instantiate_collection(@klass, data)
         end
       end
     end

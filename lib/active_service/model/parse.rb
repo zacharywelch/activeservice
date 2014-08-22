@@ -23,14 +23,11 @@ module ActiveService
         def parse(data)
           data = data.with_indifferent_access
           if parse_root_in_json? && root_element_included?(data)
-            if json_api_format?
-              data.fetch(parsed_root_element).first
-            else
+            data = json_api_format? ? 
+              data.fetch(parsed_root_element).first : 
               data.fetch(parsed_root_element) { data }
-            end
-          else
-            data
           end
+          attribute_map.map(data)
         end
 
         # @private

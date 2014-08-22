@@ -127,12 +127,14 @@ describe ActiveService::Model::ORM do
           stub.get("/users?id[]=1&id[]=2") { |env| ok! [{ :id => 1, :name => "Tobias Fünke" }, { :id => 2, :name => "Lindsay Fünke" }] }
           stub.get("/users?name=foo") { |env| ok! [{ :id => 3, :name => "foo" }] }
           stub.get("/users?name=bar") { |env| ok! [{ :id => 4, :name => "bar" }] }
+          stub.get("/users?EmailAddress=foo@bar.com") { |env| ok! [{ :id => 3, :name => "foo", :EmailAddress => "foo@bar.com" }] }
         end
       end
 
       spawn_model "User" do
         use_api api
         attribute :name
+        attribute :email, :source => "EmailAddress"
       end
     end
 
@@ -190,6 +192,18 @@ describe ActiveService::Model::ORM do
     it "handles finding with other parameters and scoped" do
       @users = User.scoped
       expect(@users.where(:name => "foo")).to be_all { |u| u.name == "foo" }
+    end
+
+    it "handles finding with other parameters having different source names" do
+      @user = User.where(name: "foo").first
+      expect(@user.id).to be 3
+      expect(@user.name).to eq "foo"
+    end
+
+    it "maps where clauses to source fields" do
+      @user = User.where(email: "foo@bar.com").first
+      expect(@user.id).to be 3
+      expect(@user.email).to eq "foo@bar.com"
     end
   end
 

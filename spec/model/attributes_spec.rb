@@ -6,6 +6,7 @@ describe ActiveService::Model::Attributes do
     before do 
       spawn_model "User" do
         attribute :name
+        attribute :'life-span'
       end
     end
 
@@ -136,6 +137,30 @@ describe ActiveService::Model::Attributes do
       hash[User.find(1)] = false
       expect(hash.size).to eql 1
       expect(hash).to eq({ user => false })
+    end
+  end
+
+  context "attributes are different than source" do
+    before do
+      api = ActiveService::API.new :url => "https://api.example.com" do |builder|
+        builder.use ActiveService::Middleware::ParseJSON
+        builder.adapter :test do |stub|
+          stub.get("/users/1") { |env| ok! :id => 1, :UserName => "Tobias Fünke" }
+          stub.get("/users?UserName=foo") { |env| ok! [{ :id => 3, :UserName => "foo" }] }
+        end
+      end
+
+      spawn_model "User" do
+        uses_api api
+        attribute :name, :source => 'UserName'
+      end
+    end
+
+    let(:user) { User.find(1) }
+
+    it "maps source fields to attributes" do
+      expect(user.name).to eq "Tobias Fünke"
+      expect(user).not_to respond_to :UserName 
     end
   end
 end
