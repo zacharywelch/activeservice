@@ -7,3 +7,4 @@ bundler_stubs/
 /client/.idea
 /service/log/*.log
 /tmp
+/coverage
