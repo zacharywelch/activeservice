@@ -1,7 +1,6 @@
 require 'active_model'
 require 'active_service/model/http'
 require 'active_service/model/attributes'
-require 'active_service/model/attributes'
 require 'active_service/model/relation'
 require 'active_service/model/orm'
 require 'active_service/model/parse'
