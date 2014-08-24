@@ -47,7 +47,7 @@ module ActiveService
       #
       # @example
       #   @users = User.order(:name)
-      #   # Fetched via GET "/users?sort=name"
+      #   # Fetched via GET "/users?sort=name_asc"
       #
       # @example
       #   @users = User.order(:name => :desc)
