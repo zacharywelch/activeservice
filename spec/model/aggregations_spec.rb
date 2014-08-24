@@ -64,7 +64,7 @@ describe ActiveService::Model::Aggregations do
       end
     end
 
-    context "with class_name option" do
+    context "when class_name option is provided" do
       before do
         spawn_model "User" do
           attribute   :address_street
@@ -85,13 +85,13 @@ describe ActiveService::Model::Aggregations do
 
       subject(:user) { User.new(:address_street => "123 Sesame St.", :address_city => "New York City") }
 
-      it "maps to class with different class_name" do
+      it "maps to class having different class_name" do
         expect(user.work_address.street).to eq "123 Sesame St."
         expect(user.work_address.city).to eq "New York City"
         expect(user.work_address).to be_kind_of(Address)
       end
 
-      it "handles assignment of aggregation with different class_name" do
+      it "handles assignment of aggregation having different class_name" do
         address = Address.new(:street => "New Street", :city => "New City")
         expect { user.work_address = address }.not_to raise_error()
         expect { user.work_address = BadAddress.new }.to raise_error()
