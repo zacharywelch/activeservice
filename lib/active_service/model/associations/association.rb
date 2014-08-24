@@ -74,9 +74,26 @@ module ActiveService
         #   user.comments.where(:approved => 1) # Fetched via GET "/users/1/comments?approved=1
         def where(params = {})
           return self if params.blank? && @owner.attributes[@name].blank?
+          params = @klass.attribute_map.map(params, :to => :source)
           AssociationProxy.new self.clone.tap { |a| a.params = a.params.merge(params) }
         end
         alias all where
+
+        # Add query parameters to the HTTP request performed to fetch the data
+        #
+        # @example
+        #   class User < ActiveService::Model
+        #     has_many :comments
+        #   end
+        #
+        #   user = User.find(1)
+        #   user.comments.order(:name) # Fetched via GET "/users/1/comments?sort=name_asc
+        def order(params = {})
+          return self if params.blank? && @owner.attributes[@name].blank?
+          params = Hash[params, :asc] if params.is_a? ::Symbol
+          params = { sort: @klass.attribute_map.map(params, to: :source).flatten.join('_') }
+          AssociationProxy.new self.clone.tap { |a| a.params.merge! params } 
+        end
 
         # Fetches the data specified by id
         #

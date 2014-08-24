@@ -81,6 +81,60 @@ describe ActiveService::Model::Relation do
     end
   end
 
+  describe :order do
+    before do
+      api = ActiveService::API.new :url => "https://api.example.com" do |builder|
+        builder.use ActiveService::Middleware::ParseJSON
+        builder.adapter :test do |stub|
+          stub.get("/users?name=foo&sort=name_asc") { |env| ok! [{ :id => 3, :name => "foo a" }, { :id => 4, :name => "foo b" }] }
+          stub.get("/users?sort=name_asc") { |env| ok! [{ :id => 2, :name => "Lindsay Fünke" }, { :id => 1, :name => "Tobias Fünke" }] }
+          stub.get("/users?sort=name_desc") { |env| ok! [{ :id => 1, :name => "Tobias Fünke" }, { :id => 2, :name => "Lindsay Fünke" }] }
+        end
+      end
+
+      spawn_model "User" do
+        uses_api api
+        attribute :name
+      end
+    end
+
+    it "doesn't fetch the data immediatly" do
+      expect(User).to receive(:request).never
+      @users = User.order(:name)
+    end
+
+    it "fetches the data and passes query parameters" do
+      expect(User).to receive(:request).once.and_call_original
+      @users = User.order(:name)
+      expect(@users).to respond_to(:length)
+      expect(@users.size).to be 2
+    end
+
+    it "orders in ascending order by default" do
+      @users = User.order(:name)
+      expect(@users.first.name).to eq "Lindsay Fünke"
+      expect(@users.last.name).to eq "Tobias Fünke"
+    end
+
+    it "orders in ascending order when :asc is specified" do
+      @users = User.order(:name => :asc)
+      expect(@users.first.name).to eq "Lindsay Fünke"
+      expect(@users.last.name).to eq "Tobias Fünke"
+    end
+
+    it "orders in descending order when :desc is specified" do
+      @users = User.order(:name => :desc)
+      expect(@users.first.name).to eq "Tobias Fünke"
+      expect(@users.last.name).to eq "Lindsay Fünke"
+    end
+
+    it "can be chained with where statement" do
+      @users = User.where(:name => "foo").order(:name)
+      expect(@users.first.name).to eq "foo a"
+      expect(@users.last.name).to eq "foo b"
+    end
+  end
+
   describe :create do
     before do
       api = ActiveService::API.setup :url => "https://api.example.com" do |builder|

@@ -125,6 +125,7 @@ describe ActiveService::Model::ORM do
           stub.get("/users/1") { |env| ok! :id => 1, :name => "Tobias Fünke" }
           stub.get("/users/2") { |env| ok! :id => 2, :name => "Lindsay Fünke" }
           stub.get("/users?id[]=1&id[]=2") { |env| ok! [{ :id => 1, :name => "Tobias Fünke" }, { :id => 2, :name => "Lindsay Fünke" }] }
+          stub.get("/users?name=foo&sort=EmailAddress_asc") { |env| ok! [{ :id => 3, :name => "foo", :EmailAddress => "foo@first.com" }, { :id => 4, :name => "foo", :EmailAddress => "foo@second.com" }] }
           stub.get("/users?name=foo") { |env| ok! [{ :id => 3, :name => "foo" }] }
           stub.get("/users?name=bar") { |env| ok! [{ :id => 4, :name => "bar" }] }
           stub.get("/users?EmailAddress=foo@bar.com") { |env| ok! [{ :id => 3, :name => "foo", :EmailAddress => "foo@bar.com" }] }
@@ -204,6 +205,12 @@ describe ActiveService::Model::ORM do
       @user = User.where(email: "foo@bar.com").first
       expect(@user.id).to be 3
       expect(@user.email).to eq "foo@bar.com"
+    end
+
+    it "handles finding with other parameters and sorted" do
+      @users = User.where(:name => "foo").order(:email)
+      expect(@users).to be_all { |u| u.name == "foo" }
+      expect(@users.first.email).to eq "foo@first.com"
     end
   end
 

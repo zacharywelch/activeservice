@@ -27,7 +27,7 @@ module ActiveService
       #   # Fetched via GET "/users"
       #
       # @example
-      #   @users = User.where(:approved => 1).all
+      #   @users = User.where(:approved => 1)
       #   # Fetched via GET "/users?approved=1"
       def where(params = {})
         return self if params.blank? && !@_fetch.nil?
@@ -38,6 +38,33 @@ module ActiveService
         end
       end
       alias all where
+
+      # Add a query string parameter for sorting
+      #
+      # @example
+      #   @users = User.all
+      #   # Fetched via GET "/users"
+      #
+      # @example
+      #   @users = User.order(:name)
+      #   # Fetched via GET "/users?sort=name"
+      #
+      # @example
+      #   @users = User.order(:name => :desc)
+      #   # Fetched via GET "/users?sort=name_desc"
+      #
+      # @example
+      #   @users = User.order(:name => :asc)
+      #   # Fetched via GET "/users?sort=name_asc"
+      def order(params = {})
+        return self if params.blank? && !@_fetch.nil?        
+        params = Hash[params, :asc] if params.is_a? ::Symbol
+        params = @owner.attribute_map.map(params, :to => :source)
+        self.clone.tap do |r|
+          r.params = r.params.merge(:sort => params.flatten.join('_'))
+          r.clear_fetch_cache!
+        end
+      end
 
       # Bubble all methods to the fetched collection
       #

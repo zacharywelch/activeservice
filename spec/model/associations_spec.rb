@@ -392,6 +392,11 @@ describe ActiveService::Model::Associations do
       expect(subject.where(role: 'committer').association.
         params).to include :role
     end
+
+    it "can use association methods like order" do
+      expect(subject.order(:name).association.
+        params).to include :sort
+    end
   end
 
   context "building and creating association data" do
