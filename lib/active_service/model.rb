@@ -5,6 +5,7 @@ require 'active_service/model/relation'
 require 'active_service/model/orm'
 require 'active_service/model/parse'
 require 'active_service/model/associations'
+require 'active_service/model/aggregations'
 require 'active_service/model/introspection'
 require 'active_service/model/paths'
 require 'active_service/model/serialization'
@@ -30,6 +31,7 @@ module ActiveService
     include ActiveService::Model::Introspection
     include ActiveService::Model::Paths
     include ActiveService::Model::Associations
+    include ActiveService::Model::Aggregations
     include ActiveService::Model::Serialization
 
     included do
