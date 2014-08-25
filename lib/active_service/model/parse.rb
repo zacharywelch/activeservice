@@ -135,13 +135,10 @@ module ActiveService
         #
         # @param [Symbol] value
         def collection_parser(value = nil)
-          @collection_parser ||= begin
-            superclass.collection_parser if superclass.respond_to?(:collection_parser)
-          end
-
+          @collection_parser ||= ActiveService::API.default_collection_parser
           return @collection_parser unless value
           @collection_parser = value
-        end        
+        end
 
         # @private
         def root_element_included?(data)

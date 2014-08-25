@@ -50,7 +50,7 @@ module ActiveService
       attribute :id
 
       # Define the default collection parser
-      collection_parser ActiveService::API.default_collection_parser
+      # collection_parser ActiveService::API.default_collection_parser
             
       # Include ActiveModel naming methods
       extend ActiveModel::Translation
