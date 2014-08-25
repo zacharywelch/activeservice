@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["zwelchcb"]
-  s.date = "2014-08-22"
+  s.date = "2014-08-24"
   s.description = "ActiveService is an ORM that maps REST resources to Ruby objects using an ActiveRecord-like interface."
   s.email = "Zachary.Welch@careerbuilder.com"
   s.extra_rdoc_files = [
@@ -34,6 +34,7 @@ Gem::Specification.new do |s|
     "lib/active_service/middleware.rb",
     "lib/active_service/middleware/parse_json.rb",
     "lib/active_service/model.rb",
+    "lib/active_service/model/aggregations.rb",
     "lib/active_service/model/associations.rb",
     "lib/active_service/model/associations/association.rb",
     "lib/active_service/model/associations/association_proxy.rb",
@@ -41,6 +42,9 @@ Gem::Specification.new do |s|
     "lib/active_service/model/associations/has_many_association.rb",
     "lib/active_service/model/associations/has_one_association.rb",
     "lib/active_service/model/attributes.rb",
+    "lib/active_service/model/attributes/attribute_definition.rb",
+    "lib/active_service/model/attributes/attribute_map.rb",
+    "lib/active_service/model/attributes/nested_attributes.rb",
     "lib/active_service/model/http.rb",
     "lib/active_service/model/introspection.rb",
     "lib/active_service/model/orm.rb",
@@ -49,12 +53,16 @@ Gem::Specification.new do |s|
     "lib/active_service/model/relation.rb",
     "lib/active_service/model/serialization.rb",
     "lib/active_service/version.rb",
+    "lib/ext/active_attr.rb",
     "spec/api_spec.rb",
     "spec/collection_spec.rb",
     "spec/middleware/json_parser_spec.rb",
+    "spec/model/aggregations_spec.rb",
     "spec/model/associations_spec.rb",
+    "spec/model/attribute_map_spec.rb",
     "spec/model/attributes_spec.rb",
     "spec/model/http_spec.rb",
+    "spec/model/nested_attributes_spec.rb",
     "spec/model/orm_spec.rb",
     "spec/model/parse_spec.rb",
     "spec/model/paths_spec.rb",

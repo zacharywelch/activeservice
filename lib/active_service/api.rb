@@ -10,11 +10,19 @@ module ActiveService
     FARADAY_OPTIONS = [:request, :proxy, :ssl, :builder, :url, :parallel_manager, 
                        :params, :headers, :builder_class].freeze
 
-    # Setup a default API connection. Accepted arguments and options are the 
-    # same as {API#setup}.
-    def self.setup(opts={}, &block)
-      @default_api = new
-      @default_api.setup(opts, &block)
+    class << self
+      # Setup a default API connection. Accepted arguments and options are the 
+      # same as {API#setup}.
+      def setup(opts={}, &block)
+        @default_api = new
+        @default_api.setup(opts, &block)
+      end
+
+      # Assign a default collection parser
+      attr_writer :default_collection_parser
+      def default_collection_parser
+        @default_collection_parser ||= ActiveService::Collection
+      end
     end
 
     # Create a new API object. This is useful to create multiple APIs and use 
@@ -105,6 +113,7 @@ module ActiveService
         end
       end
     end
+
 
     private
     # @private
