@@ -354,4 +354,42 @@ describe ActiveService::Model::Parse do
   context 'when send_only_modified_attributes is set' do
     pending
   end
+
+  context "when a custom collection parser is set" do
+    before do
+      class CustomCollection < ActiveService::Collection
+        attr_reader :total_count
+        def initialize(parsed = {})
+          @elements = parsed[:collection]
+          @total_count = parsed[:total_count]
+        end
+      end
+
+      api = ActiveService::API.new :url => "https://api.example.com" do |builder|
+        builder.use ActiveService::Middleware::ParseJSON
+        builder.adapter :test do |stub|
+          stub.get("/users") { |env| [200, {}, { :collection => [{ :id => 1, :name => "Tobias Fünke" }], :total_count => 100 }.to_json] }
+        end
+      end
+      
+      spawn_model "User" do
+        uses_api api
+        collection_parser CustomCollection
+        attribute :name
+      end
+    end
+
+    it "handles parsing the collection" do
+      @users = User.all
+      expect(@users).to be_kind_of(CustomCollection)
+      expect(@users.length).to be 1
+      expect(@users.first.name).to eq "Tobias Fünke"
+    end
+
+    it "handles other methods on custom collection" do
+      @users = User.all
+      expect(@users.respond_to?(:total_count)).to be_truthy
+      expect(@users.total_count).to be 100
+    end
+  end  
 end

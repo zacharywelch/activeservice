@@ -114,7 +114,6 @@ module ActiveService
       end
     end
 
-
     private
     # @private
     def self.default_api(opts={})

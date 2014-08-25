@@ -173,8 +173,8 @@ module ActiveService
         #
         # @private
         def extract_array(data)
-          if data.is_a?(Hash) && data.keys.size == 1
-            data.values.first
+          if active_model_serializers_format? || json_api_format?
+            data[pluralized_parsed_root_element]
           else
             data
           end
