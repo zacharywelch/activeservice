@@ -50,7 +50,6 @@ module ActiveService
         @attributes ||= attributes
         # Use setter methods first
         unset_attributes = self.class.use_setter_methods(self, new_attributes)
-
         # Then translate attributes of associations into association instances
         parsed_attributes = self.class.parse_associations(unset_attributes)
         # Then merge the parsed_data into @attributes.
@@ -75,7 +74,6 @@ module ActiveService
       def get_attribute(attribute_name)
         @attributes[attribute_name]
       end
-      alias attribute get_attribute
 
       # Return the value of the model `primary_key` attribute
       # def id
