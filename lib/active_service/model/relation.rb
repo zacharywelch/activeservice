@@ -67,7 +67,7 @@ module ActiveService
       end
 
       # @note hack until ProxyObject is available
-      undef_method :inspect, :eql?, :==
+      undef_method :inspect, :equal?, :eql?, :==
 
       # Bubble all methods to the fetched collection
       #
