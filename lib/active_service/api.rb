@@ -5,6 +5,7 @@ module ActiveService
   class API
     # @private
     attr_reader :base_uri, :connection, :options
+    delegate :headers, :ssl, :parallel_manager, :to => :connection
 
     # Constants
     FARADAY_OPTIONS = [:request, :proxy, :ssl, :builder, :url, :parallel_manager, 
