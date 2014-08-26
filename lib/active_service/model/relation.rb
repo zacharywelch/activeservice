@@ -3,6 +3,7 @@ module ActiveService
     class Relation
       # @private
       attr_accessor :params
+      undef_method  :inspect
 
       # @private
       def initialize(owner)
