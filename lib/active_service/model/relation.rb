@@ -3,7 +3,6 @@ module ActiveService
     class Relation
       # @private
       attr_accessor :params
-      undef_method  :inspect
 
       # @private
       def initialize(owner)
@@ -66,6 +65,9 @@ module ActiveService
           r.clear_fetch_cache!
         end
       end
+
+      # @note hack until ProxyObject is available
+      undef_method :inspect, :eql?, :==
 
       # Bubble all methods to the fetched collection
       #
