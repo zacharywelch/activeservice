@@ -6,7 +6,7 @@ ActiveService is an ORM that maps REST resources to Ruby objects using an Active
 
 ## Getting Started
 
-1. Setup an API for your ActiveService models to use. For Rails this would go in a service initalizer like config/initializers/active_service.rb
+Setup an API for your ActiveService models to use. For Rails this would go in a service initalizer like config/initializers/active_service.rb
 
 ```ruby
 ActiveService::API.setup :url => "http://api.example.com" do |c|
