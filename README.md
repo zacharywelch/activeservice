@@ -1,10 +1,10 @@
 # ActiveService
 
-ActiveService is an ORM that maps REST resources to Ruby objects using an ActiveRecord-like interface. 
+Active Service is an ORM that maps REST resources to Ruby objects using an ActiveRecord-like interface. 
 
 ## Getting Started
 
-Setup an API for your ActiveService models to use. For Rails this would go in a service initalizer like `config/initializers/active_service.rb`
+Setup an API for your Active Service models to use. For Rails this would go in a service initalizer like `config/initializers/active_service.rb`
 
 ```ruby
 ActiveService::API.setup :url => "http://api.example.com" do |c|
@@ -17,7 +17,7 @@ ActiveService::API.setup :url => "http://api.example.com" do |c|
 end
 ```
 
-Creating your ActiveService models is simple. Inherit from `ActiveService::Base` and define your attributes.
+Creating your Active Service models is simple. Inherit from `ActiveService::Base` and define your attributes.
 
 ```ruby
 class User < ActiveService::Base
@@ -25,7 +25,7 @@ class User < ActiveService::Base
 end
 ```
 
-That's it! Now you can communicate with the API using ActiveRecord syntax.
+That's it! Now you can communicate with the API using Active Record syntax.
 
 ```ruby
 User.all
@@ -45,11 +45,11 @@ user.save
 
 ## CRUD: Reading and Writing Data
 
-ActiveRecord objects are mapped to a database via SQL `SELECT`, `INSERT`, `UPDATE`, and `DELETE` statements. With ActiveService, objects are mapped to a resource via HTTP `GET`, `POST`, `PUT` and `DELETE` requests.
+Active Record objects are mapped to a database via SQL `SELECT`, `INSERT`, `UPDATE`, and `DELETE` statements. With Active Service, objects are mapped to a resource via HTTP `GET`, `POST`, `PUT` and `DELETE` requests.
 
 ### Create
 
-Creating resources with ActiveService is similar to ActiveRecord.
+Creating resources with Active Service is similar to Active Record.
 
 ```ruby
 user = User.create(name: "foo", email: "foo@bar.com")
@@ -64,7 +64,7 @@ user.save
 
 ### Read
 
-ActiveService provides a rich API for accessing resources. A lot of the syntatic sugar you've come to love with ActiveRecord is available in ActiveService.
+Active Service provides a rich API for accessing resources. A lot of the syntatic sugar you've come to love with Active Record is available in Active Service.
 
 ```ruby
 users = User.all
@@ -88,7 +88,7 @@ user.new? # => true
 
 ### Update
 
-Once an ActiveService object has been retrieved, its attributes can be modified and sent back to the API in a `PUT` request. 
+Once an Active Service object has been retrieved, its attributes can be modified and sent back to the API in a `PUT` request. 
 
 ```ruby
 user = User.find(1)
@@ -103,7 +103,7 @@ user.update_attributes(name: "new new name")
 
 ### Delete
 
-Calling `destroy` on an ActiveService object will send an HTTP `DELETE` request to the API. If you already know the resource, you can save a trip to the API by using the `destroy` class method.
+Calling `destroy` on an Active Service object will send an HTTP `DELETE` request to the API. If you already know the resource, you can save a trip to the API by using the `destroy` class method.
 
 ```ruby
 user = User.find(1)
@@ -118,7 +118,7 @@ User.destroy(1)
 
 ## Validations
 
-ActiveService includes `ActiveModel::Validations` so you can define validations similar to ActiveRecord. Models get validated before being sent to the API, saving unnecessary trips if the resource is invalid. 
+Active Service includes `ActiveModel::Validations` so you can define validations similar to Active Record. Models get validated before being sent to the API, saving unnecessary trips if the resource is invalid. 
 
 Any errors returned from the API with a `400` or `422` status are parsed and assigned to the `errors` array.
 
@@ -139,4 +139,54 @@ user.save
 # =>   returns 400 { "name": ["can't be blank"], "email": ["is invalid"] }
 user.errors.full_messages
 # => ["Name can't be blank", "Email is invalid"]
+```
+
+## Callbacks
+
+Active Service includes `ActiveModel::Callbacks` so you can define callbacks similar to Active Record. See the documentation on Active Record [callbacks] for details. 
+
+```ruby
+class User < ActiveService::Base
+  attribute :email
+  before_save { |user| user.email = user.email.downcase }  
+end
+
+user = User.çreate(email: "FOO@BAR.COM")
+# => POST /users { "email": "foo@bar.com" } 
+```
+
+The available callbacks are:
+
+* `before_save`
+* `before_create`
+* `before_update`
+* `before_destroy`
+* `after_save`
+* `after_create`
+* `after_update`
+* `after_destroy`
+
+## Associations
+
+Active Service supports many of the association macros available in Active Record. Examples in this section use the following models:
+
+```ruby
+class User < ActiveService::Base
+  attribute :name
+  has_many :comments
+  has_one :role
+  belongs_to :organization
+end
+
+class Comment < ActiveService::Base
+  attribute :content
+end
+
+class Role < ActiveService::Base
+  attribute :name
+end
+
+class Organization
+  attribute :name
+end
 ```
