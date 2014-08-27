@@ -151,7 +151,7 @@ class User < ActiveService::Base
   before_save { |user| user.email = user.email.downcase }  
 end
 
-user = User.çreate(email: "FOO@BAR.COM")
+user = User.create(email: "FOO@BAR.COM")
 # => POST /users { "email": "foo@bar.com" } 
 ```
 
