@@ -17,10 +17,6 @@ ActiveService::API.setup :url => "http://api.example.com" do |c|
 end
 ```
 
-## Examples
-
-### Defining Active Service Models
-
 ```ruby
 # To create your model first inherit from ActiveService::Base
 class User < ActiveService::Base
