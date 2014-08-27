@@ -54,6 +54,11 @@ describe ActiveService::Model::Relation do
         expect(User.create(:name => 'George Michael Bluth').id).to be 3
         expect(User.all.size).to be 3
       end
+
+      it "responds to first and last" do
+        expect(User).to respond_to :first
+        expect(User).to respond_to :last
+      end
     end
 
     context "for parent class" do

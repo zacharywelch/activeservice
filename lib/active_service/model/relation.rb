@@ -38,6 +38,12 @@ module ActiveService
         end
       end
       alias all where
+      
+      # Fetch the first or last record
+      # @note 
+      #   This is not the most efficient way of returning the first or last 
+      #   resource because a fetch is required but it's provided for convenience
+      delegate :first, :last, :to => :fetch      
 
       # Add a query string parameter for sorting
       #
@@ -163,8 +169,8 @@ module ActiveService
       #
       #   # If collection is empty:
       #   # POST /users with `email=remi@example.com`
-      def first_or_create(attributes = {})
-        fetch.first || create(attributes)
+      def find_or_create(attributes = {})
+        first || create(attributes)
       end
 
       # Fetch a resource and build it if it's not found
@@ -178,8 +184,8 @@ module ActiveService
       #   # If collection is empty:
       #   @user.email # => "remi@example.com"
       #   @user.new? # => true
-      def first_or_initialize(attributes = {})
-        fetch.first || build(attributes)
+      def find_or_initialize(attributes = {})
+        first || build(attributes)
       end
 
       # @private
