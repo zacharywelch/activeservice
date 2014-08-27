@@ -8,8 +8,13 @@ Setup an API for your ActiveService models to use. For Rails this would go in a 
 
 ```ruby
 ActiveService::API.setup :url => "http://api.example.com" do |c|
+  # Request
   c.use Faraday::Request::UrlEncoded
+
+  # Response
   c.use ActiveService::Middleware::DefaultParseJSON
+
+  # Adapter
   c.use Faraday::Adapter::NetHttp
 end
 ```
