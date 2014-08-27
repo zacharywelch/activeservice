@@ -1,17 +1,6 @@
 # ActiveService
 
-ActiveService is an object-relational mapper for web services. Its goal is to provide an ORM similar to ActiveRecord for interacting with services. Using ActiveRecord, objects are mapped to a database via SQL SELECT, INSERT, UPDATE, and DELETE statements. With ActiveService, objects are mapped to a resource via HTTP GET, POST, PUT and DELETE requests.
-
-ActiveService combines several important modules and gems.
-
-* [Active Model][active_model]
-* [Active Attr][active_attr]
-* [Typhoeus][typhoeus]
-
-[active_model]: https://github.com/rails/rails/tree/master/activemodel
-[active_attr]: https://github.com/cgriego/active_attr
-[typhoeus]: https://github.com/typhoeus/typhoeus
-[activerecord_callbacks]: http://api.rubyonrails.org/classes/ActiveRecord/Callbacks.html
+ActiveService is an ORM that maps REST resources to Ruby objects using an ActiveRecord-like interface. 
 
 ## Examples
 
