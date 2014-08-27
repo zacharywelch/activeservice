@@ -88,7 +88,7 @@ user.new? # => true
 
 ### Update
 
-Once an Active Service object has been retrieved, its attributes can be modified and sent back to the API in a `PUT` request. 
+Once an Active Service object has been retrieved, its attributes can be modified and sent back to the API using `save` or `update_attributes`. 
 
 ```ruby
 user = User.find(1)
@@ -179,7 +179,7 @@ class User < ActiveService::Base
 end
 
 class Comment < ActiveService::Base
-  attribute :content
+  attribute :content 
 end
 
 class Role < ActiveService::Base
@@ -190,3 +190,4 @@ class Organization
   attribute :name
 end
 ```
+
