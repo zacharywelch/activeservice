@@ -172,29 +172,29 @@ module ActiveService
       # Fetch a resource and create it if it's not found
       #
       # @example
-      #   @user = User.where(:email => "remi@example.com").find_or_create
+      #   @user = User.where(:email => "foo@bar.com").first_or_create
       #
       #   # Returns the first item of the collection if present:
-      #   # GET "/users?email=remi@example.com"
+      #   # GET "/users?email=foo@bar.com"
       #
       #   # If collection is empty:
-      #   # POST /users with `email=remi@example.com`
-      def find_or_create(attributes = {})
+      #   # POST /users with `email=foo@bar.com`
+      def first_or_create(attributes = {})
         first || create(attributes)
       end
 
       # Fetch a resource and build it if it's not found
       #
       # @example
-      #   @user = User.where(:email => "remi@example.com").find_or_initialize
+      #   @user = User.where(:email => "foo@bar.com").first_or_initialize
       #
       #   # Returns the first item of the collection if present:
-      #   # GET "/users?email=remi@example.com"
+      #   # GET "/users?email=foo@bar.com"
       #
       #   # If collection is empty:
-      #   @user.email # => "remi@example.com"
+      #   @user.email # => "foo@bar.com"
       #   @user.new? # => true
-      def find_or_initialize(attributes = {})
+      def first_or_initialize(attributes = {})
         first || build(attributes)
       end
 
