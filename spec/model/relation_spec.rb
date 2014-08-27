@@ -140,6 +140,37 @@ describe ActiveService::Model::Relation do
     end
   end
 
+  describe :limit do 
+    before do
+      api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
+        builder.use ActiveService::Middleware::ParseJSON
+        builder.adapter :test do |stub|
+          stub.get("/users?limit=2") { |env| ok! [{:id => 1, :name => "Tobias Fünke"}, {:id => 2, :name => "Lindsay Fünke"}] }
+          stub.get("/users?name=foo&limit=1") { |env| ok! [{:id => 1, :name => "foo"}] }
+        end
+      end
+
+      spawn_model "User" do
+        uses_api api
+        attribute :name
+      end
+    end
+
+    it "doesn't fetch the data immediatly" do
+      expect(User).to receive(:request).never
+      User.limit(2)
+    end
+
+    it "limits the number of results" do
+      expect(User.limit(2).size).to be 2
+    end
+
+    it "can be chained with where statements" do
+      @users = User.where(:name => "foo").limit(1)
+      expect(@users.size).to be 1
+    end    
+  end
+
   describe :create do
     before do
       api = ActiveService::API.setup :url => "https://api.example.com" do |builder|

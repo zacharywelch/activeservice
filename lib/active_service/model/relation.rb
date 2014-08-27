@@ -39,6 +39,16 @@ module ActiveService
       end
       alias all where
       
+      # Specifies a limit for the number of records to retrieve.
+      #
+      #   User.limit(10) # generated HTTP has '?limit=10'
+      #
+      #   User.limit(10).limit(20) # generated HTTP has '?limit=20'
+      def limit(value)
+        return self if value.nil? && !@_fetch.nil?
+        where(limit: value)
+      end
+
       # Fetch the first or last record
       # @note 
       #   This is not the most efficient way of returning the first or last 

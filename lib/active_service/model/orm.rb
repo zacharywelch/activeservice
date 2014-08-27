@@ -187,13 +187,13 @@ module ActiveService
         end
 
         # Delegate the following methods to `scoped`
-        [:all, :where, :order, :create, :build, :find, :first, :last, :first_or_create, :first_or_initialize].each do |method|
+        [:all, :where, :order, :create, :build, :find, :first, :last, :limit, :first_or_create, :first_or_initialize].each do |method|
           class_eval <<-RUBY, __FILE__, __LINE__ + 1
             def #{method}(*params)
               scoped.send(#{method.to_sym.inspect}, *params)
             end
           RUBY
-        end   
+        end
 
         # Build a new resource with the given attributes.
         # If the request_new_object_on_build flag is set, the new object is requested via API.
