@@ -13,6 +13,7 @@ ActiveService::API.setup :url => "http://api.example.com" do |c|
   c.use ActiveService::Middleware::DefaultParseJSON
   c.use Faraday::Adapter::NetHttp
 end
+```
 
 ## Examples
 
