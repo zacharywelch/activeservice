@@ -115,3 +115,28 @@ user.destroyed?
 User.destroy(1)
 # => DELETE /users/1
 ```
+
+## Validations
+
+ActiveService includes `ActiveModel::Validations` so you can define validations similar to ActiveRecord. Models get validated before being sent to the API, saving unnecessary trips if the resource is invalid. 
+
+Any errors returned from the API with a `400` or `422` status are parsed and assigned to the `errors` array.
+
+```ruby
+class User < ActiveService::Base
+  attribute :name 
+  attribute :email
+
+  VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
+
+  validates :name,  presence: true, length: { maximum: 50 }
+  validates :email, presence: true, format: { with: VALID_EMAIL_REGEX }  
+end
+
+user = User.new(email: "bad@email")
+user.save
+# => POST /users { "email": "bad@email" } 
+# =>   returns 400 { "name": ["can't be blank"], "email": ["is invalid"] }
+user.errors.full_messages
+# => ["Name can't be blank", "Email is invalid"]
+```
