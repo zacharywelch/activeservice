@@ -84,7 +84,6 @@ user = User.where(name: 'foo').first_or_initialize
 # If collection is empty
 user.name # => "foo"
 user.new? # => true
-# => PUT /users/1 { "id": 1, "name": "bar" }
 ```
 
 ### Update
