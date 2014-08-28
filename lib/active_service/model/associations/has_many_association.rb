@@ -3,6 +3,11 @@ module ActiveService
     module Associations
       class HasManyAssociation < Association
 
+        def initialize(owner, opts = {})
+          klass = owner.class.nearby_class(opts[:class_name])
+          super owner, opts.merge(path: "/#{klass.collection_path}")
+        end
+
         # @private
         def self.attach(klass, name, opts)
           opts = {
