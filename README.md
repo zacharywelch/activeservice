@@ -2,6 +2,17 @@
 
 Active Service is an ORM that maps REST resources to Ruby objects using an ActiveRecord-like interface. 
 
+## Installation
+
+```ruby
+gem install 'active_service'
+```
+
+In your Gemfile add
+```ruby
+gem 'active_service'
+```
+
 ## Getting Started
 
 Setup an API for your Active Service models to use. For Rails this would go in a service initalizer like `config/initializers/active_service.rb`
