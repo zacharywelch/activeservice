@@ -264,3 +264,25 @@ user.comments_attributes = [{content: "Hodor Hodor."}, {content: "Hodor."}]
 user.comments
 # => [#<Comment id=nil user_id=1 content="Hodor Hodor.">, #<Comment id=nil user_id=1 content="Hodor.">]
 ```
+
+## Overriding the Naming Conventions
+
+Often web services refuse to play nicely and you need to override common behaviors in Active Service. No problem, we've got you covered.
+
+### Mapping JSON attributes to different names
+
+If the API sends JSON attributes and you prefer to use different names in your model, you can specify the `source` name as an option and Active Service will map it to the attribute.
+
+```ruby
+class User < ActiveService::Base
+  attribute :name, :source => "UserName"
+end
+
+user = User.find(1)
+# => GET /users/1 returns { "id": 1, "UserName": "foo" }
+user.name
+# => "foo"
+
+users = User.where(name: "foo")
+# => GET /users?UserName=foo
+```
