@@ -227,3 +227,21 @@ user.organization
 # => GET /organizations/1
 # => #<Organization id=1>
 ```
+
+Subsequent calls to an association will return the cached objects instead of sending a new HTTP request.
+
+### Creating data
+
+Calling `build` on an association will return a new instance of your model without sending an HTTP request. Calling `create` on an association will issue an HTTP POST request to the complete path.
+
+```ruby
+user = User.find(1)
+# => GET /users/1
+
+comment = user.comments.build(:content => "Hodor Hodor. Hodor.")
+# => #<Comment id=nil user_id=1 content="Hodor Hodor. Hodor"> 
+
+comment = user.comments.create(:content => "Hodor Hodor. Hodor.")
+# => POST /users { "user_id": 1, "content": "Hodor Hodor. Hodor." }
+# => #<Comment id=1 user_id=1 content="Hodor Hodor. Hodor">
+```
