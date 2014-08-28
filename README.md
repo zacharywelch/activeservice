@@ -352,3 +352,47 @@ end
 User.all
 # => GET http://another.api.example.com/users
 ```
+
+## Testing
+
+The faraday gem provides support for stubbing requests. With Rspec, we can setup a unique API for our models.
+
+```ruby
+# spec/spec_helper.rb
+RSpec.configure do |config|
+  config.include(Module.new do
+    def stub_api_for(klass)
+      klass.use_api (api = ActiveService::API.new)
+      # Here you would customize this for your own API (URL, middleware, etc)
+      # like you have done in your application’s initializer
+      api.setup url: "http://api.example.com" do |c|
+        c.use ActiveService::Middleware::DefaultParseJSON
+        c.adapter(:test) { |s| yield s }
+      end
+    end
+  end)
+end
+
+#app/models/user.rb 
+class User < ActiveService::Base
+  attribute :name
+end
+```
+
+Then in our tests we create a stub for each HTTP request.
+
+```ruby
+# spec/models/user.rb
+describe User do
+  before do
+    stub_api_for(User) do |stub|
+      stub.get("/users/1") { |env| [200, {}, { id: 1, name: "Hodor Hodor" }.to_json] }
+    end
+  end
+
+  describe :find do
+    subject(:user) { User.find(1) }
+    expect(user.name).to eq "Hodor Hodor"
+  end
+end
+```
