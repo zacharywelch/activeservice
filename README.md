@@ -281,7 +281,7 @@ end
 admins = User.admins
 # => GET /users?admin=true
 
-active_admins = User.admins.active
+active_admins = User.active.admins
 # => GET /users?admin=true&active=true
 ```
 
