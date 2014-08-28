@@ -282,7 +282,7 @@ admins = User.admins
 # => GET /users?admin=true
 
 active_admins = User.active.admins
-# => GET /users?admin=true&active=true
+# => GET /users?active=true&admin=true
 ```
 
 ## Overriding the Naming Conventions
