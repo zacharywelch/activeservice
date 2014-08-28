@@ -265,6 +265,26 @@ user.comments
 # => [#<Comment id=nil user_id=1 content="Hodor Hodor.">, #<Comment id=nil user_id=1 content="Hodor.">]
 ```
 
+## Scopes
+
+Scopes can be defined on your models using the same syntax as Active Record. Scopes return an `ActiveService::Model::Relation` and can be chained or used within other scopes. 
+
+```ruby
+class User < ActiveService::Base
+  attribute :name
+  attribute :active?
+  attribute :admin?
+  scope :active, -> { where(active: true) }
+  scope :admins, -> { where(admin: true) }
+end
+
+admins = User.admins
+# => GET /users?admin=true
+
+active_admins = User.admins.active
+# => GET /users?admin=true&active=true
+```
+
 ## Overriding the Naming Conventions
 
 Often web services refuse to play nicely and you need to override common behaviors in Active Service. No problem, we've got you covered.
