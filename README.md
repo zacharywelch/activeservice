@@ -286,3 +286,34 @@ user.name
 users = User.where(name: "foo")
 # => GET /users?UserName=foo
 ```
+
+### Custom Paths
+
+You can define custom HTTP paths for your models.
+
+```ruby
+class User < ActiveService::Base
+  collection_path "employees"
+end
+
+User.all
+# => GET /employees
+
+User.find(1)
+# => GET /employees/1
+```
+
+You can also include custom variables in your paths.
+
+```ruby
+class User < ActiveService::Base
+  attribute :organization_id
+  collection_path "organizations/:organization_id/users"
+end
+
+User.all(_organization_id: 1)
+# => GET /organizations/1/users
+
+User.find(1, _organization_id: 2)
+# => GET /organizations/2/users/1
+```
