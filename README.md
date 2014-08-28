@@ -245,3 +245,22 @@ comment = user.comments.create(:content => "Hodor Hodor. Hodor.")
 # => POST /users { "user_id": 1, "content": "Hodor Hodor. Hodor." }
 # => #<Comment id=1 user_id=1 content="Hodor Hodor. Hodor">
 ```
+
+### Nested attributes
+
+Setup nested attributes for your associations with the usual  `accepts_nested_attributes_for` macro. When you enable nested attribues an attribute reader and attribute writer are created for the association.
+
+```ruby
+class User < ActiveService::Base
+  attribute :name
+  has_many :comments
+  accepts_nested_attributes_for :comments
+end
+
+user = User.find(1)
+# => GET /users/1
+
+user.comments_attributes = [{content: "Hodor Hodor."}, {content: "Hodor."}]
+user.comments
+# => [#<Comment id=nil user_id=1 content="Hodor Hodor.">, #<Comment id=nil user_id=1 content="Hodor.">]
+```
