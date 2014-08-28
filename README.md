@@ -285,7 +285,7 @@ active_admins = User.active.admins
 # => GET /users?active=true&admin=true
 ```
 
-## Overriding the Naming Conventions
+## Overriding Conventions
 
 Often web services refuse to play nicely and you need to override common behaviors in Active Service. No problem, we've got you covered.
 
@@ -336,4 +336,19 @@ User.all(_organization_id: 1)
 
 User.find(1, _organization_id: 2)
 # => GET /organizations/2/users/1
+```
+
+### Multiple APIs
+
+Connect your models to a different API using `ActiveService::API.new` and the `uses_api` macro.
+
+```ruby
+api = ActiveService::API.new :url => "http://another.api.example.com"
+
+class User < ActiveService::Base
+  uses_api api
+end
+
+User.all
+# => GET http://another.api.example.com/users
 ```
