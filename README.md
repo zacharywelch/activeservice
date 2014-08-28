@@ -179,11 +179,12 @@ The available callbacks are:
 
 ## Associations
 
-Active Service supports many of the association macros available in Active Record. Examples in this section use the following models:
+Setting up associations between resources should be familiar to anyone who uses Active Record. Examples in this section use the following models:
 
 ```ruby
 class User < ActiveService::Base
   attribute :name
+  attribute :organization_id  
   has_many :comments
   has_one :role
   belongs_to :organization
@@ -202,3 +203,27 @@ class Organization
 end
 ```
 
+### Fetching data
+
+Calling an association sends an HTTP request with the complete path
+
+```ruby
+user = User.find(1)
+# => GET /users/1
+
+user.comments
+# => GET /users/1/comments
+[#<Comment id=1>, #<Comment id=2>]
+
+user.comments.where(content: "foo")
+# => GET /users/1/comments?content=foo
+
+user.role
+# => GET /users/1/role
+# => #<Role id=1>
+
+user.organization
+# => :organization_id on user is used to build the path
+# => GET /organizations/1
+# => #<Organization id=1>
+```
