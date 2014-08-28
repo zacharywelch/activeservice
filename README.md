@@ -114,7 +114,7 @@ user.update_attributes(name: "new new name")
 
 ### Delete
 
-Calling `destroy` on an Active Service object will send an HTTP `DELETE` request to the API. If you already know the resource, you can save a trip to the API by using the `destroy` class method.
+Calling `destroy` on an Active Service object will send an HTTP `DELETE` request to the API. If you already know the resource, you can save a round trip to the API by using the `destroy` class method.
 
 ```ruby
 user = User.find(1)
@@ -159,7 +159,7 @@ Active Service includes `ActiveModel::Callbacks` so you can define callbacks sim
 ```ruby
 class User < ActiveService::Base
   attribute :email
-  before_save { |user| user.email = user.email.downcase }  
+  before_save { |user| user.email = user.email.downcase }
 end
 
 user = User.create(email: "FOO@BAR.COM")
@@ -239,11 +239,11 @@ user = User.find(1)
 # => GET /users/1
 
 comment = user.comments.build(:content => "Hodor Hodor. Hodor.")
-# => #<Comment id=nil user_id=1 content="Hodor Hodor. Hodor"> 
+# => #<Comment id=nil user_id=1 content="Hodor Hodor. Hodor."> 
 
 comment = user.comments.create(:content => "Hodor Hodor. Hodor.")
 # => POST /users { "user_id": 1, "content": "Hodor Hodor. Hodor." }
-# => #<Comment id=1 user_id=1 content="Hodor Hodor. Hodor">
+# => #<Comment id=1 user_id=1 content="Hodor Hodor. Hodor.">
 ```
 
 ### Nested attributes
