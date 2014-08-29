@@ -86,7 +86,7 @@ module ActiveService
         def fetch
           super.tap do |o|
             writer = "#{@opts[:inverse_of] || @owner.singularized_resource_name}="
-            o.each { |entry| entry.send(writer, @owner) }
+            o.each { |entry| entry.send(writer, @owner) if entry.respond_to? writer }
           end
         end
 
