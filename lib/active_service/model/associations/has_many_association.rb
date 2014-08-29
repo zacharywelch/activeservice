@@ -4,8 +4,8 @@ module ActiveService
       class HasManyAssociation < Association
 
         def initialize(owner, opts = {})
-          klass = owner.class.nearby_class(opts[:class_name])
-          super owner, opts.merge(path: "/#{klass.collection_path}")
+          super owner, opts
+          @opts[:path] ||= "/#{@klass.collection_path}"
         end
 
         # @private
@@ -15,7 +15,7 @@ module ActiveService
             :name           => name,
             :data_key       => name,
             :default        => ActiveService::Collection.new,
-            :path           => "/#{name}",
+            :path           => nil,
             :inverse_of => nil
           }.merge(opts)
           klass.associations[:has_many] << opts

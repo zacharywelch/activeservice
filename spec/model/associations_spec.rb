@@ -8,7 +8,7 @@ describe ActiveService::Model::Associations do
 
     context "single has_many association" do
       before { User.has_many :comments }
-      its([:has_many]) { should eql [{ :name => :comments, :data_key => :comments, :default => [], :class_name => "Comment", :path => "/comments", :inverse_of => nil }] }
+      its([:has_many]) { should eql [{ :name => :comments, :data_key => :comments, :default => [], :class_name => "Comment", :path => nil, :inverse_of => nil }] }
     end
 
     context "multiple has_many associations" do
@@ -17,7 +17,7 @@ describe ActiveService::Model::Associations do
         User.has_many :posts
       end
 
-      its([:has_many]) { should eql [{ :name => :comments, :data_key => :comments, :default => [], :class_name => "Comment", :path => "/comments", :inverse_of => nil }, { :name => :posts, :data_key => :posts, :default => [], :class_name => "Post", :path => "/posts", :inverse_of => nil }] }
+      its([:has_many]) { should eql [{ :name => :comments, :data_key => :comments, :default => [], :class_name => "Comment", :path => nil, :inverse_of => nil }, { :name => :posts, :data_key => :posts, :default => [], :class_name => "Post", :path => nil, :inverse_of => nil }] }
     end
 
     context "single has_one association" do
@@ -56,7 +56,7 @@ describe ActiveService::Model::Associations do
     context "in base class" do
       context "single has_many association" do
         before { User.has_many :comments, :class_name => "Post", :inverse_of => :admin, :data_key => :user_comments, :default => {} }
-        its([:has_many]) { should eql [{ :name => :comments, :data_key => :user_comments, :default => {}, :class_name => "Post", :path => "/comments", :inverse_of => :admin }] }
+        its([:has_many]) { should eql [{ :name => :comments, :data_key => :user_comments, :default => {}, :class_name => "Post", :path => nil, :inverse_of => :admin }] }
       end
 
       context "single has_one association" do
@@ -76,7 +76,7 @@ describe ActiveService::Model::Associations do
       describe "associations accessor" do
         subject { Class.new(User).associations }
         its(:object_id) { should_not eql User.associations.object_id }
-        its([:has_many]) { should eql [{ :name => :comments, :data_key => :comments, :default => [], :class_name => "Post", :path => "/comments", :inverse_of => nil }] }
+        its([:has_many]) { should eql [{ :name => :comments, :data_key => :comments, :default => [], :class_name => "Post", :path => nil, :inverse_of => nil }] }
       end
     end
   end

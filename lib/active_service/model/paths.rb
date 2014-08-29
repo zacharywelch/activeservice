@@ -84,15 +84,13 @@ module ActiveService
             path.gsub!(/(\A|\/):id(\Z|\/)/, "\\1:#{primary_key}\\2")
           end
 
-          path = path.gsub(/:([\w_]+)/) do
+          path.gsub(/:([\w_]+)/) do
             # Look for :key or :_key, otherwise raise an exception
             value = $1.to_sym
             parameters.delete(value) || 
             parameters.delete(:"_#{value}") || 
             raise(ActiveService::Errors::PathError.new("Missing :_#{$1} parameter to build the request path. Path is `#{path}`. Parameters are `#{parameters.symbolize_keys.inspect}`.", $1))
           end
-          puts "path = #{path}"
-          path
         end
 
         # @private
