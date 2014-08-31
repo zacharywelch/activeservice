@@ -146,8 +146,7 @@ end
 
 user = User.new(email: "bad@email")
 user.save
-# => POST /users { "email": "bad@email" } 
-# =>   returns 400 { "name": ["can't be blank"], "email": ["is invalid"] }
+# => false
 user.errors.full_messages
 # => ["Name can't be blank", "Email is invalid"]
 ```
@@ -242,7 +241,7 @@ comment = user.comments.build(:content => "Hodor Hodor. Hodor.")
 # => #<Comment id=nil user_id=1 content="Hodor Hodor. Hodor."> 
 
 comment = user.comments.create(:content => "Hodor Hodor. Hodor.")
-# => POST /users { "user_id": 1, "content": "Hodor Hodor. Hodor." }
+# => POST /users/1/comments { "user_id": 1, "content": "Hodor Hodor. Hodor." }
 # => #<Comment id=1 user_id=1 content="Hodor Hodor. Hodor.">
 ```
 
