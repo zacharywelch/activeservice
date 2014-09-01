@@ -17,7 +17,7 @@ module ActiveService
 
         # @private
         def self.proxy(owner, opts = {})
-          AssociationProxy.new new(owner, opts)
+          proxy = AssociationProxy.new new(owner, opts)
         end
 
         # @private
@@ -114,7 +114,7 @@ module ActiveService
 
         def use_default?
           attribute_value = @owner.attributes[@name]
-          attribute_empty = @owner.attributes.include?(@name) && (attribute_value.nil? || !attribute_value.nil? && attribute_value.empty?)
+          attribute_empty = @owner.attributes.include?(@name) && attribute_value == @opts[:default]
           attribute_empty && @params.empty?
         end
       end

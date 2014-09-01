@@ -84,6 +84,7 @@ module ActiveService
 
         # @private
         def assign_nested_attributes(attributes)
+          puts "belongs_to assign_nested_attributes"
           assign_single_nested_attributes(attributes)
         end
       end

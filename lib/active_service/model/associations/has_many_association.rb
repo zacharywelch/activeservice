@@ -92,6 +92,7 @@ module ActiveService
 
         # @private
         def assign_nested_attributes(attributes)
+          puts "has_many assign_nested_attributes"
           data = attributes.is_a?(Hash) ? attributes.values : attributes
           @owner.attributes[@name] = @klass.instantiate_collection(@klass, data)
         end
