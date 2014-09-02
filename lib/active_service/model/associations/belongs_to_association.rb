@@ -13,7 +13,7 @@ module ActiveService
             :foreign_key => "#{name}_id",
             :path => "/#{name.to_s.pluralize}/:id"
           }.merge(opts)
-          klass.associations[:belongs_to] << opts
+          klass.associations[macro] << opts
 
           klass.class_eval <<-RUBY, __FILE__, __LINE__ + 1
             def #{name}
@@ -28,6 +28,11 @@ module ActiveService
         # @private
         def self.parse(*args)
           parse_single(*args)
+        end
+
+        # @private
+        def self.macro
+          :belongs_to
         end
 
         # Initialize a new object

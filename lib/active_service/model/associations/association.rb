@@ -49,7 +49,8 @@ module ActiveService
           return @owner.attributes[@name] unless @params.any? || @owner.attributes[@name].blank?
           
           path = build_association_path lambda { "#{@owner.request_path(@params)}#{@opts[:path]}" }
-          @klass.get(path, @params).tap do |result|
+          method = self.class.macro == :has_many ? :get_collection : :get_resource
+          @klass.send(method, path, @params).tap do |result|
             @cached_result = result unless @params.any?
           end
         end

@@ -12,7 +12,7 @@ module ActiveService
             :default => nil,
             :path => "/#{name}"
           }.merge(opts)
-          klass.associations[:has_one] << opts
+          klass.associations[macro] << opts
 
           klass.class_eval <<-RUBY, __FILE__, __LINE__ + 1
             def #{name}
@@ -27,6 +27,11 @@ module ActiveService
         # @private
         def self.parse(*args)
           parse_single(*args)
+        end
+
+        # @private
+        def self.macro
+          :has_one
         end
 
         # Initialize a new object with a foreign key to the parent

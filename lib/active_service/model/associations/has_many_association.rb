@@ -18,7 +18,7 @@ module ActiveService
             :path           => nil,
             :inverse_of => nil
           }.merge(opts)
-          klass.associations[:has_many] << opts
+          klass.associations[macro] << opts
 
           klass.class_eval <<-RUBY, __FILE__, __LINE__ + 1
             def #{name}
@@ -37,6 +37,11 @@ module ActiveService
 
           klass = klass.nearby_class(association[:class_name])
           { association[:name] => klass.instantiate_collection(klass, data[data_key]) }
+        end
+
+        # @private
+        def self.macro
+          :has_many
         end
 
         # Initialize a new object with a foreign key to the parent
