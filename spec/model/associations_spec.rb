@@ -195,6 +195,14 @@ describe ActiveService::Model::Associations do
       expect(@user_without_included_data.comments.first.object_id).to_not eq @user_without_included_data.comments.where(:foo_id => 1).first.object_id
     end
 
+    it "fetches data that was not included through has_many again after being reset" do
+      expect{ @user_without_included_data.comments.reset }.to change{ @user_without_included_data.comments.first.object_id }
+    end
+
+    it "fetches data that was not included through has_many again after being reloaded" do
+      expect{ @user_without_included_data.comments.reload }.to change{ @user_without_included_data.comments.first.object_id }
+    end
+
     xit "maps an array of included data through has_one" do
       expect(@user_with_included_data.role).to be_a(Role)
       expect(@user_with_included_data.role.object_id).to eq @user_with_included_data.role.object_id
@@ -332,7 +340,7 @@ describe ActiveService::Model::Associations do
       expect(@user_without_included_data.company.name).to eq "Bluth Company"
     end
 
-    it "does not require foreugn key to have nested object" do
+    it "does not require foreign key to have nested object" do
       expect(@user_with_included_data_but_no_fk.company.name).to eq "Bluth Company Inc."
     end
   end

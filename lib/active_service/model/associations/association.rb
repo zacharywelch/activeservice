@@ -17,7 +17,7 @@ module ActiveService
 
         # @private
         def self.proxy(owner, opts = {})
-          proxy = AssociationProxy.new new(owner, opts)
+          AssociationProxy.new new(owner, opts)
         end
 
         # @private
@@ -108,6 +108,20 @@ module ActiveService
           return nil if id.blank?
           path = build_association_path lambda { "#{@owner.request_path(@params)}#{@opts[:path]}/#{id}" }
           @klass.get(path, @params)
+        end
+
+        # Puts the association proxy back in its initial state, which is 
+        # unloaded. Cached associations are cleared.
+        def reset
+          @params = {}
+          @cached_result = nil
+          @owner.attributes.delete(@name)
+        end
+
+        # Invokes reset and refetches association
+        def reload
+          reset
+          fetch
         end
 
         private 

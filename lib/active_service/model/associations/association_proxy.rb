@@ -15,7 +15,7 @@ module ActiveService
         end
 
         install_proxy_methods :association,
-          :build, :create, :where, :order, :find, :all, :assign_nested_attributes
+          :build, :create, :where, :order, :find, :all, :assign_nested_attributes, :reset, :reload
 
         # @private
         def initialize(association)
