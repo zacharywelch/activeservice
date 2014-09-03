@@ -92,7 +92,7 @@ module ActiveService
         def order(params = {})
           return self if params.blank? && @owner.attributes[@name].blank?
           params = Hash[params, :asc] if params.is_a? ::Symbol
-          params = { sort: @klass.attribute_map.map(params, to: :source).flatten.join('_') }
+          params = { sort: @klass.attribute_map.map(params, :to => :source).flatten.join('_') }
           AssociationProxy.new self.clone.tap { |a| a.params.merge! params } 
         end
 

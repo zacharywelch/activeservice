@@ -94,12 +94,19 @@ describe ActiveService::Model::Relation do
           stub.get("/users?name=foo&sort=name_asc") { |env| ok! [{ :id => 3, :name => "foo a" }, { :id => 4, :name => "foo b" }] }
           stub.get("/users?sort=name_asc") { |env| ok! [{ :id => 2, :name => "Lindsay Fünke" }, { :id => 1, :name => "Tobias Fünke" }] }
           stub.get("/users?sort=name_desc") { |env| ok! [{ :id => 1, :name => "Tobias Fünke" }, { :id => 2, :name => "Lindsay Fünke" }] }
+          stub.get("/admin_users?UserName=foo&sort=UserName_asc") { |env| ok! [{ :id => 3, :UserName => "foo a" }, { :id => 4, :UserName => "foo b" }] }
+          stub.get("/admin_users?sort=UserName_asc") { |env| ok! [{ :id => 2, :UserName => "Lindsay Fünke" }, { :id => 1, :UserName => "Tobias Fünke" }] }
         end
       end
 
       spawn_model "User" do
         uses_api api
         attribute :name
+      end
+
+      spawn_model "AdminUser" do
+        uses_api api
+        attribute :name, :source => "UserName"
       end
     end
 
@@ -133,11 +140,29 @@ describe ActiveService::Model::Relation do
       expect(@users.last.name).to eq "Lindsay Fünke"
     end
 
+    it "orders string parameters" do
+      @users = User.order("name")
+      expect(@users.first.name).to eq "Lindsay Fünke"
+      expect(@users.last.name).to eq "Tobias Fünke"
+    end
+
+    it "orders parameters with different source names" do
+      @users = AdminUser.order(:name)
+      expect(@users.first.name).to eq "Lindsay Fünke"
+      expect(@users.last.name).to eq "Tobias Fünke"
+    end    
+
     it "can be chained with where statement" do
       @users = User.where(:name => "foo").order(:name)
       expect(@users.first.name).to eq "foo a"
       expect(@users.last.name).to eq "foo b"
     end
+
+    it "can be chained with where statement and with different source names" do
+      @users = AdminUser.where(:name => "foo").order(:name)
+      expect(@users.first.name).to eq "foo a"
+      expect(@users.last.name).to eq "foo b"
+    end    
   end
 
   describe :limit do 
