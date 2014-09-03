@@ -140,17 +140,23 @@ describe ActiveService::Model::Relation do
       expect(@users.last.name).to eq "Lindsay Fünke"
     end
 
+    it "orders parameters with different source names" do
+      @users = AdminUser.order(:name)
+      expect(@users.first.name).to eq "Lindsay Fünke"
+      expect(@users.last.name).to eq "Tobias Fünke"
+    end    
+
     it "orders string parameters" do
       @users = User.order("name")
       expect(@users.first.name).to eq "Lindsay Fünke"
       expect(@users.last.name).to eq "Tobias Fünke"
     end
 
-    it "orders parameters with different source names" do
-      @users = AdminUser.order(:name)
+    it "orders string parameters with different source names" do
+      @users = AdminUser.order("name")
       expect(@users.first.name).to eq "Lindsay Fünke"
       expect(@users.last.name).to eq "Tobias Fünke"
-    end    
+    end
 
     it "can be chained with where statement" do
       @users = User.where(:name => "foo").order(:name)

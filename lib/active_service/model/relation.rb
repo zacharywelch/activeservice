@@ -75,7 +75,7 @@ module ActiveService
       def order(params = {})
         return self if params.blank? && !@_fetch.nil?        
         params = Hash[params, :asc] if params.is_a?(::Symbol) || params.is_a?(::String)
-        params = @owner.attribute_map.map(params, :to => :source)
+        params = @owner.attribute_map.map(params.symbolize_keys, :to => :source)
         self.clone.tap do |r|
           r.params.merge!(:sort => params.flatten.join('_'))
           r.clear_fetch_cache!
