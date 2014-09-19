@@ -28,7 +28,7 @@ module ActiveService
 
     # Returns
     # * the value of the attribute_name attribute if it's in orm data
-    # * the resource/collection corrsponding to attribute_name if it's an association
+    # * the resource/collection corresponding to attribute_name if it's an association
     #
     # @private
     def [](attribute_name)

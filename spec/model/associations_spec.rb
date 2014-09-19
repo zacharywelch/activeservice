@@ -272,6 +272,10 @@ describe ActiveService::Model::Associations do
       expect(params[:comments].length).to be 2
     end
 
+    it "fetches ids for has_many association" do
+      expect(@user_without_included_data.comments.collect(&:id)).to eq @user_without_included_data.comment_ids
+    end
+
     [:create, :save_existing, :destroy].each do |type|
       context "after #{type}" do
         let(:subject) { self.send("user_with_included_data_after_#{type}")}
@@ -430,11 +434,12 @@ describe ActiveService::Model::Associations do
     context "with #create" do
       before do
         api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
-          builder.use ActiveService::Middleware::FirstLevelParseJSON
+          builder.use ActiveService::Middleware::ParseJSON
           builder.use Faraday::Request::UrlEncoded
           builder.adapter :test do |stub|
             stub.get("/users/10") { |env| [200, {}, { :id => 10 }.to_json] }
             stub.post("/comments") { |env| [200, {}, { :id => 1, :body => Faraday::Utils.parse_query(env[:body])['body'], :user_id => Faraday::Utils.parse_query(env[:body])['user_id'].to_i }.to_json] }
+            stub.get("/users/10/comments") { |env| [200, {}, [{ :id => 1, :body => "Hello!", :user_id => 10 }].to_json] }
           end
         end
 
@@ -442,7 +447,7 @@ describe ActiveService::Model::Associations do
         Comment.use_api api
       end
 
-      xit "takes the parent primary key and saves the resource" do
+      it "takes the parent primary key and saves the resource" do
         @user = User.find(10)
         @comment = @user.comments.create(:body => "Hello!")
         expect(@comment.id).to be 1

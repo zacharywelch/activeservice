@@ -27,6 +27,10 @@ module ActiveService
               cached_data = (instance_variable_defined?(cached_name) && instance_variable_get(cached_name))
               cached_data || instance_variable_set(cached_name, ActiveService::Model::Associations::HasManyAssociation.proxy(self, #{opts.inspect}))
             end
+
+            def #{name.to_s.singularize}_ids
+              #{name}.collect(&:id)
+            end
           RUBY
         end
 
@@ -77,20 +81,15 @@ module ActiveService
         #   user.comments.create(:body => "Hello!")
         #   user.comments # => [#<Comment id=2 user_id=1 body="Hello!">]
         def create(attributes = {})
-          resource = build(attributes)
-
-          if resource.save
-            @owner.attributes[@name] ||= ActiveService::Collection.new
-            @owner.attributes[@name] << resource
-          end
-
+          resource = build(attributes)          
+          reset if resource.save and @cached_result
           resource
         end
 
         # @private
         def fetch
           super.tap do |o|
-            writer = "#{@opts[:inverse_of] || @owner.singularized_resource_name}="
+            writer = "#{@opts[:inverse_of]}="
             o.each { |entry| entry.send(writer, @owner) if entry.respond_to? writer }
           end
         end
