@@ -225,6 +225,10 @@ user.organization
 # => :organization_id on user is used to build the path
 # => GET /organizations/1
 # => #<Organization id=1>
+
+user.comment_ids
+# => GET /users/1/comments
+[1,2]
 ```
 
 Subsequent calls to an association will return the cached objects instead of sending a new HTTP request.
