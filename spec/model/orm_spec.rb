@@ -195,7 +195,7 @@ describe ActiveService::Model::ORM do
       expect(@users.where(:name => "foo")).to be_all { |u| u.name == "foo" }
     end
 
-    it "handles finding with other parameters having different source names" do
+    it "handles finding with different source attributes" do
       @user = User.where(name: "foo").first
       expect(@user.id).to be 3
       expect(@user.name).to eq "foo"
@@ -261,9 +261,12 @@ describe ActiveService::Model::ORM do
     before do
       api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
         builder.use ActiveService::Middleware::ParseJSON
+        builder.use Faraday::Request::UrlEncoded
         builder.adapter :test do |stub|
           stub.post("/users") { |env| ok! :id => 1, :name => "Tobias Fünke" }
           stub.post("/companies") { |env| error! name: ["can't be blank"] }
+          stub.get("/comments/1") { |env| ok! :id => 1, :CommentBody => "Hodor Hodor. Hodor." }
+          stub.post("/comments") { |env| [200, {}, { :id => 1, :CommentBody => Faraday::Utils.parse_query(env[:body])['CommentBody'] }.to_json] }
         end
       end
 
@@ -277,6 +280,11 @@ describe ActiveService::Model::ORM do
         attribute :name
         validates :name, presence: true
       end
+
+      spawn_model "Comment" do
+        uses_api api
+        attribute :body, :source => "CommentBody"
+      end      
     end
 
     it "handle one-line resource creation" do
@@ -295,6 +303,11 @@ describe ActiveService::Model::ORM do
       @user = User.new(:name => "Tobias Fünke")
       expect(@user.save!).to be_truthy
       expect(@user.name).to eq "Tobias Fünke"
+    end    
+
+    it "handles resource creation with different source attributes" do
+      @comment = Comment.create(:body => "foo")
+      expect(@comment.body).to eq "foo"
     end    
 
     it "returns false when #save gets errors" do
@@ -318,15 +331,23 @@ describe ActiveService::Model::ORM do
     before do
       api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
         builder.use ActiveService::Middleware::ParseJSON
+        builder.use Faraday::Request::UrlEncoded
         builder.adapter :test do |stub|
           stub.get("/users/1") { |env| ok! :id => 1, :name => "Tobias Fünke" }
-          stub.put("/users/1") { |env| ok! :id => 1, :name => "Lindsay Fünke" }
+          stub.put("/users/1") { ok! :id => 1, :name => "Lindsay Fünke" }
+          stub.get("/comments/1") { |env| ok! :id => 1, :CommentBody => "Hodor Hodor. Hodor." }
+          stub.put("/comments/1") { |env| [200, {}, { :id => 1, :CommentBody => Faraday::Utils.parse_query(env[:body])['CommentBody'] }.to_json] }
         end
       end
 
       spawn_model "User" do
         uses_api api
         attribute :name
+      end
+
+      spawn_model "Comment" do
+        uses_api api
+        attribute :body, :source => "CommentBody"
       end
     end
 
@@ -349,6 +370,13 @@ describe ActiveService::Model::ORM do
       @user.name = "Lindsay Fünke"
       @user.save
       expect(@user.name).to eq "Lindsay Fünke"
+    end
+
+    it "handles resource update with different source attributes" do
+      @comment = Comment.find(1)
+      @comment.body = "foo"
+      @comment.save
+      expect(@comment.body).to eq "foo"
     end
   end  
 

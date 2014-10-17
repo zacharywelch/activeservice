@@ -56,8 +56,13 @@ describe ActiveService::Model::Attributes::AttributeMap do
       expect(User.attribute_map.map(hash)).to eq({ id: 1, name: "foo" })
     end
 
-    it "maps attributes to source names with :to => source option" do
+    it "maps attributes to source names" do
       hash = { :id => 1, :name => "foo" }
+      expect(User.attribute_map.map(hash, :to => :source)).to eq({ "id" => 1, "UserName" => "foo" })
+    end    
+
+    it "maps attributes with string keys to source names" do
+      hash = { "id" => 1, "name" => "foo" }
       expect(User.attribute_map.map(hash, :to => :source)).to eq({ "id" => 1, "UserName" => "foo" })
     end    
   end
