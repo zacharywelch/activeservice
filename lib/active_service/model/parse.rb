@@ -38,13 +38,13 @@ module ActiveService
           filtered_attributes.merge!(embeded_params(attributes))          
           if include_root_in_json?
             if json_api_format?
-              { included_root_element => [filtered_attributes] }.symbolize_keys
+              { included_root_element => [filtered_attributes] }
             else
-              { included_root_element => filtered_attributes }.symbolize_keys
+              { included_root_element => filtered_attributes }
             end
           else
-            filtered_attributes.symbolize_keys
-          end
+            filtered_attributes
+          end.symbolize_keys
         end
 
 
