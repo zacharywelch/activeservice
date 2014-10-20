@@ -296,21 +296,21 @@ class User < ActiveService::Base
   has_many :comments
 end
 
-class Comment < ActiveService::Base
+class Timesheet < ActiveService::Base
   attribute :content
   attribute :user_id
+  attribute :submitted?
   attribute :approved?
-  attribute :created_at
   belongs_to :user
+  scope :submitted, -> { where(submitted: true) }
   scope :approved, -> { where(approved: true) }
-  scope :recent, -> { order(created_at: :desc) }
 end
 
 user = User.find(1)
 # => GET /users/1
 
-comments = user.comments.approved.recent
-# => GET /users/1/comments?approved=true&sort=created_at_desc
+timesheets = user.timesheets.submitted.approved
+# => GET /users/1/timesheets?submitted=true&approved=true
 ``` 
 
 ## Overriding Conventions
