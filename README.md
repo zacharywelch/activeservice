@@ -288,6 +288,31 @@ active_admins = User.active.admins
 # => GET /users?active=true&admin=true
 ```
 
+Scopes are also supported on associations.
+
+```ruby
+class User < ActiveService::Base
+  attribute :name
+  has_many :comments
+end
+
+class Comment < ActiveService::Base
+  attribute :content
+  attribute :user_id
+  attribute :approved?
+  attribute :created_at
+  belongs_to :user
+  scope :approved, -> { where(approved: true) }
+  scope :recent, -> { order(created_at: :desc) }
+end
+
+user = User.find(1)
+# => GET /users/1
+
+comments = user.comments.approved.recent
+# => GET /users/1/comments?approved=true&sort=created_at_desc
+``` 
+
 ## Overriding Conventions
 
 Often web services refuse to play nicely and you need to override common behaviors in Active Service. No problem, we've got you covered.
