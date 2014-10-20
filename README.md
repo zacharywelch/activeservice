@@ -317,7 +317,7 @@ Often web services refuse to play nicely and you need to override common behavio
 
 ### Mapping JSON attributes to different names
 
-If the API sends JSON attributes and you prefer to use different names in your model, you can specify the `source` name as an option and Active Service will map it to the attribute.
+If you want to transform JSON attributes from the API into different names on your model, specify a `source` option and Active Service will map it to the correct attribute.
 
 ```ruby
 class User < ActiveService::Base
