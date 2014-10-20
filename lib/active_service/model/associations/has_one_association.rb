@@ -48,7 +48,7 @@ module ActiveService
         #   new_role = user.role.build(:title => "moderator")
         #   new_role # => #<Role user_id=1 title="moderator">
         def build(attributes = {})
-          @klass.build(attributes.merge(:"#{@owner.singularized_resource_name}_id" => @owner.id))
+          @klass.build(attributes.merge(foreign_key_association))
         end
 
         # Create a new object, save it and associate it to the parent
@@ -70,10 +70,20 @@ module ActiveService
           resource
         end
 
+        def scoped
+          klass.where(foreign_key_association)
+        end
+
         # @private
         def assign_nested_attributes(attributes)
           assign_single_nested_attributes(attributes)
         end
+
+        private
+
+        def foreign_key_association
+          { :"#{@owner.singularized_resource_name}_id" => @owner.id }
+        end        
       end
     end
   end

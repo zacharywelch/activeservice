@@ -71,6 +71,10 @@ module ActiveService
           resource
         end
 
+        def scoped 
+          klass
+        end
+
         # @private
         def fetch
           foreign_key_value = @owner.attributes[@opts[:foreign_key].to_sym]

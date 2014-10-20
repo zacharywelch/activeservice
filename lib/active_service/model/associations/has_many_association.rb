@@ -64,7 +64,7 @@ module ActiveService
         # TODO: This only merges the id of the parents, handle the case
         #       where this is more deeply nested
         def build(attributes = {})
-          @klass.build(attributes.merge(:"#{@owner.singularized_resource_name}_id" => @owner.id))
+          @klass.build(attributes.merge(foreign_key_association))
         end
 
         # Create a new object, save it and add it to the associated collection
@@ -86,6 +86,10 @@ module ActiveService
           resource
         end
 
+        def scoped
+          klass.where(foreign_key_association)
+        end
+
         # @private
         def fetch
           super.tap do |o|
@@ -98,6 +102,12 @@ module ActiveService
         def assign_nested_attributes(attributes)
           data = attributes.is_a?(Hash) ? attributes.values : attributes
           @owner.attributes[@name] = @klass.instantiate_collection(@klass, data)
+        end
+
+        private
+
+        def foreign_key_association
+          { :"#{@owner.singularized_resource_name}_id" => @owner.id }
         end
       end
     end

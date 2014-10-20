@@ -94,7 +94,9 @@ describe ActiveService::Model::Associations do
           stub.get("/users/2/comments/5") { |env| [200, {}, { :comment => { :id => 5, :body => "Is this the tiny town from Footloose?" } }.to_json] }
           stub.get("/users/2/role") { |env| [200, {}, { :id => 2, :body => "User" }.to_json] }
           stub.get("/users/1/role") { |env| [200, {}, { :id => 3, :body => "User" }.to_json] }
-          stub.get("/users/1/posts") { |env| [200, {}, [{:id => 1, :body => 'blogging stuff', :admin_id => 1 }].to_json] }
+          stub.get("/users/1/posts") { |env| [200, {}, [{:id => 1, :body => 'blogging stuff', :admin_id => 1, :approved => true }, {:id => 2, :body => 'personal stuff', :admin_id => 1, :approved => false }].to_json] }
+          stub.get("/users/2/timesheets?status=approved&hours=40") { |env| [200, {}, [{ :id => 2, :status => 'approved', :hours => 40, :user_id => 2 }].to_json] }
+          stub.get("/users/2/timesheets?status=approved") { |env| [200, {}, [{ :id => 1, :status => 'approved', :hours => 20, :user_id => 2 }, { :id => 2, :status => 'approved', :hours => 40, :user_id => 2 }].to_json] }
           stub.get("/organizations/1") { |env| [200, {}, { :organization =>  { :id => 1, :name => "Bluth Company Foo" } }.to_json] }
           stub.post("/users") { |env| [200, {}, { :id => 5, :name => "Mr. Krabs", :comments => [{ :comment => { :id => 99, :body => "Rodríguez, nasibisibusi?", :user_id => 5 } }], :role => { :id => 1, :body => "Admin" }, :organization => { :id => 3, :name => "Krusty Krab" }, :organization_id => 3 }.to_json] }
           stub.put("/users/5") { |env| [200, {}, { :id => 5, :name => "Clancy Brown", :comments => [{ :comment => { :id => 99, :body => "Rodríguez, nasibisibusi?", :user_id => 5 } }], :role => { :id => 1, :body => "Admin" }, :organization => { :id => 3, :name => "Krusty Krab" }, :organization_id => 3 }.to_json] }
@@ -118,6 +120,7 @@ describe ActiveService::Model::Associations do
         has_one :role
         belongs_to :organization
         has_many :posts, :inverse_of => :admin
+        has_many :timesheets
       end
       spawn_model "Comment" do
         uses_api api
@@ -142,6 +145,17 @@ describe ActiveService::Model::Associations do
       spawn_model "Role" do
         uses_api api
         attribute :body
+      end
+
+      spawn_model "Timesheet" do
+        uses_api api
+        collection_path "users/:user_id/timesheets"
+        attribute :status
+        attribute :hours
+        attribute :user_id
+        belongs_to :user
+        scope :approved, -> { where(status: 'approved') }
+        scope :full_time, -> { where(hours: 40) }
       end
 
       @user_with_included_data = User.find(1)
@@ -275,6 +289,18 @@ describe ActiveService::Model::Associations do
     it "fetches ids for has_many association" do
       expect(@user_without_included_data.comments.collect(&:id)).to eq @user_without_included_data.comment_ids
     end
+
+    it "supports scopes on associations" do
+      timesheets = @user_without_included_data.timesheets.approved
+      expect(timesheets.count).to be 2
+      expect(timesheets.first.id).to be 1
+    end    
+
+    it "supports multiple scopes on associations" do
+      timesheets = @user_without_included_data.timesheets.approved.full_time
+      expect(timesheets.count).to be 1
+      expect(timesheets.first.hours).to be 40
+    end    
 
     [:create, :save_existing, :destroy].each do |type|
       context "after #{type}" do
