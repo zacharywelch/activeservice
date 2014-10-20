@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["zwelchcb"]
-  s.date = "2014-10-17"
+  s.date = "2014-10-20"
   s.description = "ActiveService is an ORM that maps REST resources to Ruby objects using an ActiveRecord-like interface."
   s.email = "Zachary.Welch@careerbuilder.com"
   s.extra_rdoc_files = [
@@ -24,7 +24,6 @@ Gem::Specification.new do |s|
     "LICENSE.txt",
     "README.md",
     "Rakefile",
-    "UserName",
     "VERSION",
     "active_service.gemspec",
     "lib/active_service.rb",
