@@ -51,7 +51,7 @@ module ActiveService
       #   # Called via POST "/users"
       def save
         run_callbacks :save do
-          new? ? create : update
+          new? ? save_record(:create) : save_record(:update)
         end
       end
 
@@ -92,31 +92,18 @@ module ActiveService
 
       protected
 
-      # Creates a record with values matching those of the instance attributes. 
-      # Returns the object if the create was successful, otherwise it 
-      # returns nil. An HTTP +POST+ request is sent to the service backend and 
+      # Saves record with values matching those of the instance attributes. 
+      # Returns the object if save was successful, otherwise it 
+      # returns nil. An HTTP +POST+ or +PUT+ request is sent to the service backend and 
       # the JSON result is used to set the model attributes.
-      def create
-        run_callbacks :create do
-          method = self.class.method_for(:create)
+      def save_record(callback)
+        run_callbacks callback do
+          method = self.class.method_for(callback)
           self.class.request(to_params.merge(:_method => method, :_path => request_path)) do |response|
             load_attributes_from_response(response)
           end
-        end
+        end        
       end
-
-      # Updates the associated record with values matching those of the instance 
-      # attributes. Returns true if the update was successful, otherwise false.
-      # An HTTP +PUT+ request is sent to the service backend and the JSON result 
-      # is used to set the model attributes.
-      def update
-        run_callbacks :update do
-          method = self.class.method_for(:update)
-          self.class.request(to_params.merge(:_method => method, :_path => request_path)) do |response|
-            load_attributes_from_response(response)
-          end
-        end
-      end      
 
       # Parses the HTTP response and uses the JSON body to set the model 
       # attributes if it was successful. If a request was malformed (400) or 
