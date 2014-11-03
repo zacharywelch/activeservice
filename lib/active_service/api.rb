@@ -105,6 +105,7 @@ module ActiveService
           request.body = opts
         end
       end
+      handle_response(response)
     end
 
     private
@@ -112,5 +113,28 @@ module ActiveService
     def self.default_api(opts={})
       defined?(@default_api) ? @default_api : nil
     end
+
+    # @private
+    # Parse response and error codes    
+    def handle_response(response)
+      case response.status
+        when 200, 201
+          response
+        when 400
+          raise ActiveService::Errors::BadRequest.new(response)
+        when 401
+          raise ActiveService::Errors::UnauthorizedAccess.new(response)
+        when 404
+          raise ActiveService::Errors::ResourceNotFound.new(response)
+        when 422
+          raise ActiveService::Errors::ResourceInvalid.new(response)
+        when 401..499
+          raise ActiveService::Errors::ClientError.new(response.code)
+        when 500..599
+          raise ActiveService::Errors::ServerError.new(response.code)
+        else
+          raise response.body
+      end
+    end    
   end
 end

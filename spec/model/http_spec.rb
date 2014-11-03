@@ -78,6 +78,7 @@ describe ActiveService::Model::HTTP do
           stub.get("/users") { |env| ok! [{ :id => 1 }] }
           stub.get("/users/1") { |env| [200, {}, { :id => 1 }.to_json] }
           stub.post("/users") { |env| ok! :id => 1 }
+          stub.post("/posts") { |env| ok! :id => 1 }
           stub.get("/users/popular") do |env|
             if env[:params]["page"] == "2"
               ok! [{ :id => 3 }, { :id => 4 }]
@@ -85,12 +86,18 @@ describe ActiveService::Model::HTTP do
               ok! [{ :id => 1 }, { :id => 2 }]
             end
           end          
+          stub.post("/comments") { |env| error! body: ["can't be blank"] }                    
         end
       end
 
       spawn_model "User" do
         use_api api
       end
+
+      spawn_model "Comment" do
+        use_api api
+        attribute :body
+      end      
     end
 
     describe :get do
@@ -158,6 +165,10 @@ describe ActiveService::Model::HTTP do
       context "with a return value" do
         subject { User.post_raw("/users", { id: 1 }) }
         specify { expect(subject.body).to eq({ :id => 1 }) }
+      end
+
+      it "handles errors" do
+        expect { Comment.post_raw("/comments") }.to raise_error ActiveService::Errors::BadRequest
       end
     end    
   end

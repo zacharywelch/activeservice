@@ -61,28 +61,6 @@ module ActiveService
           end
         end
 
-        # Parse response and error codes
-        def handle_response(response)
-          case response.status
-            when 200, 201
-              response
-            when 400
-              raise ActiveService::Errors::BadRequest
-            when 401
-              raise ActiveService::Errors::UnauthorizedAccess
-            when 404
-              raise ActiveService::Errors::ResourceNotFound
-            when 422
-              raise ActiveService::Errors::ResourceInvalid
-            when 401..499
-              raise ActiveService::Errors::ClientError.new(response.code)
-            when 500..599
-              raise ActiveService::Errors::ServerError.new(response.code)
-            else
-              raise response.body
-          end
-        end        
-
         METHODS.each do |method|
           class_eval <<-RUBY, __FILE__, __LINE__ + 1
             def #{method}(path, params={})

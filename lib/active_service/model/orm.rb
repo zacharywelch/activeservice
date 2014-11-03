@@ -51,20 +51,17 @@ module ActiveService
       #   # Called via POST "/users"
       def save
         run_callbacks :save do
-          callback = new? ? :create : :update
-          run_callbacks callback do
-            method = self.class.method_for(callback)
-            self.class.request(to_params.merge(:_method => method, :_path => request_path)) do |response|
-              load_attributes_from_response(response)
-            end
-          end
+          new? ? create : update
         end
+      rescue ActiveService::Errors::BadRequest, ActiveService::Errors::ResourceInvalid => e
+        assign_errors e.response.body
+        nil  
       end
 
       # Similar to save(), except that ResourceInvalid is raised if the save fails
       def save!
         if !self.save
-          raise ActiveService::Errors::ResourceInvalid
+          raise ActiveService::Errors::ResourceInvalid.new(self)
         end 
         self
       end
@@ -98,6 +95,32 @@ module ActiveService
 
       protected
 
+      # Creates a record with values matching those of the instance attributes. 
+      # Returns the object if the create was successful, otherwise it 
+      # returns nil. An HTTP +POST+ request is sent to the service backend and 
+      # the JSON result is used to set the model attributes.
+      def create
+        run_callbacks :create do
+          method = self.class.method_for(:create)
+          self.class.request(to_params.merge(:_method => method, :_path => request_path)) do |response|
+            load_attributes_from_response(response)
+          end
+        end
+      end
+
+      # Updates the associated record with values matching those of the instance 
+      # attributes. Returns true if the update was successful, otherwise false.
+      # An HTTP +PUT+ request is sent to the service backend and the JSON result 
+      # is used to set the model attributes.
+      def update
+        run_callbacks :update do
+          method = self.class.method_for(:update)
+          self.class.request(to_params.merge(:_method => method, :_path => request_path)) do |response|
+            load_attributes_from_response(response)
+          end
+        end
+      end      
+
       # Parses the HTTP response and uses the JSON body to set the model 
       # attributes if it was successful. If a request was malformed (400) or 
       # not found (404), the errors are parsed from the response body and used 
@@ -105,12 +128,8 @@ module ActiveService
       # an exception with the response body as its message
       def load_attributes_from_response(response)
         data = response.body
-        self.class.handle_response(response)
         assign_attributes(self.class.parse(data)) unless data.empty?
         self
-      rescue ActiveService::Errors::BadRequest, ActiveService::Errors::ResourceInvalid
-        assign_errors data
-        nil  
       end
 
       # Assign resource errors to ActiveModel errors array 

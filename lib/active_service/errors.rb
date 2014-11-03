@@ -14,11 +14,14 @@ module ActiveService
 
     # Base class for response errors
     class ResponseError < StandardError
-      attr_reader :code
+      attr_reader :response
       
-      def initialize(code, message = nil)
-        super message
-        @code = code
+      def initialize(response)
+        @response = response
+      end
+
+      def to_s
+        response.body
       end
     end
 
@@ -26,45 +29,21 @@ module ActiveService
     class ClientError < ResponseError; end
 
     # 400 Bad Request
-    class BadRequest < ClientError
-      def initialize
-        super 400
-      end
-    end
+    class BadRequest < ClientError; end
 
     # 401 Unauthorized
-    class UnauthorizedAccess < ClientError
-      def initialize
-        super 401
-      end
-    end
+    class UnauthorizedAccess < ClientError; end
 
     # 404 Not Found
-    class ResourceNotFound < ClientError
-      def initialize
-        super 404
-      end
-    end
+    class ResourceNotFound < ClientError; end
 
     # 408 Timeout Error
-    class TimeoutError < ResponseError
-      def initialize
-        super 408
-      end
-    end
+    class TimeoutError < ResponseError; end
 
     # 422 Resource Invalid
-    class ResourceInvalid < ClientError
-      def initialize
-        super 422
-      end
-    end
+    class ResourceInvalid < ClientError; end
 
     # 5xx Server Error
-    class ServerError < ResponseError
-      def initialize
-        super 500
-      end
-    end    
+    class ServerError < ResponseError; end
   end
 end
