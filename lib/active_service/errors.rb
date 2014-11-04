@@ -16,7 +16,8 @@ module ActiveService
     class ResponseError < StandardError
       attr_reader :response
       
-      delegate :code, :body, :to => :response      
+      delegate :status, :body, :to => :response      
+      alias :code :status
       
       def initialize(response)
         @response = response
