@@ -129,9 +129,9 @@ module ActiveService
         when 422
           raise ActiveService::Errors::ResourceInvalid.new(response)
         when 401..499
-          raise ActiveService::Errors::ClientError.new(response.code)
+          raise ActiveService::Errors::ClientError.new(response)
         when 500..599
-          raise ActiveService::Errors::ServerError.new(response.code)
+          raise ActiveService::Errors::ServerError.new(response)
         else
           raise response.body
       end

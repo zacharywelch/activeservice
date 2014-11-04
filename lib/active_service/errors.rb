@@ -16,12 +16,14 @@ module ActiveService
     class ResponseError < StandardError
       attr_reader :response
       
+      delegate :code, :body, :to => :response      
+      
       def initialize(response)
         @response = response
       end
 
       def to_s
-        response.body
+        body
       end
     end
 
