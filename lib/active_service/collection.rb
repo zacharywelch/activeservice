@@ -56,6 +56,8 @@ module ActiveService
     # and should set @elements.
     def initialize(elements = [])
       @elements = elements
+      message = "Collection elements should be an Array."
+      raise ActiveService::Errors::ParserError, message unless @elements.is_a? Array
     end
     
     def to_a
