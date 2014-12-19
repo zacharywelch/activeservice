@@ -355,7 +355,7 @@ describe ActiveService::Model::Parse do
     pending
   end
 
-  context "when a custom collection parser is set" do
+  context "when a custom collection exists" do
     before do
       class CustomCollection < ActiveService::Collection
         attr_reader :total_count
@@ -369,6 +369,7 @@ describe ActiveService::Model::Parse do
         builder.use ActiveService::Middleware::ParseJSON
         builder.adapter :test do |stub|
           stub.get("/users") { |env| [200, {}, { :collection => [{ :id => 1, :name => "Tobias Fünke" }], :total_count => 100 }.to_json] }
+          stub.get("/super_users") { |env| [200, {}, { :collection => [{ :id => 1, :name => "Tobias Fünke" }], :total_count => 100 }.to_json] }
         end
       end
       
@@ -377,19 +378,35 @@ describe ActiveService::Model::Parse do
         collection_parser CustomCollection
         attribute :name
       end
+
+      spawn_model "SuperUser" do
+	uses_api api
+        attribute :name
+      end
+    end
+  
+    context "when the custom collection is set" do
+      it "handles parsing the collection" do
+        @users = User.all
+        expect(@users).to be_kind_of(CustomCollection)
+        expect(@users.length).to be 1
+        expect(@users.first.name).to eq "Tobias Fünke"
+      end
+
+      it "handles other methods on custom collection" do
+        @users = User.all
+        expect(@users.respond_to?(:total_count)).to be_truthy
+        expect(@users.total_count).to be 100
+      end
     end
 
-    it "handles parsing the collection" do
-      @users = User.all
-      expect(@users).to be_kind_of(CustomCollection)
-      expect(@users.length).to be 1
-      expect(@users.first.name).to eq "Tobias Fünke"
-    end
-
-    it "handles other methods on custom collection" do
-      @users = User.all
-      expect(@users.respond_to?(:total_count)).to be_truthy
-      expect(@users.total_count).to be 100
+    context "when custom collection is not set" do
+      it "raises a ParserError" do
+	@super_users = SuperUser.all
+        expect {@super_users.first}.to raise_error(
+	  ActiveService::Errors::ParserError
+        )
+      end
     end
   end  
 end
