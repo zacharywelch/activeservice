@@ -1,6 +1,6 @@
 # encoding: utf-8
 require File.join(File.dirname(__FILE__), "../spec_helper.rb")
-
+require 'pry'
 describe ActiveService::Model::Associations do
   context "setting associations without details" do
     before { spawn_model "User" }
@@ -161,7 +161,7 @@ describe ActiveService::Model::Associations do
       @user_with_included_data = User.find(1)
       @user_without_included_data = User.find(2)
     end
-
+    
     let(:user_with_included_data_after_create) { User.create }
     let(:user_with_included_data_after_save_existing) { User.save_existing(5, :name => "Clancy Brown") }
     let(:user_with_included_data_after_destroy) { User.new(:id => 5).destroy }
@@ -172,6 +172,12 @@ describe ActiveService::Model::Associations do
       expect(@user_with_included_data.comments.length).to be 2
       expect(@user_with_included_data.comments.first.id).to be 2
       expect(@user_with_included_data.comments.first.body).to eq "Tobias, you blow hard!"
+    end
+
+    it "does not refetch ordered, associated objects from a preset variable" do
+      ordered_comments = @user_with_included_data.comments.order(Hash['date', 'desc'])
+      expect(Comment).to receive(:request).never
+      expect(ordered_comments).to be_a(ActiveService::Collection)
     end
 
     xit "does not refetch the parents models data if they have been fetched before" do
