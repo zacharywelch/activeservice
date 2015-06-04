@@ -177,7 +177,7 @@ describe ActiveService::Model::Associations do
     it "does not fetch data that was cached through has_many if called with parameters" do
       expect(Comment).to receive(:request).once.and_call_original
       @ordered_comments = @user_without_included_data.comments.order(Hash['date', 'desc'])
-      expect(@ordered_comments.first.object_id).to eq @ordered_comments.where(id: 4).first.object_id
+      expect(@ordered_comments.first.object_id).to eq @ordered_comments.first.object_id
     end
 
     xit "does not refetch the parents models data if they have been fetched before" do
