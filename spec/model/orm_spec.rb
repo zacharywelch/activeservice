@@ -21,7 +21,7 @@ describe ActiveService::Model::ORM do
       spawn_model "AdminUser" do
         uses_api api
         primary_key :admin_id
-      end      
+      end
     end
 
     it "maps a single resource to a Ruby object" do
@@ -60,61 +60,69 @@ describe ActiveService::Model::ORM do
         builder.use Faraday::Request::UrlEncoded
         builder.use ActiveService::Middleware::ParseJSON
         builder.adapter :test do |stub|
-          stub.get("/users/1") { |env| ok! :id => 1, :email => "tfunke@example.com" }
-          stub.put("/users/1") { |env| error! :email => ["is invalid"] }
-          stub.post("/users") { |env| error! :email => ["is invalid"] }
+          stub.get('/users/1') { |env| ok! :id => 1, :email => 'tfunke@example.com', :ContactName => 'John Doe' }
+          stub.put('/users/1') { |env| error! :email => ['is invalid'], :ContactName => ['name not allowed'] }
+          stub.post('/users') { |env| error! :email => ['is invalid'], :ContactName => ['name not allowed'] }
         end
       end
 
       spawn_model :User do
         uses_api api
         attribute :email
+        attribute :contact_name, source: 'ContactName'
       end
     end
 
     it "handle errors through #create" do
-      @user = User.create(:email => "invalid@email")
-      expect(@user.errors.count).to be 1
+      @user = User.create(:email => 'invalid@email', :contact_name => 'John Doe')
+      expect(@user.errors.count).to be 2
+      expect(@user.errors[:contact_name]).to eq ['name not allowed']
     end
 
     it "keeps values when errors are returned through #create" do
-      @user = User.create(:email => "invalid@email")
-      expect(@user.email).to eq "invalid@email"
+      @user = User.create(:email => 'invalid@email', :contact_name => 'John Doe')
+      expect(@user.email).to eq 'invalid@email'
+      expect(@user.contact_name).to eq 'John Doe'
     end
 
     it "handle errors through #save on an existing resource" do
       @user = User.find(1)
-      @user.email = "invalid@email"
+      @user.email = 'invalid@email'
+      @user.contact_name = 'John Doe'
       @user.save
-      expect(@user.errors.count).to be 1
+      expect(@user.errors.count).to be 2
+      expect(@user.errors[:contact_name]).to eq ['name not allowed']
     end
 
     it "handles new errors through #save on an existing resource" do
       @user = User.find(1)
-      @user.email = "invalid@email"
+      @user.email = 'invalid@email'
+      @user.contact_name = 'John Doe'
       @user.save
-      expect(@user.errors.count).to be 1
-      @user.save
-      expect(@user.errors.count).to be 1
-    end    
+      expect(@user.errors.count).to be 2
+      expect(@user.errors[:contact_name]).to eq ['name not allowed']
+    end
 
     it "handle errors through #update_attributes" do
       @user = User.find(1)
-      @user.update_attributes(:email => "invalid@email")
-      expect(@user.errors.count).to be 1
-    end    
+      @user.update_attributes(:email => 'invalid@email', :contact_name => 'John Doe')
+      expect(@user.errors.count).to be 2
+      expect(@user.errors[:contact_name]).to eq ['name not allowed']
+    end
 
     it "handle errors through Model.new + #save" do
-      @user = User.new(:email => "invalid@email")
+      @user = User.new(:email => 'invalid@email', :contact_name => 'John Doe')
       @user.save
-      expect(@user.errors.count).to be 1
+      expect(@user.errors.count).to be 2
+      expect(@user.errors[:contact_name]).to eq ['name not allowed']
     end
 
     xit "handle errors through Model.new + #save!" do
-      @user = User.new(:email => "invalid@email")
+      @user = User.new(:email => 'invalid@email', :contact_name => 'John Doe')
       @user.save!
       expect { @user.save! }.to raise_error ActiveService::Errors::ResourceInvalid
-      expect(@user.errors.count).to be 1
+      expect(@user.errors.count).to be 2
+      expect(@user.errors[:contact_name]).to eq ['name not allowed']
     end
   end
 
@@ -142,7 +150,7 @@ describe ActiveService::Model::ORM do
 
     it "handles finding by a single id" do
       @user = User.find(1)
-      expect(@user.id).to be 1      
+      expect(@user.id).to be 1
     end
 
     it "handles finding by multiple ids" do
@@ -150,7 +158,7 @@ describe ActiveService::Model::ORM do
       expect(@users).to be_kind_of(Array)
       expect(@users.length).to be 2
       expect(@users[0].id).to be 1
-      expect(@users[1].id).to be 2      
+      expect(@users[1].id).to be 2
     end
 
     it "handles finding by an array of ids" do
@@ -158,14 +166,14 @@ describe ActiveService::Model::ORM do
       expect(@users).to be_kind_of(Array)
       expect(@users.length).to be 2
       expect(@users[0].id).to be 1
-      expect(@users[1].id).to be 2      
+      expect(@users[1].id).to be 2
     end
 
     it "handles finding by an array of ids of length 1" do
       @users = User.find([1])
       expect(@users).to be_kind_of(Array)
       expect(@users.length).to be 1
-      expect(@users[0].id).to be 1      
+      expect(@users[0].id).to be 1
     end
 
     it "handles finding by an array id param of length 2" do
@@ -181,7 +189,7 @@ describe ActiveService::Model::ORM do
       expect(@users).to be_kind_of(ActiveService::Collection)
       expect(@users.length).to be 2
       expect(@users[0].id).to be 1
-      expect(@users[1].id).to be 2      
+      expect(@users[1].id).to be 2
     end
 
     it "handles finding with other parameters" do
@@ -245,7 +253,7 @@ describe ActiveService::Model::ORM do
           attribute :name
           attribute :email
           request_new_object_on_build true
-        end 
+        end
       end
 
       it "requests a new resource" do
@@ -255,7 +263,7 @@ describe ActiveService::Model::ORM do
         expect(@new_user.name).to eq "Tobias Fünke"
         expect(@new_user.email).to eq "tobias@bluthcompany.com"
       end
-    end    
+    end
   end
 
   context "creating resources" do
@@ -275,7 +283,7 @@ describe ActiveService::Model::ORM do
         attribute :name
         use_api api
       end
-      
+
       spawn_model "Company" do
         use_api api
         attribute :name
@@ -285,7 +293,7 @@ describe ActiveService::Model::ORM do
       spawn_model "Comment" do
         uses_api api
         attribute :body, :source => "CommentBody"
-      end      
+      end
     end
 
     it "handle one-line resource creation" do
@@ -304,17 +312,17 @@ describe ActiveService::Model::ORM do
       @user = User.new(:name => "Tobias Fünke")
       expect(@user.save!).to be_truthy
       expect(@user.name).to eq "Tobias Fünke"
-    end    
+    end
 
     it "handles resource creation with different source attributes" do
       @comment = Comment.create(:body => "foo")
       expect(@comment.body).to eq "foo"
-    end    
+    end
 
     it "returns false when #save gets errors" do
       @company = Company.new
       expect(@company.save).to be_falsey
-    end    
+    end
 
     it "raises ResourceInvalid when #save! gets errors" do
       @company = Company.new
@@ -325,7 +333,7 @@ describe ActiveService::Model::ORM do
       @company = Company.new(:name => "Company Inc.")
       expect(@company.save).to be_falsey
       expect(@company.name).to eq "Company Inc."
-    end    
+    end
   end
 
   context "updating resources" do
@@ -379,7 +387,7 @@ describe ActiveService::Model::ORM do
       @comment.save
       expect(@comment.body).to eq "foo"
     end
-  end  
+  end
 
   context "deleting resources" do
     before do
@@ -402,7 +410,7 @@ describe ActiveService::Model::ORM do
       @user = User.destroy(1)
       expect(@user.active).to be_falsey
       expect(@user).to be_destroyed
-    end    
+    end
 
     it "handle resource deletion through #destroy on an existing resource" do
       @user = User.find(1)
@@ -410,7 +418,7 @@ describe ActiveService::Model::ORM do
       expect(@user.active).to be_falsey
       expect(@user).to be_destroyed
     end
-  end  
+  end
 
   context "customizing HTTP methods" do
     context "create" do
@@ -420,7 +428,7 @@ describe ActiveService::Model::ORM do
           builder.use ActiveService::Middleware::ParseJSON
           builder.adapter :test do |stub|
             stub.put("/users") { |env| [200, {}, { :id => 1, :name => "Tobias Fünke" }.to_json] }
-          end        
+          end
         end
 
         spawn_model "Foo::User" do
@@ -462,9 +470,9 @@ describe ActiveService::Model::ORM do
           builder.adapter :test do |stub|
             stub.get("/users/1") { |env| [200, {}, { :id => 1, :name => "Lindsay Fünke" }.to_json] }
             stub.post("/users/1") { |env| [200, {}, { :id => 1, :name => "Tobias Fünke" }.to_json] }
-          end        
+          end
         end
-        
+
         spawn_model "User" do
           uses_api api
           attribute :name
@@ -483,5 +491,5 @@ describe ActiveService::Model::ORM do
         expect(user.name).to eq "Tobias Fünke"
       end
     end
-  end  
+  end
 end
