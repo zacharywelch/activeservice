@@ -60,69 +60,71 @@ describe ActiveService::Model::ORM do
         builder.use Faraday::Request::UrlEncoded
         builder.use ActiveService::Middleware::ParseJSON
         builder.adapter :test do |stub|
-          stub.get('/users/1') { |env| ok! :id => 1, :email => 'tfunke@example.com', :ContactName => 'John Doe' }
-          stub.put('/users/1') { |env| error! :email => ['is invalid'], :ContactName => ['name not allowed'] }
-          stub.post('/users') { |env| error! :email => ['is invalid'], :ContactName => ['name not allowed'] }
+          stub.get('/users/1') { |env| ok! :id => 1, :email => 'tfunke@example.com' }
+          stub.put('/users/1') { |env| error! :email => ['is invalid'] }
+          stub.post('/users') { |env| error! :email => ['is invalid'] }
+          stub.get('/admin_users/1') { |env| ok! :id => 1, :UserEmail => 'tfunke@example.com' }
+          stub.post('/admin_users') { |env| error! :UserEmail => ['is invalid'] }
         end
       end
 
       spawn_model :User do
         uses_api api
         attribute :email
-        attribute :contact_name, source: 'ContactName'
+      end
+
+      spawn_model :AdminUser do
+        uses_api api
+        attribute :email, source: "UserEmail"
       end
     end
 
     it "handle errors through #create" do
-      @user = User.create(:email => 'invalid@email', :contact_name => 'John Doe')
-      expect(@user.errors.count).to be 2
-      expect(@user.errors[:contact_name]).to eq ['name not allowed']
+      @user = User.create(:email => 'invalid@email')
+      expect(@user.errors.count).to be 1
     end
 
     it "keeps values when errors are returned through #create" do
-      @user = User.create(:email => 'invalid@email', :contact_name => 'John Doe')
+      @user = User.create(:email => 'invalid@email')
       expect(@user.email).to eq 'invalid@email'
-      expect(@user.contact_name).to eq 'John Doe'
     end
 
     it "handle errors through #save on an existing resource" do
       @user = User.find(1)
       @user.email = 'invalid@email'
-      @user.contact_name = 'John Doe'
       @user.save
-      expect(@user.errors.count).to be 2
-      expect(@user.errors[:contact_name]).to eq ['name not allowed']
+      expect(@user.errors.count).to be 1
     end
 
     it "handles new errors through #save on an existing resource" do
       @user = User.find(1)
       @user.email = 'invalid@email'
-      @user.contact_name = 'John Doe'
       @user.save
-      expect(@user.errors.count).to be 2
-      expect(@user.errors[:contact_name]).to eq ['name not allowed']
+      expect(@user.errors.count).to be 1
     end
 
     it "handle errors through #update_attributes" do
       @user = User.find(1)
-      @user.update_attributes(:email => 'invalid@email', :contact_name => 'John Doe')
-      expect(@user.errors.count).to be 2
-      expect(@user.errors[:contact_name]).to eq ['name not allowed']
+      @user.update_attributes(:email => 'invalid@email')
+      expect(@user.errors.count).to be 1
     end
 
     it "handle errors through Model.new + #save" do
-      @user = User.new(:email => 'invalid@email', :contact_name => 'John Doe')
+      @user = User.new(:email => 'invalid@email')
       @user.save
-      expect(@user.errors.count).to be 2
-      expect(@user.errors[:contact_name]).to eq ['name not allowed']
+      expect(@user.errors.count).to be 1
     end
 
     xit "handle errors through Model.new + #save!" do
-      @user = User.new(:email => 'invalid@email', :contact_name => 'John Doe')
+      @user = User.new(:email => 'invalid@email')
       @user.save!
       expect { @user.save! }.to raise_error ActiveService::Errors::ResourceInvalid
-      expect(@user.errors.count).to be 2
-      expect(@user.errors[:contact_name]).to eq ['name not allowed']
+      expect(@user.errors.count).to be 1
+    end
+
+    it "maps source names to attributes" do
+      @user = AdminUser.create(:email => 'invalid@email')
+      expect(@user.errors.count).to be 1
     end
   end
 
