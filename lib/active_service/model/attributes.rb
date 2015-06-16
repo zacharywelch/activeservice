@@ -14,8 +14,7 @@ module ActiveService
         @destroyed = attributes.delete(:_destroyed) || false
 
         attributes = self.class.default_scope.apply_to(attributes)
-        assign_attributes(attributes)
-        apply_defaults
+        assign_attributes(attributes) && apply_defaults
       end
 
       # Handles missing methods

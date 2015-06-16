@@ -56,12 +56,11 @@ describe ActiveService::Model::Attributes do
       expect(@new_user.get_attribute(:'life-span')).to eq '3 years'
     end
 
-    it "sets applicable attribute to default when not set by new" do
+    it "applies defaults" do
       @new_user = User.new
-      expect(@new_user.admin).to be(false)
+      expect(@new_user.admin).to be_falsey
     end
   end
-
 
   context "assigning new resource data" do
     before do
