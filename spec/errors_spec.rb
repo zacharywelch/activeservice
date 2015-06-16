@@ -13,73 +13,80 @@ describe ActiveService::Errors do
       stub.get("/ServerError") { |env| [567, {}, { :errors => "ServerError" }.to_json] }
     end
   end
+  
   context 'when a BadRequest error is raised' do
     it "should raise a BadRequest error" do
       expect do
         error = api.request(:_method => :get, :_path => "BadRequest")
       end.to raise_error do |error|
-        error.should be_a(ActiveService::Errors::BadRequest)
-        error.body.should include(:errors => "BadRequest")
+        expect(error).to be_a(ActiveService::Errors::BadRequest)
+        expect(error.body).to include(:errors => "BadRequest")
       end
     end
   end
+  
   context 'when a UnauthorizedAccess error is raised' do
     it "should raise a UnauthorizedAccess error" do
       expect do
         error = api.request(:_method => :get, :_path => "UnauthorizedAccess")
       end.to raise_error do |error|
-        error.should be_a(ActiveService::Errors::UnauthorizedAccess)
-        error.body.should include(:errors => "UnauthorizedAccess")
+        expect(error).to be_a(ActiveService::Errors::UnauthorizedAccess)
+        expect(error.body).to include(:errors => "UnauthorizedAccess")
       end
     end
   end
+
   context 'when a ResourceNotFound error is raised' do
     it "should raise a ResourceNotFound error" do
       expect do
         error = api.request(:_method => :get, :_path => "ResourceNotFound")
       end.to raise_error do |error|
-        error.should be_a(ActiveService::Errors::ResourceNotFound)
-        error.body.should include(:errors => "ResourceNotFound")
+        expect(error).to be_a(ActiveService::Errors::ResourceNotFound)
+        expect(error.body).to include(:errors => "ResourceNotFound")
       end
     end
   end
+  
   context 'when a TimeoutError error is raised' do
     it "should raise a TimeoutError error" do
       expect do
         error = api.request(:_method => :get, :_path => "TimeoutError")
       end.to raise_error do |error|
-        error.should be_a(ActiveService::Errors::ClientError)
-        error.body.should include(:errors => "TimeoutError")
+        expect(error).to be_a(ActiveService::Errors::ClientError)
+        expect(error.body).to include(:errors => "TimeoutError")
       end
     end
   end
+  
   context 'when a ResourceInvalid error is raised' do
     it "should raise a ResourceInvalid error" do
       expect do
         error = api.request(:_method => :get, :_path => "ResourceInvalid")
       end.to raise_error do |error|
-        error.should be_a(ActiveService::Errors::ResourceInvalid)
-        error.body.should include(:errors => "ResourceInvalid")
+        expect(error).to be_a(ActiveService::Errors::ResourceInvalid)
+        expect(error.body).to include(:errors => "ResourceInvalid")
       end
     end
   end
+  
   context 'when a ClientError error is raised' do
     it "should raise a ClientError error" do
       expect do
         error = api.request(:_method => :get, :_path => "ClientError")
       end.to raise_error do |error|
-        error.should be_a(ActiveService::Errors::ClientError)
-        error.body.should include(:errors => "ClientError")
+        expect(error).to be_a(ActiveService::Errors::ClientError)
+        expect(error.body).to include(:errors => "ClientError")
       end
     end
   end
+  
   context 'when a ServerError error is raised' do
     it "should raise a ServerError error" do
       expect do
         error = api.request(:_method => :get, :_path => "ServerError")
       end.to raise_error do |error|
-        error.should be_a(ActiveService::Errors::ServerError)
-        error.body.should include(:errors => "ServerError")
+        expect(error).to be_a(ActiveService::Errors::ServerError)
+        expect(error.body).to include(:errors => "ServerError")
       end
     end
   end
