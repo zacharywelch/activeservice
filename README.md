@@ -10,7 +10,7 @@ gem install 'active_service'
 
 In your Gemfile add
 ```ruby
-gem 'active_service'
+gem 'active_service', git: 'git@cagit.careerbuilder.com:CorpAppsCB/activeservice.git'
 ```
 
 ## Getting Started
