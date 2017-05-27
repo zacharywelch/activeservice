@@ -401,7 +401,7 @@ GET /posts.json delivers following response body:
 
 A Post class can be setup to handle it with:
 
-```
+```ruby
   class Post < ActiveService::Base
     self.site = "http://example.com"
     self.collection_parser = PostCollection
@@ -410,7 +410,7 @@ A Post class can be setup to handle it with:
 
 And the collection parser:
 
-```
+```ruby
   class PostCollection < ActiveService::Collection
     attr_accessor :next_page
     def initialize(parsed = {})
@@ -424,7 +424,7 @@ The result from a find method that returns multiple entries will now be a
 `PostParser` instance. `ActiveService::Collection` includes `Enumerable` and
 instances can be iterated over just like an array.
 
-```
+```ruby
    @posts = Post.all        # => PostCollection:xxx
    @posts.next_page         # => "/posts.json?page=2"
    @posts.map(&:id)         # => [1, 3, 5 ...]
