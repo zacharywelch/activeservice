@@ -176,6 +176,60 @@ The available callbacks are:
 * `after_update`
 * `after_destroy`
 
+## Attributes
+
+Active Service uses [ActiveAttr](https://github.com/cgriego/active_attr) under the hood
+for most of its attribute magic.
+
+```ruby
+class User < ActiveService::Base
+  attribute :name # plain string attribute
+  attribute :admin, default: false # attribute w/ default
+  attribute :active, type: Boolean # type casted attribute
+  attribute :email, source: 'UserEmail' # attribute with different source name
+  attribute :role, values: %w(admin editor moderator) # attribute with possible values
+end
+```
+
+We've also added a few enhancements of our own to make integrating with APIs easier.
+
+### Mapping JSON attributes to different names
+
+Transform JSON attributes from the API to different names on your model by specifying a `source` option on the `attribute`. Active Service will take care of mapping the `attribute` to/from JSON.
+
+```ruby
+class User < ActiveService::Base
+  attribute :name, source: "UserName"
+end
+
+user = User.find(1)
+# => GET /users/1 returns { "id": 1, "UserName": "foo" }
+user.name
+# => "foo"
+
+users = User.where(name: "foo")
+# => GET /users?UserName=foo
+```
+
+### Assigning a list of possible values
+
+Often an API has attributes with a possible list of values. Define these values 
+by specifying a `values` option on the `attribute`. Active Service will provide 
+predicates and scopes for each of the values.
+
+```ruby
+class Purchase < ActiveService::Base
+  attribute :status, values: %w(in_progress submitted approved shipped)
+end
+
+purchase = Purchase.new(status: "approved")
+purchase.approved? # => true
+purchase.submitted? # => false
+
+purchases = Purchase.shipped
+# => GET /purchases?status=shipped
+```
+
 ## Associations
 
 Setting up associations between resources should be familiar to anyone who uses Active Record. Examples in this section use the following models:
@@ -371,24 +425,6 @@ and should set @elements.
 ## Overriding Conventions
 
 Often web services refuse to play nicely and you need to override common behaviors in Active Service. No problem, we've got you covered.
-
-### Mapping JSON attributes to different names
-
-Transform JSON attributes from the API to different names on your model by specifying a `source` option on the `attribute`. Active Service will take care of mapping the `attribute` to/from JSON.
-
-```ruby
-class User < ActiveService::Base
-  attribute :name, :source => "UserName"
-end
-
-user = User.find(1)
-# => GET /users/1 returns { "id": 1, "UserName": "foo" }
-user.name
-# => "foo"
-
-users = User.where(name: "foo")
-# => GET /users?UserName=foo
-```
 
 ### Custom Paths
 
