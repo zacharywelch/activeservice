@@ -2,6 +2,57 @@
 require File.join(File.dirname(__FILE__), "../spec_helper.rb")
 
 describe ActiveService::Model::Relation do
+  describe :includes do
+    before do
+      spawn_model "User" do
+        has_many :comments
+        has_many :posts
+      end
+
+      spawn_model "Comment" do
+        belongs_to :user
+        attribute :user_id
+      end
+
+      spawn_model "Post" do
+        belongs_to :user
+        attribute :user_id
+      end
+
+      allow(User.scoped.connection).to receive(:get).with(
+        "users/1").and_return(Faraday::Response.new(:status=>200, :body=>{:id => 1}))
+
+      allow(User.scoped.connection).to receive(:get).with(
+        "users/1/comments").and_return(Faraday::Response.new(:body=>[
+          { :id => 10, :user_id => 1 }, { :id => 11, :user_id => 1 }
+        ]))
+        
+      allow(User.scoped.connection).to receive(:get).with(
+        "users/1/posts").and_return(Faraday::Response.new(:body=>[
+          { :id => 12, :user_id => 1 }, { :id => 13, :user_id => 1 }
+        ]))
+    end
+
+    subject(:user) { User.includes(1, [:comments, :posts]) }
+
+    it { should be_a User }
+
+    it "loads associations" do
+      expect(user.attributes["comments"]).to_not be_nil
+      expect(user.attributes["posts"]).to_not be_nil
+    end
+
+    it "includes comments" do
+      expect(user.comments.first.id).to be 10
+      expect(user.comments.count).to be 2
+    end
+
+    it "includes posts" do
+      expect(user.posts.first.id).to be 12
+      expect(user.posts.count).to be 2
+    end
+  end
+
   describe :where do
     context "for base classes" do
       before do

@@ -11,6 +11,11 @@ module ActiveService
       end
 
       # @private
+      def connection
+        @owner.api.connection
+      end
+
+      # @private
       def apply_to(attributes)
         @params.merge(attributes)
       end
@@ -18,6 +23,81 @@ module ActiveService
       # Build a new resource
       def build(attributes = {})
         @owner.build(@params.merge(attributes))
+      end
+
+      def includes(id, associations = [])
+        data = build_request_paths(id, associations)
+        connection.in_parallel do
+          data[:instance_response] = connection.get(data[:instance_path])
+          data[:associations].each do |assocation|
+            assocation[:response] = connection.get(assocation[:path])
+          end
+        end
+        data[:instance_response] = handle_response(data[:instance_response])
+        @owner.new(attributes_with_associations(data))
+      end
+
+      # @private
+      def build_request_paths(id, associations)
+        data = {}
+        data[:instance_path] = @owner.build_request_path(id: id)
+        data[:associations] = []
+        associations.each do |a|
+          data[:associations] << build_assocation_hash(data[:instance_path], a)
+        end
+        data
+      end
+
+      # @private
+      def build_assocation_hash(instance_path, association)
+        hash = {}
+        hash[:name] = association
+        hash[:class] = @owner.associations[:has_many].detect {
+          |a| a[:name] == association }[:class_name].constantize
+        hash[:path] = "#{instance_path}/#{hash[:class].build_request_path}"
+        hash
+      end      
+
+      # @private
+      def attributes_with_associations(data)
+        attributes = @owner.new_from_parsed_data(data[:instance_response].body).attributes
+        data[:associations].each do |a|
+          merge_attributes!(attributes, a) unless unsuccessful?(a[:response].body)
+        end
+        attributes
+      end
+
+      # @private
+      def merge_attributes!(attributes, association)
+        collection = @owner.instantiate_collection(association[:class], association[:response].body)
+        attributes.merge!(association[:name] => collection)
+      end
+
+      # @private
+      def unsuccessful?(body)
+        (body.is_a? Hash and body[:Errors]) or body.nil?
+      end
+
+      # @private
+      def handle_response(response)
+        case response.status
+          when 200, 201
+            response
+          when 400
+            raise ActiveService::Errors::BadRequest.new(response)
+          when 401
+            raise ActiveService::Errors::UnauthorizedAccess.new(response)
+          when 404
+            raise ActiveService::Errors::ResourceNotFound.new(response)
+          when 422
+            raise ActiveService::Errors::ResourceInvalid.new(response)
+          when 401..499
+            raise ActiveService::Errors::ClientError.new(response)
+          when 500..599
+            raise ActiveService::Errors::ServerError.new(response)
+          else
+            raise response.body
+        end
       end
 
       # Add a query string parameter
@@ -38,7 +118,7 @@ module ActiveService
         end
       end
       alias all where
-      
+
       # Specifies a limit for the number of records to retrieve.
       #
       #   User.limit(10) # generated HTTP has '?limit=10'
@@ -50,10 +130,10 @@ module ActiveService
       end
 
       # Fetch the first or last record
-      # @note 
-      #   This is not the most efficient way of returning the first or last 
+      # @note
+      #   This is not the most efficient way of returning the first or last
       #   resource because a fetch is required but it's provided for convenience
-      delegate :first, :last, :to => :fetch      
+      delegate :first, :last, :to => :fetch
 
       # Add a query string parameter for sorting
       #
@@ -73,7 +153,7 @@ module ActiveService
       #   @users = User.order(:name => :asc)
       #   # Fetched via GET "/users?sort=name_asc"
       def order(params = {})
-        return self if params.blank? && !@_fetch.nil?        
+        return self if params.blank? && !@_fetch.nil?
         params = Hash[params, :asc] if params.is_a?(::Symbol) || params.is_a?(::String)
         params = @owner.attribute_map.map(params.symbolize_keys, :to => :source)
         self.clone.tap do |r|
@@ -137,7 +217,7 @@ module ActiveService
             :_method => :get,
             :_path => @owner.build_request_path(params.merge(@owner.primary_key => id))
           )
-          
+
           @owner.request(request_params) do |response|
             if response.success?
               resource = @owner.new_from_parsed_data(response.body)
@@ -201,7 +281,7 @@ module ActiveService
       # @private
       def clear_fetch_cache!
         instance_variable_set(:@_fetch, nil)
-      end  
+      end
     end
   end
 end
