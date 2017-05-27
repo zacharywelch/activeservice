@@ -12,6 +12,7 @@ module ActiveService
       def initialize(attributes={})  
         attributes ||= {}
         @destroyed = attributes.delete(:_destroyed) || false
+        @owner_path = attributes.delete(:_owner_path)
 
         attributes = self.class.default_scope.apply_to(attributes)
         assign_attributes(attributes) && apply_defaults

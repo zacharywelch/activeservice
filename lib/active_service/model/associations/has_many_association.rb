@@ -64,7 +64,9 @@ module ActiveService
         # TODO: This only merges the id of the parents, handle the case
         #       where this is more deeply nested
         def build(attributes = {})
-          @klass.build(attributes.merge(foreign_key_association))
+          attributes.merge! foreign_key_association.merge(
+            :_owner_path => @owner.request_path)
+          @klass.build(attributes)
         end
 
         # Create a new object, save it and add it to the associated collection

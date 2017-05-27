@@ -80,6 +80,9 @@ module ActiveService
                 collection_path.dup
               end
 
+            owner_path = parameters.delete(:_owner_path)
+            path = "#{owner_path}/#{path}" unless owner_path.nil?
+
             # Replace :id with our actual primary key
             path.gsub!(/(\A|\/):id(\Z|\/)/, "\\1:#{primary_key}\\2")
           end

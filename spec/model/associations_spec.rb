@@ -476,7 +476,7 @@ describe ActiveService::Model::Associations do
           builder.use Faraday::Request::UrlEncoded
           builder.adapter :test do |stub|
             stub.get("/users/10") { |env| [200, {}, { :id => 10 }.to_json] }
-            stub.post("/comments") { |env| [200, {}, { :id => 1, :body => Faraday::Utils.parse_query(env[:body])['body'], :user_id => Faraday::Utils.parse_query(env[:body])['user_id'].to_i }.to_json] }
+            stub.post("/users/10/comments") { |env| [200, {}, { :id => 1, :body => Faraday::Utils.parse_query(env[:body])['body'], :user_id => Faraday::Utils.parse_query(env[:body])['user_id'].to_i }.to_json] }
             stub.get("/users/10/comments") { |env| [200, {}, [{ :id => 1, :body => "Hello!", :user_id => 10 }].to_json] }
           end
         end

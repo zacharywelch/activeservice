@@ -102,7 +102,8 @@ module ActiveService
       def create
         run_callbacks :create do
           method = self.class.method_for(:create)
-          self.class.request(to_params.merge(:_method => method, :_path => request_path)) do |response|
+          path = request_path(:_owner_path => @owner_path)
+          self.class.request(to_params.merge(:_method => method, :_path => path)) do |response|
             load_attributes_from_response(response)
           end
         end
@@ -115,7 +116,8 @@ module ActiveService
       def update
         run_callbacks :update do
           method = self.class.method_for(:update)
-          self.class.request(to_params.merge(:_method => method, :_path => request_path)) do |response|
+          path = request_path(:_owner_path => @owner_path)
+          self.class.request(to_params.merge(:_method => method, :_path => path)) do |response|
             load_attributes_from_response(response)
           end
         end
