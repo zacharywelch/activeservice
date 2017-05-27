@@ -46,14 +46,14 @@ module ActiveService
         # @private
         def fetch(opts = {})
           return @opts[:default].try(:dup) if use_default?
-          return @cached_result unless @cached_params != @params || @cached_result.nil?
+          return @cached_result unless @params.any? || @cached_result.nil?
           return @owner.attributes[@name] unless @params.any? || @owner.attributes[@name].blank?
           
           path = build_association_path lambda { "#{@owner.request_path(@params)}#{@opts[:path]}" }
           method = self.class.macro == :has_many ? :get_collection : :get_resource
           @klass.send(method, path, @params).tap do |result|
-            @cached_params = @params
             @cached_result = result
+            @params.clear
           end
         end
 

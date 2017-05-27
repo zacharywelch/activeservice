@@ -308,6 +308,12 @@ describe ActiveService::Model::Associations do
       expect(timesheets.first.hours).to be 40
     end    
 
+    it "chains scopes using one request" do
+      expect(Timesheet).to receive(:request).once.and_call_original      
+      timesheets = @user_without_included_data.timesheets.approved.full_time
+      expect(timesheets.count).to be 1
+    end
+
     [:create, :save_existing, :destroy].each do |type|
       context "after #{type}" do
         let(:subject) { self.send("user_with_included_data_after_#{type}")}
