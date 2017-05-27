@@ -235,21 +235,26 @@ Setting up associations between resources should be familiar to anyone who uses 
 ```ruby
 class User < ActiveService::Base
   attribute :name
-  attribute :organization_id  
+  attribute :organization_id
   has_many :comments
-  has_one :role
+  has_one :profile
   belongs_to :organization
+  has_and_belongs_to_many :roles
 end
 
 class Comment < ActiveService::Base
   attribute :content 
 end
 
-class Role < ActiveService::Base
-  attribute :name
+class Profile < ActiveService::Base
+  attribute :bio
 end
 
 class Organization
+  attribute :name
+end
+
+class Role < ActiveService::Base
   attribute :name
 end
 ```
@@ -269,14 +274,18 @@ user.comments
 user.comments.where(content: "foo")
 # => GET /users/1/comments?content=foo
 
-user.role
-# => GET /users/1/role
-# => #<Role id=1>
+user.profile
+# => GET /users/1/profile
+# => #<Profile id=1>
 
 user.organization
 # => :organization_id on user is used to build the path
 # => GET /organizations/1
 # => #<Organization id=1>
+
+user.roles
+# => GET /users/1/roles
+[#<Role id=1>, #<Role id=2>]
 
 user.comment_ids
 # => GET /users/1/comments
@@ -299,6 +308,10 @@ comment = user.comments.build(:content => "Hodor Hodor. Hodor.")
 comment = user.comments.create(:content => "Hodor Hodor. Hodor.")
 # => POST /users/1/comments { "user_id": 1, "content": "Hodor Hodor. Hodor." }
 # => #<Comment id=1 user_id=1 content="Hodor Hodor. Hodor.">
+
+role = user.roles.create(:name => "admin")
+# => POST /users/1/roles { "name": "admin" }
+# => #<Role id=1 name="admin">
 ```
 
 ### Nested attributes
@@ -408,17 +421,14 @@ And the collection parser:
 ```
 
 The result from a find method that returns multiple entries will now be a 
-PostParser instance.  ActiveService::Collection includes Enumerable and
+`PostParser` instance. `ActiveService::Collection` includes `Enumerable` and
 instances can be iterated over just like an array.
 
 ```
-   @posts = Post.find(:all) # => PostCollection:xxx
+   @posts = Post.all        # => PostCollection:xxx
    @posts.next_page         # => "/posts.json?page=2"
    @posts.map(&:id)         # => [1, 3, 5 ...]
 ```
-
-The initialize method will receive the ActiveService::Formats parsed result
-and should set @elements.
 
 ## Overriding Conventions
 
