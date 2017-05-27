@@ -10,6 +10,7 @@ module ActiveService
 
       # Apply default scope to any new object
       def initialize(attributes={})  
+        apply_defaults
         attributes ||= {}
         @destroyed = attributes.delete(:_destroyed) || false
 
