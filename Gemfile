@@ -11,7 +11,8 @@ group :development do
   gem "jeweler", "~> 1.8.7"
   gem "faraday_middleware", "~> 0.9"
   gem "typhoeus"
-  gem "active_attr", '>=0'
   gem "pry"
   gem "pry-byebug"
 end
+
+gem "active_attr", '>=0'
