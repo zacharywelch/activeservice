@@ -1,5 +1,7 @@
 # ActiveService
 
+[![Code Climate](https://codeclimate.cb.com/repos/56b510408363f60c11000008/badges/b42976b48cb576e7988a/gpa.svg)](https://codeclimate.cb.com/repos/56b510408363f60c11000008/feed) [![Issue Count](https://codeclimate.cb.com/repos/56b510408363f60c11000008/badges/b42976b48cb576e7988a/issue_count.svg)](https://codeclimate.cb.com/repos/56b510408363f60c11000008/feed)
+
 Active Service is an ORM that maps REST resources to Ruby objects using an ActiveRecord-like interface. 
 
 ## Installation

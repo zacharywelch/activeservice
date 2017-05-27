@@ -1,0 +1,24 @@
+---
+engines:
+  brakeman:
+    enabled: false
+  bundler-audit:
+    enabled: false
+  duplication:
+    enabled: true
+    config:
+      languages:
+        ruby: {}
+        javascript: {}
+  fixme:
+    enabled: true
+  rubocop:
+    enabled: true
+ratings:
+  paths:
+  - "**.rb"
+exclude_paths:
+- "config/**/*"
+- "db/**/*"
+- "spec/**/*"
+- "Gemfile"
