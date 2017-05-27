@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib"]
   s.authors = ["zwelchcb"]
-  s.date = "2016-08-19"
+  s.date = "2017-05-27"
   s.description = "ActiveService is an ORM that maps REST resources to Ruby objects using an ActiveRecord-like interface."
   s.email = "Zachary.Welch@careerbuilder.com"
   s.extra_rdoc_files = [
@@ -135,60 +135,53 @@ Gem::Specification.new do |s|
     "spec/model_spec.rb",
     "spec/spec_helper.rb",
     "spec/support/macros/model_macros.rb",
-    "spec/support/macros/request_macros.rb",
-    "spec/support/utilities.rb"
+    "spec/support/macros/request_macros.rb"
   ]
   s.homepage = "http://github.com/zwelchcb/active_service"
   s.licenses = ["MIT"]
-  s.rubygems_version = "2.4.3"
+  s.rubygems_version = "2.5.1"
   s.summary = "An object-relational mapper for web services."
 
   if s.respond_to? :specification_version then
     s.specification_version = 4
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<active_attr>, [">= 0"])
       s.add_development_dependency(%q<rspec>, ["~> 3.0"])
       s.add_development_dependency(%q<rspec-its>, ["~> 1.0"])
-      s.add_development_dependency(%q<simplecov>, [">= 0"])
+      s.add_development_dependency(%q<simplecov>, ["~> 0"])
       s.add_development_dependency(%q<fivemat>, ["~> 1.2"])
       s.add_development_dependency(%q<rdoc>, ["~> 3.12"])
-      s.add_development_dependency(%q<bundler>, ["~> 1.0"])
-      s.add_development_dependency(%q<jeweler>, ["~> 1.8.7"])
+      s.add_development_dependency(%q<bundler>, ["~> 1.13"])
+      s.add_development_dependency(%q<jeweler>, ["~> 2.0"])
       s.add_development_dependency(%q<faraday_middleware>, ["~> 0.9"])
-      s.add_development_dependency(%q<typhoeus>, [">= 0"])
-      s.add_development_dependency(%q<pry>, [">= 0"])
-      s.add_development_dependency(%q<pry-byebug>, [">= 0"])
+      s.add_development_dependency(%q<active_attr>, ["~> 0"])
       s.add_runtime_dependency(%q<faraday>, ["< 1.0", ">= 0.8"])
+      s.add_runtime_dependency(%q<active_attr>, ["~> 0"])
     else
-      s.add_dependency(%q<active_attr>, [">= 0"])
       s.add_dependency(%q<rspec>, ["~> 3.0"])
       s.add_dependency(%q<rspec-its>, ["~> 1.0"])
-      s.add_dependency(%q<simplecov>, [">= 0"])
+      s.add_dependency(%q<simplecov>, ["~> 0"])
       s.add_dependency(%q<fivemat>, ["~> 1.2"])
       s.add_dependency(%q<rdoc>, ["~> 3.12"])
-      s.add_dependency(%q<bundler>, ["~> 1.0"])
-      s.add_dependency(%q<jeweler>, ["~> 1.8.7"])
+      s.add_dependency(%q<bundler>, ["~> 1.13"])
+      s.add_dependency(%q<jeweler>, ["~> 2.0"])
       s.add_dependency(%q<faraday_middleware>, ["~> 0.9"])
-      s.add_dependency(%q<typhoeus>, [">= 0"])
-      s.add_dependency(%q<pry>, [">= 0"])
-      s.add_dependency(%q<pry-byebug>, [">= 0"])
+      s.add_dependency(%q<active_attr>, ["~> 0"])
       s.add_dependency(%q<faraday>, ["< 1.0", ">= 0.8"])
+      s.add_dependency(%q<active_attr>, ["~> 0"])
     end
   else
-    s.add_dependency(%q<active_attr>, [">= 0"])
     s.add_dependency(%q<rspec>, ["~> 3.0"])
     s.add_dependency(%q<rspec-its>, ["~> 1.0"])
-    s.add_dependency(%q<simplecov>, [">= 0"])
+    s.add_dependency(%q<simplecov>, ["~> 0"])
     s.add_dependency(%q<fivemat>, ["~> 1.2"])
     s.add_dependency(%q<rdoc>, ["~> 3.12"])
-    s.add_dependency(%q<bundler>, ["~> 1.0"])
-    s.add_dependency(%q<jeweler>, ["~> 1.8.7"])
+    s.add_dependency(%q<bundler>, ["~> 1.13"])
+    s.add_dependency(%q<jeweler>, ["~> 2.0"])
     s.add_dependency(%q<faraday_middleware>, ["~> 0.9"])
-    s.add_dependency(%q<typhoeus>, [">= 0"])
-    s.add_dependency(%q<pry>, [">= 0"])
-    s.add_dependency(%q<pry-byebug>, [">= 0"])
+    s.add_dependency(%q<active_attr>, ["~> 0"])
     s.add_dependency(%q<faraday>, ["< 1.0", ">= 0.8"])
+    s.add_dependency(%q<active_attr>, ["~> 0"])
   end
 end
 

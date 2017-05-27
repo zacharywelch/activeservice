@@ -22,6 +22,7 @@ Jeweler::Tasks.new do |gem|
   gem.email = "Zachary.Welch@careerbuilder.com"
   gem.authors = ["zwelchcb"]
   gem.add_dependency 'faraday', '>= 0.8', '< 1.0'
+  gem.add_dependency 'active_attr', '~> 0'
 end
 Jeweler::RubygemsDotOrgTasks.new
 
