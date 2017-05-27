@@ -61,15 +61,20 @@ module ActiveService
           end
         end
 
+        def reading_option
+          @reading_option ||= {}
+        end
+
         METHODS.each do |method|
           class_eval <<-RUBY, __FILE__, __LINE__ + 1
             def #{method}(path, params={})
+              option_to_read = reading_option[{ method: '#{method}', path: path }]
               path = build_request_path_from_string_or_symbol(path, params)
               params = to_params(params) unless #{method.to_sym.inspect} == :get
               send(:'#{method}_raw', path, params) do |response|
                 parsed_data = response.body
-                if parsed_data.is_a?(Array) || active_model_serializers_format? || json_api_format?
-                  new_collection(parsed_data)                  
+                if parsed_data.is_a?(Array) || active_model_serializers_format? || json_api_format? || option_to_read == :collection
+                  new_collection(parsed_data)
                 else
                   new(parse(parsed_data))
                 end
@@ -95,11 +100,13 @@ module ActiveService
               end
             end
 
-            def custom_#{method}(*paths)
+            def custom_#{method}(*paths, **options)
+              raise ArgumentError.new(':on option expects a value of :collection or :member') unless [:collection, :member].include?(options[:on])
               metaclass = (class << self; self; end)
               opts = paths.last.is_a?(Hash) ? paths.pop : Hash.new
 
               paths.each do |path|
+                reading_option[{ method: '#{method}', path: path }] = options[:on]
                 metaclass.send(:define_method, path) do |*params|
                   params = params.first || Hash.new
                   send(#{method.to_sym.inspect}, path, params)

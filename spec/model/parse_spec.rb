@@ -19,7 +19,7 @@ describe ActiveService::Model::Parse do
           attribute :name
           include_root_in_json true
           parse_root_in_json true
-          custom_post :admins
+          custom_post :admins, on: :member
         end
       end
 
@@ -86,7 +86,7 @@ describe ActiveService::Model::Parse do
         spawn_model "User" do
           uses_api api
           attribute :name    
-          custom_get :admins
+          custom_get :admins, on: :collection
           parse_root_in_json true
         end
       end
@@ -195,7 +195,7 @@ describe ActiveService::Model::Parse do
           uses_api api
           attribute :name
           parse_root_in_json true, :format => :active_model_serializers
-          custom_get :admins
+          custom_get :admins, on: :collection
         end
       end
 
@@ -277,7 +277,7 @@ describe ActiveService::Model::Parse do
         uses_api api 
         parse_root_in_json true, :format => :json_api
         include_root_in_json true
-        custom_get :admins
+        custom_get :admins, on: :collection
         attribute :name
       end
     end
@@ -334,7 +334,7 @@ describe ActiveService::Model::Parse do
           uses_api api
           include_root_in_json true
           parse_root_in_json true, format: :json_api
-          custom_post :admins
+          custom_post :admins, on: :collection
           attribute :name
         end
       end
@@ -370,6 +370,7 @@ describe ActiveService::Model::Parse do
         builder.adapter :test do |stub|
           stub.get("/users") { |env| [200, {}, { :collection => [{ :id => 1, :name => "Tobias Fünke" }], :total_count => 100 }.to_json] }
           stub.get("/super_users") { |env| [200, {}, { :collection => [{ :id => 1, :name => "Tobias Fünke" }], :total_count => 100 }.to_json] }
+          stub.get("/users/active") { |env| [200, {}, { :collection => [{ :id => 1, :name => "Tobias Fünke" }], :total_count => 50 }.to_json] }
         end
       end
       
@@ -397,6 +398,13 @@ describe ActiveService::Model::Parse do
         @users = User.all
         expect(@users.respond_to?(:total_count)).to be_truthy
         expect(@users.total_count).to be 100
+      end
+
+      it "handles custom_get on custom collection" do
+        User.custom_get :active, on: :collection
+        @users = User.active
+        expect(@users.respond_to?(:total_count)).to be_truthy
+        expect(@users.total_count).to be 50
       end
     end
 

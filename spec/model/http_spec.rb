@@ -192,7 +192,7 @@ describe ActiveService::Model::HTTP do
 
     describe :custom_get do
       context "without cache" do
-        before { User.custom_get :popular, :recent }
+        before { User.custom_get :popular, :recent, on: :collection }
         it { should respond_to(:popular) }
         it { should respond_to(:recent) }
 
@@ -204,7 +204,7 @@ describe ActiveService::Model::HTTP do
     end
 
     describe :custom_post do
-      before { User.custom_post :from_default }
+      before { User.custom_post :from_default, on: :member }
       it { should respond_to(:from_default) }
 
       context "making the HTTP request" do
