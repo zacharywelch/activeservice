@@ -70,7 +70,7 @@ module ActiveService
       # @private
       def merge_attributes!(attributes, association)
         collection = @owner.instantiate_collection(association[:class], association[:response].body)
-        attributes.merge!(association[:name] => collection)
+        attributes.merge!(association[:name] => collection.to_a)
       end
 
       # @private

@@ -149,7 +149,7 @@ module ActiveService
 
           params.inject({}) do |memo, (key, value)|
             writer = "#{key}="
-            if model.respond_to? writer 
+            if model.respond_to? writer and model.class.extended_attribute_names.include?(key.to_s)
               model.send writer, value
             else
               key = key.to_sym if key.is_a? String
@@ -157,6 +157,11 @@ module ActiveService
             end
             memo
           end
+        end
+
+        # @private
+        def extended_attribute_names
+          attribute_names + association_names.map { |name| name.to_s + '_attributes' }
         end
 
         # Returns a mapping of attributes to fields

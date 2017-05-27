@@ -167,7 +167,7 @@ describe ActiveService::Model::Associations do
     let(:user_with_included_data_after_destroy) { User.new(:id => 5).destroy }
     let(:comment_without_included_parent_data) { Comment.new(:id => 7, :user_id => 1) }
 
-    xit "maps an array of included data through has_many" do
+    it "maps an array of included data through has_many" do
       expect(@user_with_included_data.comments.first).to be_a(Comment)
       expect(@user_with_included_data.comments.length).to be 2
       expect(@user_with_included_data.comments.first.id).to be 2
