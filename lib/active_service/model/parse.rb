@@ -49,9 +49,28 @@ module ActiveService
 
 
         # @private
-        # TODO: Handle has_one
         def embeded_params(attributes)
-          associations[:has_many].select { |a| attributes.include?(a[:data_key])}.compact.inject({}) do |hash, association|
+          attributes = attributes.with_indifferent_access
+
+          embed_has_one(attributes).merge(embed_has_many(attributes))
+        end
+
+        def embed_has_one(attributes)
+          associations[:has_one].select { |a| attributes.include?(a[:data_key]) }.compact.inject({}) do |hash, association|
+            params = attributes[association[:data_key]].try(:to_params)
+            next if params.nil?
+            if association[:class_name].constantize.include_root_in_json?
+              root = association[:class_name].constantize.root_element
+              hash[association[:data_key]] = params[root]
+            else
+              hash[association[:data_key]] = params
+            end
+            hash
+          end || {}
+        end
+
+        def embed_has_many(attributes)
+          associations[:has_many].select { |a| attributes.include?(a[:data_key]) }.compact.inject({}) do |hash, association|
             params = attributes[association[:data_key]].map(&:to_params)
             next if params.empty?
             if association[:class_name].constantize.include_root_in_json?
@@ -61,7 +80,7 @@ module ActiveService
               hash[association[:data_key]] = params
             end
             hash
-          end
+          end || {}
         end
 
         # Return or change the value of `include_root_in_json`
