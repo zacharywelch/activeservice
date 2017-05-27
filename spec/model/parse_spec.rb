@@ -419,51 +419,97 @@ describe ActiveService::Model::Parse do
   end
 
   describe "#to_params" do
-    context "has_one embeded params" do
+    context "with single has_one association" do
       before do
-        api = ActiveService::API.setup :url => "https://api.example.com"
-
         spawn_model "User" do
-          uses_api api
           attribute :name
           has_one :role
         end
 
         spawn_model "Role" do
-          uses_api api
           attribute :name
         end
       end
 
       it "includes has_one associations" do
         @new_user = User.new(:name => "Tobias Fünke")
-        @new_user.role = Role.new(:name => "1")
+        @new_user.role = Role.new(:name => "admin")
 
-        expect(@new_user.to_params[:role]).to eq({:name => "1", :id => nil})
+        expect(@new_user.to_params[:role]).to eq({ :name => "admin", :id => nil })
       end
     end
 
-    describe "has_many embeded params" do
+    context "with multiple has_one associations" do
       before do
-        api = ActiveService::API.setup :url => "https://api.example.com"
-
         spawn_model "User" do
-          uses_api api
+          attribute :name
+          has_one :address
+          has_one :role
+        end
+
+        spawn_model "Role" do
+          attribute :name
+        end
+
+        spawn_model "Address" do
+          attribute :street
+        end
+      end
+
+      it "includes nil has_one association" do
+        @new_user = User.new(:name => "Tobias Fünke")
+        @new_user.role = Role.new(:name => "admin")
+        @new_user.address = nil
+
+        expect(@new_user.to_params[:role]).to eq({ :name => "admin", :id => nil })
+        expect(@new_user.to_params[:address]).to be_nil
+      end
+    end
+
+    context "with single has_many association" do
+      before do
+        spawn_model "User" do
           attribute :name
           has_many :comments
         end
 
         spawn_model "Comment" do
-          uses_api api
           attribute :body
         end
       end
 
       it "includes has_many associations" do
         @new_user = User.new(:name => "Tobias Fünke")
-        @new_user.comments = [Comment.new(:body =>"1")]
+        @new_user.comments = [Comment.new(:body =>"lorem ipsum")]
 
-        expect(@new_user.to_params[:comments]).to eq([{:body => "1", :id => nil}])
+        expect(@new_user.to_params[:comments]).to eq([{ :body => "lorem ipsum", :id => nil }])
+      end      
+    end
+
+    context "with multiple has_many associations" do
+      before do
+        spawn_model "User" do
+          attribute :name
+          has_many :posts
+          has_many :comments
+        end
+
+        spawn_model "Comment" do
+          attribute :body
+        end
+
+        spawn_model "Post" do
+          attribute :body
+        end
+      end
+
+      it "includes empty has_many association" do
+        @new_user = User.new(:name => "Tobias Fünke")
+        @new_user.comments = [Comment.new(:body =>"lorem ipsum")]
+        @new_user.posts = []
+
+        expect(@new_user.to_params[:comments]).to eq([{ :body => "lorem ipsum", :id => nil }])
+        expect(@new_user.to_params[:posts]).to be_empty
       end
     end
   end

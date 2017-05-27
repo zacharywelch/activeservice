@@ -58,7 +58,7 @@ module ActiveService
         def embed_has_one(attributes)
           associations[:has_one].select { |a| attributes.include?(a[:data_key]) }.compact.inject({}) do |hash, association|
             params = attributes[association[:data_key]].try(:to_params)
-            next if params.nil?
+            next hash if params.nil?
             if association[:class_name].constantize.include_root_in_json?
               root = association[:class_name].constantize.root_element
               hash[association[:data_key]] = params[root]
@@ -72,7 +72,7 @@ module ActiveService
         def embed_has_many(attributes)
           associations[:has_many].select { |a| attributes.include?(a[:data_key]) }.compact.inject({}) do |hash, association|
             params = attributes[association[:data_key]].map(&:to_params)
-            next if params.empty?
+            next hash if params.empty?
             if association[:class_name].constantize.include_root_in_json?
               root = association[:class_name].constantize.root_element
               hash[association[:data_key]] = params.map { |n| n[root] }
