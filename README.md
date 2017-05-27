@@ -311,6 +311,63 @@ comments = user.comments.approved
 # => GET /users/1/comments?approved=true
 ``` 
 
+## Collections
+
+ActiveService::Collection is a wrapper to handle parsing index responses that
+do not directly map to Rails conventions. Implementation details are heavily influenced by ActiveResource::Collection.
+
+If you expect to receive json with nonstandard data, you can 
+define a custom parser that inherits from ActiveService::Collection. 
+        
+GET /posts.json delivers following response body:
+
+```
+  {
+    posts: [
+      {
+        title: "ActiveService now has associations",
+        body: "Lorem Ipsum"
+      }
+      {...}
+    ]
+    next_page: "/posts.json?page=2"
+  }
+```
+
+A Post class can be setup to handle it with:
+
+```
+  class Post < ActiveService::Base
+    self.site = "http://example.com"
+    self.collection_parser = PostCollection
+  end
+```
+
+And the collection parser:
+
+```
+  class PostCollection < ActiveService::Collection
+    attr_accessor :next_page
+    def initialize(parsed = {})
+      @elements = parsed['posts']
+      @next_page = parsed['next_page']
+    end
+  end
+```
+
+The result from a find method that returns multiple entries will now be a 
+PostParser instance.  ActiveService::Collection includes Enumerable and
+instances can be iterated over just like an array.
+
+```
+   @posts = Post.find(:all) # => PostCollection:xxx
+   @posts.next_page         # => "/posts.json?page=2"
+   @posts.map(&:id)         # => [1, 3, 5 ...]
+```
+
+The initialize method will receive the ActiveService::Formats parsed result
+and should set @elements.
+
 ## Overriding Conventions
 
 Often web services refuse to play nicely and you need to override common behaviors in Active Service. No problem, we've got you covered.
