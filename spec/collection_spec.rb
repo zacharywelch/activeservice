@@ -31,11 +31,11 @@ describe ActiveService::Collection do
     subject { ActiveService::Collection.new }
 
     it "should play as an Array" do
-      subject.is_a?(Array).should be_truthy
+      expect(subject.is_a?(Array)).to be_truthy
     end
 
     it "should still play as an ActiveService::Collection" do
-      subject.is_a?(ActiveService::Collection).should be_truthy
+      expect(subject.is_a?(ActiveService::Collection)).to be_truthy
     end
   end
 end
