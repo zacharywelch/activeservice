@@ -62,8 +62,14 @@ describe ActiveAttr::Attributes do
         before { purchase.status = 1 }
         it { should be_approved }
       end      
+
+      it "creates a scope for each key in hash of values" do
+        values.keys.each do |key|
+          expect(Purchase).to respond_to("#{key}")
+        end
+      end      
     end
 
-    it "validates inclusion of values"    
+    it "validates inclusion of values"
   end
 end
