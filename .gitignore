@@ -8,3 +8,4 @@ bundler_stubs/
 /service/log/*.log
 /tmp
 /coverage
+.rspec
