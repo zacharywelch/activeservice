@@ -211,9 +211,9 @@ users = User.where(name: "foo")
 
 ### Assigning a list of possible values
 
-Often an API has attributes with a possible list of values. Define these values 
-by specifying a `values` option on the `attribute`. Active Service will provide 
-predicates and scopes for each of the values.
+Often an API has attributes that accept a list of possible values. 
+Define these attributes by specifying a `values` option on the `attribute`. 
+Active Service will provide predicates and scopes for each of the values.
 
 ```ruby
 class Purchase < ActiveService::Base
