@@ -186,8 +186,6 @@ class User < ActiveService::Base
   attribute :name # plain string attribute
   attribute :admin, default: false # attribute w/ default
   attribute :active, type: Boolean # type casted attribute
-  attribute :email, source: 'UserEmail' # attribute with different source name
-  attribute :role, values: %w(admin editor moderator) # attribute with possible values
 end
 ```
 
