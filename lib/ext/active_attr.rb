@@ -5,10 +5,10 @@
 
 class ActiveAttr::AttributeDefinition
   
-  # Maps a source field to an attribute on the model 
+  # Maps a source attribute to an attribute on the model 
   #
-  # When a GET is requested for a resource and the response has fields that 
-  # are named differently from the attributes on your model, use <tt>field</tt> 
+  # When a GET is requested for a resource and the response has attributes that 
+  # are named differently from the attributes on your model, use <tt>source</tt> 
   # to map them appropriately.
   #
   #   # GET https://api.com/users/1.json
