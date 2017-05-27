@@ -63,6 +63,10 @@ module ActiveService
     def to_a
       elements
     end
+
+    def is_a?(klass)
+      (klass == Array) || super
+    end
     
     def collect!
       return elements unless block_given?
