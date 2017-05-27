@@ -10,21 +10,12 @@ module ActiveService
 
       # Apply default scope to any new object
       def initialize(attributes={})  
-        apply_non_nil_defaults
         attributes ||= {}
         @destroyed = attributes.delete(:_destroyed) || false
 
         attributes = self.class.default_scope.apply_to(attributes)
         assign_attributes(attributes)
-      end
-
-      # Apply all non-nil default attribute values
-      def apply_non_nil_defaults(defaults=attribute_defaults)
-        @attributes ||= {}
-        defaults.each do |name, value|
-          # instance variable is used here to avoid any dirty tracking in attribute setter methods
-          @attributes[name] = value unless @attributes.has_key?(name) || value.nil?
-        end
+        apply_defaults
       end
 
       # Handles missing methods
