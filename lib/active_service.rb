@@ -1,7 +1,8 @@
 $:.unshift File.dirname(__FILE__)
 
 require 'active_attr'
-require 'ext/active_attr'
+require 'ext/active_attr/attribute_definition'
+require 'ext/active_attr/attributes'
 require 'faraday'
 require 'active_support/json'
 require 'active_support/core_ext/hash'

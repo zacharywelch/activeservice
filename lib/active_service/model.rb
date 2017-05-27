@@ -25,6 +25,7 @@ module ActiveService
 
     # ActiveService modules
     include ActiveService::Model::Attributes
+    # include ActiveService::Model::Attributes::AttributeValues
     include ActiveService::Model::ORM
     include ActiveService::Model::HTTP
     include ActiveService::Model::Parse

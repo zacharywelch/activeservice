@@ -1,4 +1,5 @@
 require 'active_service/model/attributes/nested_attributes'
+# require 'active_service/model/attributes/attribute_values'
 require 'active_service/model/attributes/attribute_map'
 
 module ActiveService
@@ -6,7 +7,9 @@ module ActiveService
     # This module handles attribute methods not provided by ActiveAttr
     module Attributes
       extend ActiveSupport::Concern
+      
       include ActiveService::Model::Attributes::NestedAttributes
+      # include ActiveService::Model::Attributes::AttributeValues
 
       # Apply default scope to any new object
       def initialize(attributes={})  
