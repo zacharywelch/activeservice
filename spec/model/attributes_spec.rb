@@ -1,6 +1,6 @@
 # encoding: utf-8
 require File.join(File.dirname(__FILE__), "../spec_helper.rb")
-require 'pry'
+
 describe ActiveService::Model::Attributes do
   context "mapping data to Ruby objects" do
     before do 
@@ -57,7 +57,6 @@ describe ActiveService::Model::Attributes do
     end
 
     it "sets applicable attribute to default when not set by new" do
-      binding.pry
       @new_user = User.new
       expect(@new_user.admin).to be(false)
     end
