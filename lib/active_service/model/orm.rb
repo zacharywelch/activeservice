@@ -55,14 +55,14 @@ module ActiveService
         end
       rescue ActiveService::Errors::BadRequest, ActiveService::Errors::ResourceInvalid => e
         assign_errors e.response.body
-        nil  
+        nil
       end
 
       # Similar to save(), except that ResourceInvalid is raised if the save fails
       def save!
         if !self.save
           raise ActiveService::Errors::ResourceInvalid.new(self)
-        end 
+        end
         self
       end
 
@@ -121,7 +121,7 @@ module ActiveService
             load_attributes_from_response(response)
           end
         end
-      end      
+      end
 
       # Parses the HTTP response and uses the JSON body to set the model 
       # attributes if it was successful. If a request was malformed (400) or 
@@ -132,15 +132,6 @@ module ActiveService
         data = response.body
         assign_attributes(self.class.parse(data)) unless data.empty?
         self
-      end
-
-      # Assign resource errors to ActiveModel errors array 
-      def assign_errors(items)
-        errors.clear
-        items = self.class.parse(items)
-        items.each do |attr, attr_errors|
-          attr_errors.each { |error| errors.add(attr, error) }
-        end
       end
 
       module ClassMethods
@@ -165,7 +156,7 @@ module ActiveService
           Relation.instance_eval do
             define_method(name) { |*args| instance_exec(*args, &code) }
           end
-        end        
+        end
 
         # @private
         def scoped
@@ -220,7 +211,7 @@ module ActiveService
         # @example
         #   User.destroy(1)
         #   # Called via DELETE "/users/1"
-        def destroy(id, params = {})          
+        def destroy(id, params = {})
           path = build_request_path(params.merge(primary_key => id))
           request(params.merge(:_method => :delete, :_path => path)) do |response|
             new(parse(response.body).merge(:_destroyed => true))
@@ -239,13 +230,13 @@ module ActiveService
 
           return @method_for[action] if method.nil?
           @method_for[action] = method.to_s.downcase.to_sym
-        end        
+        end
 
         private
         # @private
         def blank_relation
           @blank_relation ||= Relation.new(self)
-        end        
+        end
       end
     end
   end
