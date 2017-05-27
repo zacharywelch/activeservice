@@ -65,8 +65,15 @@ module ActiveService
       #
       # @private
       def has_attribute?(attribute_name)
-        @attributes.include?(attribute_name.to_sym)
+        self.class.attribute_names.include?(attribute_name.to_s)
       end      
+
+      # @private
+      def has_nested_attributes?(attributes_name)
+        return false unless attributes_name.to_s.match(/_attributes/)
+        associations = self.class.associations.values.flatten.map { |a| a[:name] }
+        associations.include?(attributes_name.to_s.gsub("_attributes", "").to_sym)
+      end
 
       # Handles returning data for a specific attribute
       #
@@ -149,7 +156,7 @@ module ActiveService
 
           params.inject({}) do |memo, (key, value)|
             writer = "#{key}="
-            if writable_as_attribute(writer, model)
+            if model.respond_to?(writer) && (model.has_attribute?(key) || model.has_nested_attributes?(key))
               model.send writer, value
             else
               key = key.to_sym if key.is_a? String
@@ -157,18 +164,6 @@ module ActiveService
             end
             memo
           end
-        end
-
-        # @private
-        def writable_as_attribute(writer, model)
-          model.respond_to? writer and 
-          (attribute_names.include?(writer[0..-2]) || 
-          nested_attribute_names.include?(writer[0..-2]))
-        end
-
-        # @private
-        def nested_attribute_names
-          association_names.map { |name| name.to_s + '_attributes' }
         end
 
         # Returns a mapping of attributes to fields

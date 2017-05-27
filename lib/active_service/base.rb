@@ -23,6 +23,7 @@ module ActiveService
     # @private
     def has_key?(attribute_name)
       has_attribute?(attribute_name) ||
+      has_nested_attributes?(attribute_name) ||
       has_association?(attribute_name)
     end
 
