@@ -941,7 +941,7 @@ describe ActiveService::Model::Associations do
     end
   end
 
-  context "building and creating has_and_belongs_to_many associations" do
+  context "building, creating and destroying has_and_belongs_to_many associations" do
 
     before do
       api = ActiveService::API.setup url: "https://api.example.com" do |builder|
@@ -951,6 +951,7 @@ describe ActiveService::Model::Associations do
           stub.get("/users/1") { |env| [200, {}, { id: 1 }.to_json] }
           stub.post("/users/1/roles") { |env| [200, {}, { id: 1, name: Faraday::Utils.parse_query(env[:body])['name'] }.to_json] }
           stub.get("/users/1/roles") { |env| [200, {}, [{ id: 1, name: "admin" }].to_json] }
+          stub.delete("/users/1/roles/1") { |env| [200, {}, { id: 1, name: "admin" }.to_json] }
         end
       end
 
@@ -983,6 +984,14 @@ describe ActiveService::Model::Associations do
         expect(role.id).to be 1
         expect(role.name).to eq "admin"
         expect(user.roles).to eq [role]
+      end
+    end
+
+    describe "#destroy" do
+
+      it "deletes the nested resource" do
+        role = user.roles.first
+        expect { user.roles.destroy(role) }.to change { user.roles.count }.by(-1)
       end
     end
 

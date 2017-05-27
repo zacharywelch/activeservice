@@ -85,6 +85,17 @@ module ActiveService
           resource
         end
 
+        # Destroy a resource in the join table. This does not destroy the object.
+        #
+        # @example
+        #   @role = User.find(1).roles.first # => <Role id=1 name="admin">
+        #   @role.destroy
+        #   # Called via DELETE "/users/1/roles/1"
+        def destroy(object)
+          path = build_association_path lambda { "#{@owner.request_path(@params)}#{@opts[:path]}/#{object.id}" }
+          @cached_result.delete(object) if @klass.delete(path) and @cached_result
+        end
+
         # @private
         def assign_nested_attributes(attributes)
           data = attributes.is_a?(Hash) ? attributes.values : attributes
