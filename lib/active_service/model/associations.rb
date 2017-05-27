@@ -2,6 +2,7 @@ require 'active_service/model/associations/association'
 require 'active_service/model/associations/association_proxy'
 require 'active_service/model/associations/belongs_to_association'
 require 'active_service/model/associations/has_many_association'
+require 'active_service/model/associations/has_and_belongs_to_many_association'
 require 'active_service/model/associations/has_one_association'
 
 module ActiveService
@@ -129,6 +130,29 @@ module ActiveService
         #   # Fetched via GET "/teams/2"
         def belongs_to(name, opts={})
           ActiveService::Model::Associations::BelongsToAssociation.attach(self, name, opts)
+        end
+
+        # Define an *has_and_belongs_to_many* association.
+        #
+        # @param [Symbol] name The name of the method added to resources
+        # @param [Hash] opts Options
+        # @option opts [String] :class_name The name of the class to map objects to
+        # @option opts [Symbol] :data_key The attribute where the data is stored
+        # @option opts [Path] :path The relative path where to fetch the data (defaults to `/{name}`)
+        #
+        # @example
+        #   class User < ActiveService::Base
+        #     has_and_belongs_to_many :friends
+        #   end
+        #
+        #   class Friend < ActiveService::Base
+        #   end
+        #
+        #   @user = User.find(1)
+        #   @user.friends # => [#<Friend(friends/2) id=2 name="Tobias">]
+        #   # Fetched via GET "/users/1/friends"
+        def has_and_belongs_to_many(name, opts={})
+          ActiveService::Model::Associations::HasAndBelongsToManyAssociation.attach(self, name, opts)
         end
       end      
     end

@@ -6,7 +6,7 @@ describe ActiveService::API do
 
   context "initialization" do
     describe ".setup" do
-        it "creates a default connection" do
+      it "creates a default connection" do
         ActiveService::API.setup :url => "https://api.example.com"
         expect(ActiveService::API.default_api.base_uri).to eq("https://api.example.com")
       end

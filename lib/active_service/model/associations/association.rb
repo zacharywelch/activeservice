@@ -50,10 +50,19 @@ module ActiveService
           return @owner.attributes[@name] unless @params.any? || @owner.attributes[@name].blank?
           
           path = build_association_path lambda { "#{@owner.request_path(@params)}#{@opts[:path]}" }
-          method = self.class.macro == :has_many ? :get_collection : :get_resource
-          @klass.send(method, path, @params).tap do |result|
+          @klass.send(resource_method, path, @params).tap do |result|
             @cached_result = result
             @params.clear
+          end
+        end
+
+        # @private
+        def resource_method
+          case self.class.macro 
+          when :has_many, :has_and_belongs_to_many 
+            :get_collection 
+          else
+            :get_resource
           end
         end
 
@@ -65,6 +74,13 @@ module ActiveService
             return nil
           end
         end
+
+        # @private
+        def reset
+          @params = {}
+          @cached_result = nil
+          @owner.attributes.delete(@name)
+        end        
 
         # Add query parameters to the HTTP request performed to fetch the data
         #
@@ -113,15 +129,24 @@ module ActiveService
           @klass.get(path, @params)
         end
 
-        # Puts the association proxy back in its initial state, which is 
-        # unloaded. Cached associations are cleared.
-        def reset
-          @params = {}
-          @cached_result = nil
-          @owner.attributes.delete(@name)
-        end
-
-        # Invokes reset and refetches association
+        # Refetches the association and puts the proxy back in its initial state, 
+        # which is unloaded. Cached associations are cleared.
+        #
+        # @example
+        #   class User
+        #     include Her::Model
+        #     has_many :comments
+        #   end
+        #
+        #   class Comment
+        #     include Her::Model
+        #   end
+        #
+        #   user = User.find(1)
+        #   user.comments = [#<Comment(comments/2) id=2 body="Hello!">]
+        #   user.comments.first.id = "Oops"
+        #   user.comments.reload # => [#<Comment(comments/2) id=2 body="Hello!">]
+        #   # Fetched again via GET "/users/1/comments"
         def reload
           reset
           fetch

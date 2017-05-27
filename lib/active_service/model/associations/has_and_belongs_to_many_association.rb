@@ -1,7 +1,7 @@
 module ActiveService
   module Model
     module Associations
-      class HasManyAssociation < Association
+      class HasAndBelongsToManyAssociation < Association
 
         def initialize(owner, opts = {})
           super owner, opts
@@ -15,8 +15,7 @@ module ActiveService
             :name           => name,
             :data_key       => name,
             :default        => ActiveService::Collection.new,
-            :path           => nil,
-            :inverse_of => nil
+            :path           => nil
           }.merge(opts)
           klass.associations[macro] << opts
 
@@ -25,7 +24,7 @@ module ActiveService
               cached_name = :"@association_#{name}"
 
               cached_data = (instance_variable_defined?(cached_name) && instance_variable_get(cached_name))
-              cached_data || instance_variable_set(cached_name, ActiveService::Model::Associations::HasManyAssociation.proxy(self, #{opts.inspect}))
+              cached_data || instance_variable_set(cached_name, ActiveService::Model::Associations::HasAndBelongsToManyAssociation.proxy(self, #{opts.inspect}))
             end
 
             def #{name.to_s.singularize}_ids
@@ -45,7 +44,7 @@ module ActiveService
 
         # @private
         def self.macro
-          :has_many
+          :has_and_belongs_to_many
         end
 
         # Initialize a new object with a foreign key to the parent
@@ -55,64 +54,41 @@ module ActiveService
         #     has_many :comments
         #   end
         #
-        #   class Comment < ActiveService::Base
+        #   class Role < ActiveService::Base
         #   end
         #
         #   user = User.find(1)
-        #   new_comment = user.comments.build(:body => "Hello!")
+        #   new_role = user.roles.build(:name => "admin")
         #   new_comment # => #<Comment user_id=1 body="Hello!">
         # TODO: This only merges the id of the parents, handle the case
         #       where this is more deeply nested
         def build(attributes = {})
-          attributes.merge! foreign_key_association
-          @klass.build(attributes.merge(owner_path))
+          @klass.build(attributes.merge(:_owner_path => @owner.request_path))
         end
 
         # Create a new object, save it and add it to the associated collection
         #
         # @example
         #   class User < ActiveService::Base
-        #     has_many :comments
+        #     has_and_belongs_to_many :roles
         #   end
         #
-        #   class Comment < ActiveService::Base
+        #   class Role < ActiveService::Base
         #   end
         #
         #   user = User.find(1)
-        #   user.comments.create(:body => "Hello!")
-        #   user.comments # => [#<Comment id=2 user_id=1 body="Hello!">]
+        #   user.roles.create(:name => "admin")
+        #   user.roles # => [#<Role id=1 name="admin">]
         def create(attributes = {})
           resource = build(attributes)
           reset if resource.save and @cached_result
           resource
         end
 
-        def scoped
-          klass.where(owner_path)
-        end
-
-        # @private
-        def fetch
-          super.tap do |o|
-            writer = "#{@opts[:inverse_of]}="
-            o.each { |entry| entry.send(writer, @owner) if entry.respond_to? writer }
-          end
-        end
-
         # @private
         def assign_nested_attributes(attributes)
           data = attributes.is_a?(Hash) ? attributes.values : attributes
           @owner.attributes[@name] = @klass.instantiate_collection(@klass, data)
-        end
-
-        private
-
-        def foreign_key_association
-          { :"#{@owner.singularized_resource_name}_id" => @owner.id }
-        end
-
-        def owner_path
-          { :_owner_path => @owner.request_path }
         end
       end
     end

@@ -71,7 +71,7 @@ module ActiveService
         end
 
         def scoped
-          klass.where(foreign_key_association)
+          klass.where(owner_path)
         end
 
         # @private
@@ -83,7 +83,11 @@ module ActiveService
 
         def foreign_key_association
           { :"#{@owner.singularized_resource_name}_id" => @owner.id }
-        end        
+        end
+
+        def owner_path
+          { :_owner_path => @owner.request_path }
+        end
       end
     end
   end

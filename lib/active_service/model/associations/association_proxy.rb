@@ -43,7 +43,7 @@ module ActiveService
         private 
 
         def target_for(method)
-          scope = association.klass.respond_to?(method) && association.klass.singleton_methods(false).include?(method) 
+          scope = association.klass.respond_to?(method) && association.klass.singleton_methods(false).include?(method)
           scope ? 'association.scoped' : 'association.fetch'
         end
 
