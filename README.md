@@ -1,18 +1,12 @@
 # ActiveService
 
-[![Code Climate](https://codeclimate.cb.com/repos/56b510408363f60c11000008/badges/b42976b48cb576e7988a/gpa.svg)](https://codeclimate.cb.com/repos/56b510408363f60c11000008/feed) [![Issue Count](https://codeclimate.cb.com/repos/56b510408363f60c11000008/badges/b42976b48cb576e7988a/issue_count.svg)](https://codeclimate.cb.com/repos/56b510408363f60c11000008/feed)
-
-Active Service is an ORM that maps REST resources to Ruby objects using an ActiveRecord-like interface. 
+Active Service is an ORM that maps REST resources to Ruby objects using an ActiveRecord-like interface.
 
 ## Installation
 
-```ruby
-gem install 'active_service'
-```
-
 In your Gemfile add
 ```ruby
-gem 'active_service', git: 'git@cagit.careerbuilder.com:CorpAppsCB/activeservice.git'
+gem 'active_service', git: 'git@github.com:zacharywelch/activeservice.git'
 ```
 
 ## Getting Started
@@ -101,7 +95,7 @@ user.new? # => true
 
 ### Update
 
-Once an Active Service object has been retrieved, its attributes can be modified and sent back to the API using `save` or `update_attributes`. 
+Once an Active Service object has been retrieved, its attributes can be modified and sent back to the API using `save` or `update_attributes`.
 
 ```ruby
 user = User.find(1)
@@ -131,19 +125,19 @@ User.destroy(1)
 
 ## Validations
 
-Active Service includes `ActiveModel::Validations` so you can define validations similar to Active Record. Models get validated before being sent to the API, saving unnecessary trips if the resource is invalid. 
+Active Service includes `ActiveModel::Validations` so you can define validations similar to Active Record. Models get validated before being sent to the API, saving unnecessary trips if the resource is invalid.
 
 Any errors returned from the API with a `400` or `422` status are parsed and assigned to the `errors` array.
 
 ```ruby
 class User < ActiveService::Base
-  attribute :name 
+  attribute :name
   attribute :email
 
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
 
   validates :name,  presence: true, length: { maximum: 50 }
-  validates :email, presence: true, format: { with: VALID_EMAIL_REGEX }  
+  validates :email, presence: true, format: { with: VALID_EMAIL_REGEX }
 end
 
 user = User.new(email: "bad@email")
@@ -155,7 +149,7 @@ user.errors.full_messages
 
 ## Callbacks
 
-Active Service includes `ActiveModel::Callbacks` so you can define callbacks similar to Active Record. See the documentation on Active Record [callbacks] for details. 
+Active Service includes `ActiveModel::Callbacks` so you can define callbacks similar to Active Record. See the documentation on Active Record [callbacks] for details.
 
 ```ruby
 class User < ActiveService::Base
@@ -164,7 +158,7 @@ class User < ActiveService::Base
 end
 
 user = User.create(email: "FOO@BAR.COM")
-# => POST /users { "email": "foo@bar.com" } 
+# => POST /users { "email": "foo@bar.com" }
 ```
 
 The available callbacks are:
@@ -213,8 +207,8 @@ users = User.where(name: "foo")
 
 ### Assigning a list of possible values
 
-Often an API has attributes that accept a list of possible values. 
-Define these attributes by specifying a `values` option on the `attribute`. 
+Often an API has attributes that accept a list of possible values.
+Define these attributes by specifying a `values` option on the `attribute`.
 Active Service will provide predicates and scopes for each of the values.
 
 ```ruby
@@ -245,7 +239,7 @@ class User < ActiveService::Base
 end
 
 class Comment < ActiveService::Base
-  attribute :content 
+  attribute :content
 end
 
 class Profile < ActiveService::Base
@@ -305,7 +299,7 @@ user = User.find(1)
 # => GET /users/1
 
 comment = user.comments.build(:content => "Hodor Hodor. Hodor.")
-# => #<Comment id=nil user_id=1 content="Hodor Hodor. Hodor."> 
+# => #<Comment id=nil user_id=1 content="Hodor Hodor. Hodor.">
 
 comment = user.comments.create(:content => "Hodor Hodor. Hodor.")
 # => POST /users/1/comments { "user_id": 1, "content": "Hodor Hodor. Hodor." }
@@ -337,7 +331,7 @@ user.comments
 
 ## Scopes
 
-Scopes can be defined on your models using the same syntax as Active Record. Scopes return an `ActiveService::Model::Relation` and can be chained or used within other scopes. 
+Scopes can be defined on your models using the same syntax as Active Record. Scopes return an `ActiveService::Model::Relation` and can be chained or used within other scopes.
 
 ```ruby
 class User < ActiveService::Base
@@ -376,16 +370,16 @@ user = User.find(1)
 
 comments = user.comments.approved
 # => GET /users/1/comments?approved=true
-``` 
+```
 
 ## Collections
 
 ActiveService::Collection is a wrapper to handle parsing index responses that
 do not directly map to Rails conventions. Implementation details are heavily influenced by ActiveResource::Collection.
 
-If you expect to receive json with nonstandard data, you can 
-define a custom parser that inherits from ActiveService::Collection. 
-        
+If you expect to receive json with nonstandard data, you can
+define a custom parser that inherits from ActiveService::Collection.
+
 GET /posts.json delivers following response body:
 
 ```
@@ -422,7 +416,7 @@ And the collection parser:
   end
 ```
 
-The result from a find method that returns multiple entries will now be a 
+The result from a find method that returns multiple entries will now be a
 `PostParser` instance. `ActiveService::Collection` includes `Enumerable` and
 instances can be iterated over just like an array.
 
@@ -502,7 +496,7 @@ RSpec.configure do |config|
   end)
 end
 
-#app/models/user.rb 
+#app/models/user.rb
 class User < ActiveService::Base
   attribute :name
 end
