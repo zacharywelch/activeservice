@@ -121,7 +121,7 @@ module ActiveService
     # Parse response and error codes    
     def handle_response(response)
       case response.status
-        when 200, 201
+        when 200, 201, 204
           response
         when 400
           raise ActiveService::Errors::BadRequest.new(response)
