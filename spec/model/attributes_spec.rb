@@ -1,12 +1,13 @@
 # encoding: utf-8
 require File.join(File.dirname(__FILE__), "../spec_helper.rb")
-
+require 'pry'
 describe ActiveService::Model::Attributes do
   context "mapping data to Ruby objects" do
     before do 
       spawn_model "User" do
         attribute :name
         attribute :'life-span'
+        attribute :admin, default: false
       end
     end
 
@@ -53,6 +54,12 @@ describe ActiveService::Model::Attributes do
       @new_user = User.new(:'life-span' => '3 years')
       expect(@new_user.get_attribute(:unknown_method_for_a_user)).to be_nil
       expect(@new_user.get_attribute(:'life-span')).to eq '3 years'
+    end
+
+    it "sets applicable attribute to default when not set by new" do
+      binding.pry
+      @new_user = User.new
+      expect(@new_user.admin).to be(false)
     end
   end
 
