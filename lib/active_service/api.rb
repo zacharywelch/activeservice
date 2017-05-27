@@ -1,4 +1,3 @@
-require 'typhoeus'
 module ActiveService
   # This class is where all HTTP requests are made. Before using ActiveService, 
   # you must configure it so it knows where to make those requests. In Rails, 
@@ -81,8 +80,6 @@ module ActiveService
       @options = opts
 
       faraday_options = @options.reject { |key, value| !FARADAY_OPTIONS.include?(key.to_sym) }
-      manager = Typhoeus::Hydra.new(max_concurrency: 100)
-      faraday_options.merge!(parallel_manager: manager)
       @connection = Faraday.new(faraday_options) do |connection|
         yield connection if block_given?
       end
