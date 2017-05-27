@@ -18,7 +18,24 @@ module ActiveAttr::Attributes
     end
 
     private
-
+    
+    # Defines a list of possible values on an attribute.
+    #
+    # Often an API has attributes that accept a list of possible values. Define 
+    # these attributes by specifying a values option on the attribute. 
+    # Active Service will provide predicates and scopes for each of the values.
+    #
+    #   class Purchase < ActiveService::Base
+    #     attribute :status, values: %w(in_progress submitted approved shipped)
+    #   end
+    #
+    #   purchase = Purchase.new(status: "approved")
+    #   purchase.approved? # => true
+    #   purchase.submitted? # => false
+    #
+    #   purchases = Purchase.shipped
+    #   # => GET /purchases?status=shipped
+    #
     def attribute_with_values(name, values)
       values = Hash[values.map { |key| [key, key] }] unless values.is_a?(Hash)      
 
