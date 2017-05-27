@@ -75,6 +75,13 @@ module ActiveService
         end
 
         # @private
+        def fetch
+          super
+        rescue ActiveService::Errors::ResourceNotFound
+          @owner.attributes[@name] = @opts[:default].try(:dup)
+        end
+
+        # @private
         def assign_nested_attributes(attributes)
           assign_single_nested_attributes(attributes)
         end

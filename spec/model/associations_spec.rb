@@ -637,6 +637,9 @@ describe ActiveService::Model::Associations do
 
           stub.get("/users/2") { |env| [200, {}, { id: 2, name: "Lindsay Fünke", role: { id: 2, name: "Admin" } }.to_json] }
           stub.get("/users/2/role") { |env| [200, {}, { id: 3, name: "User" }.to_json] }
+
+          stub.get("/users/3") { |env| [200, {}, { id: 3, name: "Tobias Fünke" }.to_json] }
+          stub.get("/users/3/role") { |env| [404, {}, nil] }
         end
       end
 
@@ -654,6 +657,7 @@ describe ActiveService::Model::Associations do
 
     let(:user) { User.find(1) }
     let(:user_with_role) { User.find(2) }
+    let(:user_with_missing_role) { User.find(3) }
 
     it "maps an array of included data through has_one" do
       expect(user_with_role.role).to be_a(Role)
@@ -670,6 +674,10 @@ describe ActiveService::Model::Associations do
 
     it "fetches included data if called with parameters" do
       expect(user_with_role.role.where(foo_id: 1).id).to be 3
+    end
+
+    it "returns nil if request returns 404" do
+      expect(user_with_missing_role.role).to be_nil
     end
 
     [:create, :save_existing, :destroy].each do |type|
