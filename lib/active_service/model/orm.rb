@@ -135,7 +135,7 @@ module ActiveService
       # Assign resource errors to ActiveModel errors array 
       def assign_errors(items)
         errors.clear
-        items = self.class.attribute_map.map(items)
+        items = self.class.parse(items)
         items.each do |attr, attr_errors|
           attr_errors.each { |error| errors.add(attr, error) }
         end
