@@ -223,6 +223,14 @@ describe ActiveService::Model::ORM do
       expect(@users).to be_all { |u| u.name == "foo" }
       expect(@users.first.email).to eq "foo@first.com"
     end
+
+    it "handles reloading a resource" do
+      @user = User.find(1)
+      @user.name = "Oops"
+      @user.reload
+      expect(@user.name).to eq "Tobias Fünke"
+      expect(@user).to be_persisted
+    end
   end
 
   context "building resources" do

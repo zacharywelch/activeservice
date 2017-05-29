@@ -25,17 +25,17 @@ module ActiveService
       # the existing record gets updated via an HTTP +PUT+.
       #
       # By default, save always run validations. If any of them fail the action
-      # is cancelled and +save+ returns +false+. Adding validations to your client 
-      # models can save a round trip to the service and increase performance. 
+      # is cancelled and +save+ returns +false+. Adding validations to your client
+      # models can save a round trip to the service and increase performance.
       #
       # There's a series of callbacks associated with +save+. If any of the
       # <tt>before_*</tt> callbacks return +false+ the action is cancelled and
       # +save+ returns +false+. See ActiveRecord::Callbacks for further
       # details.
       #
-      # Similar to ActiveRecord, if +save+ returns false you can check the 
-      # object's errors array for any validations that failed. ActiveService will 
-      # add client and server validations that fail to the same array for 
+      # Similar to ActiveRecord, if +save+ returns false you can check the
+      # object's errors array for any validations that failed. ActiveService will
+      # add client and server validations that fail to the same array for
       # easy access.
       #
       # @example Save a resource after fetching it
@@ -93,11 +93,32 @@ module ActiveService
         self
       end
 
+      # Refetches the resource
+      #
+      # This method finds the resource by its primary key (which could be
+      # assigned manually) and modifies the object in-place.
+      #
+      # @example
+      #   class User < ActiveService::Base
+      #     attribute :name
+      #   end
+      #
+      #   user = User.find(1)
+      #   # => #<User(users/1) id=1 name="Tobias Fünke">
+      #   user.name = "Oops"
+      #   user.reload # Fetched again via GET "/users/1"
+      #   # => #<User(users/1) id=1 name="Tobias Fünke">
+      def reload(options = nil)
+        fresh_object = self.class.find(id)
+        assign_attributes(fresh_object.attributes)
+        self
+      end
+
       protected
 
-      # Creates a record with values matching those of the instance attributes. 
-      # Returns the object if the create was successful, otherwise it 
-      # returns nil. An HTTP +POST+ request is sent to the service backend and 
+      # Creates a record with values matching those of the instance attributes.
+      # Returns the object if the create was successful, otherwise it
+      # returns nil. An HTTP +POST+ request is sent to the service backend and
       # the JSON result is used to set the model attributes.
       def create
         run_callbacks :create do
@@ -109,9 +130,9 @@ module ActiveService
         end
       end
 
-      # Updates the associated record with values matching those of the instance 
+      # Updates the associated record with values matching those of the instance
       # attributes. Returns true if the update was successful, otherwise false.
-      # An HTTP +PUT+ request is sent to the service backend and the JSON result 
+      # An HTTP +PUT+ request is sent to the service backend and the JSON result
       # is used to set the model attributes.
       def update
         run_callbacks :update do
@@ -123,10 +144,10 @@ module ActiveService
         end
       end
 
-      # Parses the HTTP response and uses the JSON body to set the model 
-      # attributes if it was successful. If a request was malformed (400) or 
-      # not found (404), the errors are parsed from the response body and used 
-      # to set the errors array on the model. Any other HTTP errors will raise 
+      # Parses the HTTP response and uses the JSON body to set the model
+      # attributes if it was successful. If a request was malformed (400) or
+      # not found (404), the errors are parsed from the response body and used
+      # to set the errors array on the model. Any other HTTP errors will raise
       # an exception with the response body as its message
       def load_attributes_from_response(response)
         data = response.body

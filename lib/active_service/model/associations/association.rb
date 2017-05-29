@@ -48,7 +48,7 @@ module ActiveService
           return @opts[:default].try(:dup) if use_default?
           return @cached_result unless @params.any? || @cached_result.nil?
           return @owner.attributes[@name] unless @params.any? || @owner.attributes[@name].blank?
-          
+
           path = build_association_path lambda { "#{@owner.request_path(@params)}#{@opts[:path]}" }
           @klass.send(resource_method, path, @params).tap do |result|
             @cached_result = result
@@ -58,9 +58,9 @@ module ActiveService
 
         # @private
         def resource_method
-          case self.class.macro 
-          when :has_many, :has_and_belongs_to_many 
-            :get_collection 
+          case self.class.macro
+          when :has_many, :has_and_belongs_to_many
+            :get_collection
           else
             :get_resource
           end
@@ -80,7 +80,7 @@ module ActiveService
           @params = {}
           @cached_result = nil
           @owner.attributes.delete(@name)
-        end        
+        end
 
         # Add query parameters to the HTTP request performed to fetch the data
         #
@@ -111,7 +111,7 @@ module ActiveService
           return self if params.blank? && @owner.attributes[@name].blank?
           params = Hash[params, :asc] if params.is_a? ::Symbol
           params = { sort: @klass.attribute_map.map(params, :to => :source).flatten.join('_') }
-          AssociationProxy.new self.clone.tap { |a| a.params.merge! params } 
+          AssociationProxy.new self.clone.tap { |a| a.params.merge! params }
         end
 
         # Fetches the data specified by id
@@ -129,17 +129,18 @@ module ActiveService
           @klass.get(path, @params)
         end
 
-        # Refetches the association and puts the proxy back in its initial state, 
+        # Refetches the association and puts the proxy back in its initial state,
         # which is unloaded. Cached associations are cleared.
         #
         # @example
-        #   class User
-        #     include Her::Model
+        #   class User < ActiveService::Base
         #     has_many :comments
         #   end
         #
-        #   class Comment
-        #     include Her::Model
+        #   class Comment < ActiveService::Base
+        #     attribute :user_id
+        #     attribute :body
+        #     belongs_to :user
         #   end
         #
         #   user = User.find(1)
@@ -152,7 +153,7 @@ module ActiveService
           fetch
         end
 
-        private 
+        private
 
         def use_default?
           attribute_value = @owner.attributes[@name]
