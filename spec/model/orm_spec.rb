@@ -352,8 +352,8 @@ describe ActiveService::Model::ORM do
         builder.use ActiveService::Middleware::ParseJSON
         builder.use Faraday::Request::UrlEncoded
         builder.adapter :test do |stub|
-          stub.get("/users/1") { |env| ok! :id => 1, :name => "Tobias Fünke" }
-          stub.put("/users/1") { ok! :id => 1, :name => "Lindsay Fünke" }
+          stub.get("/users/1") { |env| ok! :id => 1, :name => "Tobias Fünke", :admin => false }
+          stub.put("/users/1") { ok! :id => 1, :name => "Lindsay Fünke", :admin => true }
           stub.get("/comments/1") { |env| ok! :id => 1, :CommentBody => "Hodor Hodor. Hodor." }
           stub.put("/comments/1") { |env| [200, {}, { :id => 1, :CommentBody => Faraday::Utils.parse_query(env[:body])['CommentBody'] }.to_json] }
         end
@@ -362,6 +362,7 @@ describe ActiveService::Model::ORM do
       spawn_model "User" do
         uses_api api
         attribute :name
+        attribute :admin
       end
 
       spawn_model "Comment" do
@@ -396,6 +397,22 @@ describe ActiveService::Model::ORM do
       @comment.body = "foo"
       @comment.save
       expect(@comment.body).to eq "foo"
+    end
+
+    it "handles resource update through #toggle without saving it" do
+      @user = User.find(1)
+      expect(@user.admin).to be_falsey
+      expect(@user).to_not receive(:save)
+      @user.toggle(:admin)
+      expect(@user.admin).to be_truthy
+    end
+
+    it "handles resource update through #toggle!" do
+      @user = User.find(1)
+      expect(@user.admin).to be_falsey
+      expect(@user).to receive(:save).and_return(true)
+      @user.toggle!(:admin)
+      expect(@user.admin).to be_truthy
     end
   end
 
