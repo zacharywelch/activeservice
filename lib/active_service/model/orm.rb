@@ -93,6 +93,23 @@ module ActiveService
         self
       end
 
+      # Initializes +attribute+ to zero if +nil+ and adds the value passed as
+      # +by+ (default is 1). The increment is performed directly on the
+      # underlying attribute, no setter is invoked. Only makes sense for
+      # number-based attributes. Returns +self+.
+      def increment(attribute, by = 1)
+        attributes[attribute] ||= 0
+        attributes[attribute] += by
+        self
+      end
+
+      # Wrapper around #increment that saves the resource. Saving is subjected
+      # to validation checks. Returns +self+.
+      def increment!(attribute, by = 1)
+        increment(attribute, by) && save
+        self
+      end
+
       # Assigns to +attribute+ the boolean opposite of <tt>attribute?</tt>. So
       # if the predicate returns +true+ the attribute will become +false+. This
       # method toggles directly the underlying value without calling any setter.

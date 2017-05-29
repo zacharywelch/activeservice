@@ -354,6 +354,8 @@ describe ActiveService::Model::ORM do
         builder.adapter :test do |stub|
           stub.get("/users/1") { |env| ok! :id => 1, :name => "Tobias Fünke", :admin => false }
           stub.put("/users/1") { ok! :id => 1, :name => "Lindsay Fünke", :admin => true }
+          stub.get("/pages/1") { [200, {}, { id: 1, views: 1 }.to_json] }
+          stub.put("/pages/1") { [200, {}, { id: 1, views: 2 }.to_json] }
           stub.get("/comments/1") { |env| ok! :id => 1, :CommentBody => "Hodor Hodor. Hodor." }
           stub.put("/comments/1") { |env| [200, {}, { :id => 1, :CommentBody => Faraday::Utils.parse_query(env[:body])['CommentBody'] }.to_json] }
         end
@@ -363,6 +365,11 @@ describe ActiveService::Model::ORM do
         uses_api api
         attribute :name
         attribute :admin
+      end
+
+      spawn_model "Page" do
+        uses_api api
+        attribute :views
       end
 
       spawn_model "Comment" do
@@ -413,6 +420,24 @@ describe ActiveService::Model::ORM do
       expect(@user).to receive(:save).and_return(true)
       @user.toggle!(:admin)
       expect(@user.admin).to be_truthy
+    end
+
+    it "handles resource update through #increment without saving it" do
+      @page = Page.find(1)
+      expect(@page.views).to be 1
+      expect(@page).to_not receive(:save)
+      @page.increment(:views)
+      expect(@page.views).to be 2
+      @page.increment(:views, 2)
+      expect(@page.views).to be 4
+    end
+
+    it "handles resource update through #increment!" do
+      @page = Page.find(1)
+      expect(@page.views).to be 1
+      expect(@page).to receive(:save).and_return(true)
+      @page.increment!(:views)
+      expect(@page.views).to be 2
     end
   end
 
