@@ -354,8 +354,8 @@ describe ActiveService::Model::ORM do
         builder.adapter :test do |stub|
           stub.get("/users/1") { |env| ok! :id => 1, :name => "Tobias Fünke", :admin => false }
           stub.put("/users/1") { ok! :id => 1, :name => "Lindsay Fünke", :admin => true }
-          stub.get("/pages/1") { [200, {}, { id: 1, views: 1 }.to_json] }
-          stub.put("/pages/1") { [200, {}, { id: 1, views: 2 }.to_json] }
+          stub.get("/pages/1") { [200, {}, { id: 1, views: 1, unique_visitors: 4 }.to_json] }
+          stub.put("/pages/1") { [200, {}, { id: 1, views: 2, unique_visitors: 3 }.to_json] }
           stub.get("/comments/1") { |env| ok! :id => 1, :CommentBody => "Hodor Hodor. Hodor." }
           stub.put("/comments/1") { |env| [200, {}, { :id => 1, :CommentBody => Faraday::Utils.parse_query(env[:body])['CommentBody'] }.to_json] }
         end
@@ -370,6 +370,7 @@ describe ActiveService::Model::ORM do
       spawn_model "Page" do
         uses_api api
         attribute :views
+        attribute :unique_visitors
       end
 
       spawn_model "Comment" do
@@ -438,6 +439,24 @@ describe ActiveService::Model::ORM do
       expect(@page).to receive(:save).and_return(true)
       @page.increment!(:views)
       expect(@page.views).to be 2
+    end
+
+    it "handles resource update through #decrement without saving it" do
+      @page = Page.find(1)
+      expect(@page.unique_visitors).to be 4
+      expect(@page).to_not receive(:save)
+      @page.decrement(:unique_visitors)
+      expect(@page.unique_visitors).to be 3
+      @page.decrement(:unique_visitors, 2)
+      expect(@page.unique_visitors).to be 1
+    end
+
+    it "handles resource update through #decrement!" do
+      @page = Page.find(1)
+      expect(@page.unique_visitors).to be 4
+      expect(@page).to receive(:save).and_return(true)
+      @page.decrement!(:unique_visitors)
+      expect(@page.unique_visitors).to be 3
     end
   end
 
