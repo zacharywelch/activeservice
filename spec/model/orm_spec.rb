@@ -137,9 +137,12 @@ describe ActiveService::Model::ORM do
           stub.get("/users/2") { |env| ok! :id => 2, :name => "Lindsay Fünke" }
           stub.get("/users?id[]=1&id[]=2") { |env| ok! [{ :id => 1, :name => "Tobias Fünke" }, { :id => 2, :name => "Lindsay Fünke" }] }
           stub.get("/users?name=foo&sort=EmailAddress_asc") { |env| ok! [{ :id => 3, :name => "foo", :EmailAddress => "foo@first.com" }, { :id => 4, :name => "foo", :EmailAddress => "foo@second.com" }] }
+          stub.get("/users?name=foo&age=42") { |env| ok! [{ id: 3, name: "foo", age: 42 }] }
           stub.get("/users?name=foo") { |env| ok! [{ :id => 3, :name => "foo" }] }
           stub.get("/users?name=bar") { |env| ok! [{ :id => 4, :name => "bar" }] }
           stub.get("/users?EmailAddress=foo@bar.com") { |env| ok! [{ :id => 3, :name => "foo", :EmailAddress => "foo@bar.com" }] }
+          stub.get("/users?name=baz") { |env| ok! [] }
+          stub.post("/users") { |env| ok! id: 5, name: "baz" }
         end
       end
 
@@ -192,6 +195,24 @@ describe ActiveService::Model::ORM do
       expect(@users.length).to be 2
       expect(@users[0].id).to be 1
       expect(@users[1].id).to be 2
+    end
+
+    it "handles finding by attributes" do
+      @user = User.find_by(name: "foo", age: 42)
+      expect(@user).to be_a(User)
+      expect(@user.id).to eq(3)
+    end
+
+    it "handles find or create by attributes" do
+      @user = User.find_or_create_by(name: "baz")
+      expect(@user).to be_a(User)
+      expect(@user.id).to eq(5)
+    end
+
+    it "handles find or initialize by attributes" do
+      @user = User.find_or_initialize_by(name: "baz")
+      expect(@user).to be_a(User)
+      expect(@user).to_not be_persisted
     end
 
     it "handles finding with other parameters" do

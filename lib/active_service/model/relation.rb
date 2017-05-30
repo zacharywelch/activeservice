@@ -152,6 +152,50 @@ module ActiveService
         ids.length > 1 || ids.first.kind_of?(Array) ? results : results.first
       end
 
+      # Fetch first resource matching the specified conditions.
+      #
+      # If no resource is found, returns <tt>nil</tt>.
+      #
+      # @example
+      #   @user = User.find_by(name: "Tobias Fünke", age: 42)
+      #   # Called via GET "/users?name=Tobias+Fünke&age=42"
+      def find_by(params)
+        where(params).first
+      end
+
+      # Fetch first resource matching the specified conditions.
+      #
+      # In no resource is found, create one with the same attributes
+      #
+      # @example
+      #   @user = User.find_or_create_by(email: "remi@example.com")
+      #
+      #   # Returns the first item in the collection if present:
+      #   # Called via GET "/users?email=remi@example.com"
+      #
+      #   # If collection is empty:
+      #   # POST /users with `email=remi@example.com`
+      def find_or_create_by(attributes)
+        find_by(attributes) || create(attributes)
+      end
+
+      # Fetch first resource matching the specified conditions.
+      #
+      # In no resource is found, initialize one with the same attributes
+      #
+      # @example
+      #   @user = User.find_or_initialize_by(email: "remi@example.com")
+      #
+      #   # Returns the first item in the collection if present:
+      #   # Called via GET "/users?email=remi@example.com"
+      #
+      #   # If collection is empty:
+      #   @user.email # => "remi@example.com"
+      #   @user.new? # => true
+      def find_or_initialize_by(attributes)
+        find_by(attributes) || build(attributes)
+      end
+
       # Create a resource and return it
       #
       # @example
