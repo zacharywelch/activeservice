@@ -2,7 +2,7 @@
 require File.join(File.dirname(__FILE__), "../spec_helper.rb")
 
 describe ActiveService::Model::Relation do
-  describe :where do
+  describe '.where' do
     context "for base classes" do
       before do
         api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
@@ -86,7 +86,7 @@ describe ActiveService::Model::Relation do
     end
   end
 
-  describe :order do
+  describe '.order' do
     before do
       api = ActiveService::API.new :url => "https://api.example.com" do |builder|
         builder.use ActiveService::Middleware::ParseJSON
@@ -144,7 +144,7 @@ describe ActiveService::Model::Relation do
       @users = AdminUser.order(:name)
       expect(@users.first.name).to eq "Lindsay Fünke"
       expect(@users.last.name).to eq "Tobias Fünke"
-    end    
+    end
 
     it "orders string parameters" do
       @users = User.order("name")
@@ -168,10 +168,10 @@ describe ActiveService::Model::Relation do
       @users = AdminUser.where(:name => "foo").order(:name)
       expect(@users.first.name).to eq "foo a"
       expect(@users.last.name).to eq "foo b"
-    end    
+    end
   end
 
-  describe :limit do 
+  describe '.limit' do
     before do
       api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
         builder.use ActiveService::Middleware::ParseJSON
@@ -199,10 +199,10 @@ describe ActiveService::Model::Relation do
     it "can be chained with where statements" do
       @users = User.where(:name => "foo").limit(1)
       expect(@users.size).to be 1
-    end    
+    end
   end
 
-  describe :create do
+  describe '.create' do
     before do
       api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
         builder.use ActiveService::Middleware::ParseJSON
@@ -237,8 +237,8 @@ describe ActiveService::Model::Relation do
     end
   end
 
-  describe :build do
-    before do 
+  describe '.build' do
+    before do
       spawn_model "User" do
         attribute :name
       end
@@ -251,7 +251,7 @@ describe ActiveService::Model::Relation do
     end
   end
 
-  describe :scope do
+  describe '.scope' do
     before do
       api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
         builder.use ActiveService::Middleware::ParseJSON
@@ -286,13 +286,13 @@ describe ActiveService::Model::Relation do
     end
   end
 
-  describe :default_scope do
+  describe '.default_scope' do
     context "for new objects" do
       before do
         spawn_model 'User' do
           attribute :active
-          attribute :admin 
-          
+          attribute :admin
+
           default_scope lambda { where(:active => true) }
           default_scope lambda { where(:admin => true) }
         end
@@ -314,8 +314,8 @@ describe ActiveService::Model::Relation do
         end
 
         spawn_model 'User' do
-          uses_api api 
-          attribute :active          
+          uses_api api
+          attribute :active
           default_scope lambda { where(:active => true) }
         end
       end
@@ -336,18 +336,18 @@ describe ActiveService::Model::Relation do
 
         spawn_model 'User' do
           uses_api api
-          attribute :active          
+          attribute :active
           default_scope lambda { where(:active => true) }
         end
       end
 
-      it "should apply the scope to the request" do 
+      it "should apply the scope to the request" do
         expect(User.all.first).to be_active
       end
     end
   end
 
-  describe :map do
+  describe '.map' do
     before do
       api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
         builder.use ActiveService::Middleware::ParseJSON
