@@ -224,6 +224,31 @@ purchases = Purchase.shipped
 # => GET /purchases?status=shipped
 ```
 
+### Dirty Tracking
+
+ActiveService includes `ActiveModel::Dirty` to track changes on attributes the
+same way ActiveRecord does.
+
+```ruby
+class User < ActiveService::Base
+  attribute :name
+  attribute :email
+end
+
+user = User.find(1)
+# => #<User(users/1) id=1 name="Tobias" email="tobias@gmail.com">
+
+user.changes # => {}
+
+user.name = "foo"
+user.name_changed? # => true
+user.changes # => {"name"=>["Tobias", "foo"]}
+
+user.save # => true
+user.changes # => {}
+user.previous_changes # => {"name"=>["Tobias", "foo"]}
+```
+
 ## Associations
 
 Setting up associations between resources should be familiar to anyone who uses Active Record. Examples in this section use the following models:
