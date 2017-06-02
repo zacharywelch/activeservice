@@ -1,3 +1,3 @@
 module ActiveService
-  VERSION = "1.4.4"
+  VERSION = "1.5.2"
 end
