@@ -15,7 +15,7 @@ module ActiveService
   module Model
     extend ActiveSupport::Concern
 
-    # ActiveAttr modules 
+    # ActiveAttr modules
     include ActiveAttr::BasicModel
     include ActiveAttr::BlockInitialization
     include ActiveAttr::Logger
@@ -23,6 +23,7 @@ module ActiveService
     include ActiveAttr::AttributeDefaults
     include ActiveAttr::QueryAttributes
     include ActiveAttr::TypecastedAttributes
+    include ActiveAttr::Dirty
 
     # ActiveService modules
     include ActiveService::Model::Attributes
@@ -53,10 +54,10 @@ module ActiveService
 
       # Define the default collection parser
       collection_parser ActiveService::Collection
-            
+
       # Include ActiveModel naming methods
       extend ActiveModel::Translation
-      
+
       # Configure ActiveModel callbacks
       extend ActiveModel::Callbacks
       define_model_callbacks :save, :create, :update, :destroy

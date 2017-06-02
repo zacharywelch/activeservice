@@ -5,17 +5,18 @@ module ActiveService
   module Model
     # This module handles attribute methods not provided by ActiveAttr
     module Attributes
-      extend ActiveSupport::Concern      
+      extend ActiveSupport::Concern
       include ActiveService::Model::Attributes::NestedAttributes
 
       # Apply default scope to any new object
-      def initialize(attributes={})  
+      def initialize(attributes={})
         attributes ||= {}
         @destroyed = attributes.delete(:_destroyed) || false
         @owner_path = attributes.delete(:_owner_path)
 
         attributes = self.class.default_scope.apply_to(attributes)
         assign_attributes(attributes) && apply_defaults
+        yield self if block_given?
       end
 
       # Handles missing methods
@@ -67,7 +68,7 @@ module ActiveService
       # @private
       def has_attribute?(attribute_name)
         self.class.attribute_names.include?(attribute_name.to_s)
-      end      
+      end
 
       # @private
       def has_nested_attributes?(attributes_name)
@@ -86,8 +87,8 @@ module ActiveService
       # Return the value of the model `primary_key` attribute
       # def id
       #   @attributes[self.class.primary_key]
-      # end    
-      
+      # end
+
       # Return `true` if other object is an ActiveService::Base and has matching data
       #
       # @private
@@ -100,17 +101,17 @@ module ActiveService
       # @private
       def eql?(other)
         self == other
-      end     
-      
+      end
+
       # Delegate to @attributes, allowing models to act correctly in code like:
       #     [ Model.find(1), Model.find(1) ].uniq # => [ Model.find(1) ]
       # @private
       def hash
         @attributes.hash
-      end           
+      end
 
       module ClassMethods
-        
+
         # Initialize a single resources
         #
         # @private
@@ -144,8 +145,10 @@ module ActiveService
         # @private
         def new_from_parsed_data(parsed_data)
           parsed_data = parsed_data.with_indifferent_access
-          new(parse(parsed_data))
-        end           
+          new(parse(parsed_data)) do |resource|
+            resource.send :clear_changes_information
+          end
+        end
 
         # Use setter methods of model for each key / value pair in params
         # Return key / value pairs for which no setter method was defined on the model
@@ -168,9 +171,9 @@ module ActiveService
         end
 
         # Returns a mapping of attributes to fields
-        # 
-        # ActiveService can map fields from a response to attributes defined on a 
-        # model. <tt>attribute_map</tt> translates source fields to their model 
+        #
+        # ActiveService can map fields from a response to attributes defined on a
+        # model. <tt>attribute_map</tt> translates source fields to their model
         # attributes and vice-versa during HTTP requests.
         def attribute_map
           @attribute_map ||= ActiveService::Model::Attributes::AttributeMap.new(attributes.values)

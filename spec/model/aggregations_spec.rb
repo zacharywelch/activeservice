@@ -8,7 +8,7 @@ describe ActiveService::Model::Aggregations do
         spawn_model "User" do
           attribute   :address_street
           attribute   :address_city
-          composed_of :address, mapping: [ %w(address_street street), %w(address_city city) ] 
+          composed_of :address, mapping: [ %w(address_street street), %w(address_city city) ]
         end
 
         class Address
@@ -33,13 +33,13 @@ describe ActiveService::Model::Aggregations do
       end
 
       it "handles respond_to for getter" do
-        expect { user.address }.not_to raise_error()
+        expect { user.address }.not_to raise_error
         expect(user.address).to be_kind_of(Address)
       end
 
       it "handles respond_to for setter" do
         expect(user).to respond_to :address=
-      end      
+      end
 
       it "updates aggregation when attributes are updated" do
         user.address_street = "New Street"
@@ -69,7 +69,7 @@ describe ActiveService::Model::Aggregations do
         spawn_model "User" do
           attribute   :address_street
           attribute   :address_city
-          composed_of :work_address, class_name: 'Address', mapping: [ %w(address_street street), %w(address_city city) ] 
+          composed_of :work_address, class_name: 'Address', mapping: [ %w(address_street street), %w(address_city city) ]
         end
 
         class Address

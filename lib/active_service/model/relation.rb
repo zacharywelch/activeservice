@@ -132,21 +132,14 @@ module ActiveService
         params = @params.merge(ids.last.is_a?(Hash) ? ids.pop : {})
         ids = Array(params[@owner.primary_key]) if params.key?(@owner.primary_key)
         results = ids.flatten.compact.uniq.map do |id|
-          resource = nil
           request_params = params.merge(
             :_method => :get,
             :_path => @owner.build_request_path(params.merge(@owner.primary_key => id))
           )
 
           @owner.request(request_params) do |response|
-            if response.success?
-              resource = @owner.new_from_parsed_data(response.body)
-            else
-              return nil
-            end
+            @owner.new_from_parsed_data(response.body) if response.success?
           end
-
-          resource
         end
 
         ids.length > 1 || ids.first.kind_of?(Array) ? results : results.first

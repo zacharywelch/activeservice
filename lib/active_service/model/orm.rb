@@ -204,6 +204,7 @@ module ActiveService
       def load_attributes_from_response(response)
         data = response.body
         assign_attributes(self.class.parse(data)) unless data.empty?
+        changes_applied
         self
       end
 
@@ -267,17 +268,13 @@ module ActiveService
         # If the request_new_object_on_build flag is set, the new object is requested via API.
         def build(attributes = {})
           params = attributes
-          return self.new(params) unless self.request_new_object_on_build?
+          return new(params) unless request_new_object_on_build?
 
-          path = self.build_request_path(params.merge(self.primary_key => 'new'))
+          path = build_request_path(params.merge(primary_key => 'new'))
 
-          resource = nil
-          self.request(params.merge(:_method => :get, :_path => path)) do |response|
-            if response.success?
-              resource = self.new_from_parsed_data(response.body)
-            end
+          request(params.merge(:_method => :get, :_path => path)) do |response|
+            new_from_parsed_data(response.body) if response.success?
           end
-          resource
         end
 
         # Destroy an existing resource
