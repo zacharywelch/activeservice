@@ -4,6 +4,7 @@ require 'active_service/model/attributes'
 require 'active_service/model/relation'
 require 'active_service/model/orm'
 require 'active_service/model/parse'
+require 'active_service/model/params'
 require 'active_service/model/errors'
 require 'active_service/model/associations'
 require 'active_service/model/aggregations'
@@ -30,6 +31,7 @@ module ActiveService
     include ActiveService::Model::ORM
     include ActiveService::Model::HTTP
     include ActiveService::Model::Parse
+    include ActiveService::Model::Params
     include ActiveService::Model::Errors
     include ActiveService::Model::Introspection
     include ActiveService::Model::Paths
