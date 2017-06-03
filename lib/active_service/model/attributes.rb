@@ -53,9 +53,9 @@ module ActiveService
         # Use setter methods first
         unset_attributes = self.class.use_setter_methods(self, new_attributes)
         # Then translate attributes of associations into association instances
-        parsed_attributes = self.class.parse_associations(unset_attributes)
-        # Then merge the parsed_data into @attributes.
-        @attributes.merge!(parsed_attributes)
+        associations = self.class.parse_associations(unset_attributes)
+        # Then merge the associations into @attributes
+        @attributes.merge!(associations)
       end
       alias attributes= assign_attributes
 
@@ -112,14 +112,16 @@ module ActiveService
 
       module ClassMethods
 
-        # Initialize a single resources
+        # Initialize a single resource
         #
         # @private
         def instantiate_record(klass, record)
           if record.kind_of?(klass)
             record
           else
-            klass.new(klass.parse(record))
+            klass.new(klass.parse(record)) do |resource|
+              resource.send :clear_changes_information
+            end
           end
         end
 
@@ -144,10 +146,7 @@ module ActiveService
         #
         # @private
         def new_from_parsed_data(parsed_data)
-          parsed_data = parsed_data.with_indifferent_access
-          new(parse(parsed_data)) do |resource|
-            resource.send :clear_changes_information
-          end
+          instantiate_record(self, parsed_data)
         end
 
         # Use setter methods of model for each key / value pair in params
