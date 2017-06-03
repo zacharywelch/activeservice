@@ -2,6 +2,7 @@
 require File.join(File.dirname(__FILE__), "../spec_helper.rb")
 
 describe ActiveService::Model::Params do
+
   context "when include_root_in_json is set" do
     context "to true" do
       before do
@@ -133,108 +134,150 @@ describe ActiveService::Model::Params do
     end
   end
 
-  describe "#to_params" do
-    context "with single has_one association" do
-      before do
-        spawn_model "User" do
-          attribute :name
-          has_one :role
-        end
-
-        spawn_model "Role" do
-          attribute :name
-        end
-      end
-
-      it "includes has_one associations" do
-        user = User.new(name: "Tobias Fünke")
-        user.role = Role.new(name: "admin")
-
-        expect(user.to_params[:role]).to eq({ name: "admin", id: nil })
+  context "without embedded associations" do
+    before do
+      spawn_model "User" do
+        attribute :name
       end
     end
 
-    context "with multiple has_one associations" do
-      before do
-        spawn_model "User" do
-          attribute :name
-          has_one :address
-          has_one :role
-        end
-
-        spawn_model "Role" do
-          attribute :name
-        end
-
-        spawn_model "Address" do
-          attribute :street
-        end
-      end
-
-      it "includes nil has_one association" do
-        user = User.new(name: "Tobias Fünke")
-        user.role = Role.new(name: "admin")
-        user.address = nil
-
-        expect(user.to_params[:role]).to eq({ name: "admin", id: nil })
-        expect(user.to_params[:address]).to be_nil
-      end
-    end
-
-    context "with single has_many association" do
-      before do
-        spawn_model "User" do
-          attribute :name
-          has_many :comments
-        end
-
-        spawn_model "Comment" do
-          attribute :body
-        end
-      end
-
-      it "includes has_many associations" do
-        user = User.new(name: "Tobias Fünke")
-        user.comments = [Comment.new(body:"lorem ipsum")]
-
-        expect(user.to_params[:comments]).to eq([{ body: "lorem ipsum", id: nil }])
-      end
-    end
-
-    context "with multiple has_many associations" do
-      before do
-        spawn_model "User" do
-          attribute :name
-          has_many :posts
-          has_many :comments
-        end
-
-        spawn_model "Comment" do
-          attribute :body
-        end
-
-        spawn_model "Post" do
-          attribute :body
-        end
-      end
-
-      it "includes empty has_many association" do
-        user = User.new(name: "Tobias Fünke")
-        user.comments = [Comment.new(body:"lorem ipsum")]
-        user.posts = []
-
-        expect(user.to_params[:comments]).to eq([{ body: "lorem ipsum", id: nil }])
-        expect(user.to_params[:posts]).to be_empty
-      end
+    it "only sends attributes as params" do
+      user = User.new(name: "Tobias Fünke")
+      expect(user.to_params).to eq({ name: "Tobias Fünke", id: nil })
     end
   end
 
-  context "when method for update is PATCH" do
+  context "with embedded has_one association" do
+    before do
+      spawn_model "User" do
+        attribute :name
+        has_one :role
+        has_one :profile
+      end
+
+      spawn_model "Role" do
+        attribute :name
+      end
+
+      spawn_model "Profile" do
+        attribute :bio
+      end
+    end
+
+    it "includes has_one attributes in params" do
+      user = User.new(name: "Tobias Fünke")
+      user.role = Role.new(name: "Therapist")
+
+      expect(user.to_params).to eq({
+                                     name: "Tobias Fünke",
+                                     id: nil,
+                                     role: {
+                                       name: "Therapist",
+                                       id: nil
+                                     }
+                                   })
+    end
+
+    it "includes multiple has_one attributes in params" do
+      user = User.new(name: "Tobias Fünke")
+      user.role = Role.new(name: "Therapist")
+      user.profile = Profile.new(bio: "Blue Man Group understudy")
+
+      expect(user.to_params).to eq({
+                                     name: "Tobias Fünke",
+                                     id: nil,
+                                     role: {
+                                       name: "Therapist",
+                                       id: nil
+                                     },
+                                     profile: {
+                                       bio: "Blue Man Group understudy",
+                                       id: nil
+                                     }
+                                   })
+    end
+
+    it "includes nil has_one in params" do
+      user = User.new(name: "Tobias Fünke")
+      user.role = nil
+
+      expect(user.to_params).to eq({
+                                     name: "Tobias Fünke",
+                                     id: nil,
+                                     role: nil
+                                   })
+    end
+  end
+
+  context "with embedded has_many association" do
+    before do
+      spawn_model "User" do
+        attribute :name
+        has_many :comments
+        has_many :posts
+      end
+
+      spawn_model "Comment" do
+        attribute :body
+      end
+
+      spawn_model "Post" do
+        attribute :content
+      end
+    end
+
+    it "includes has_many attributes in params" do
+      user = User.new(name: "Tobias Fünke")
+      user.comments = [Comment.new(body: "They're having a FIRESALE?")]
+
+      expect(user.to_params).to eq({
+                                     name: "Tobias Fünke",
+                                     id: nil,
+                                     comments: [{
+                                       body: "They're having a FIRESALE?",
+                                       id: nil
+                                     }]
+                                   })
+    end
+
+    it "includes multiple has_many attributes in params" do
+      user = User.new(name: "Tobias Fünke")
+      user.comments = [Comment.new(body: "They're having a FIRESALE?")]
+      user.posts = [Post.new(content: "I'm afraid I have something of a mess on my hands.")]
+
+      expect(user.to_params).to eq({
+                                     name: "Tobias Fünke",
+                                     id: nil,
+                                     comments: [{
+                                       body: "They're having a FIRESALE?",
+                                       id: nil
+                                     }],
+                                     posts: [{
+                                       content: "I'm afraid I have something of a mess on my hands.",
+                                       id: nil
+                                     }]
+                                   })
+    end
+
+    it "includes empty has_many in params" do
+      user = User.new(name: "Tobias Fünke")
+      user.comments = []
+
+      expect(user.to_params).to eq({
+                                     name: "Tobias Fünke",
+                                     id: nil,
+                                     comments: []
+                                   })
+    end
+  end
+
+  context "when update method is PATCH instead of PUT" do
     before do
       spawn_model "User" do
         attribute :name
         attribute :email
         has_one :role
+        has_many :comments
         method_for :update, :patch
       end
 
@@ -251,7 +294,7 @@ describe ActiveService::Model::Params do
 
     after { User.method_for :update, :put }
 
-    it "only sends the attributes that were modified" do
+    it "only includes the attributes that were modified" do
       user = User.new(name: "Tobias Fünke")
       expect(user.to_params).to eq({ name: "Tobias Fünke" })
     end
