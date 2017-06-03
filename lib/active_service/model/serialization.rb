@@ -1,7 +1,7 @@
 module ActiveService
   module Model
-    # This module monkey patches ActiveModel's basic serialization functionality 
-    # and excludes include_root_in_json to keep API.setup conventions consistent      
+    # This module monkey patches ActiveModel's basic serialization functionality
+    # and excludes include_root_in_json to keep API.setup conventions consistent
     module Serialization
       extend ActiveSupport::Concern
       include ActiveModel::Serialization
@@ -10,7 +10,7 @@ module ActiveService
         extend ActiveModel::Naming
       end
 
-      # Returns a hash representing the model. 
+      # Returns a hash representing the model.
       # See ActiveModel::Serializers::JSON for documentation
       def as_json(options = nil)
         root = if options && options.key?(:root)
@@ -34,7 +34,7 @@ module ActiveService
         hash = hash.values.first if include_root
         self.attributes = hash
         self
-      end      
+      end
     end
   end
 end

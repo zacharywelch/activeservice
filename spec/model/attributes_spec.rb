@@ -3,7 +3,7 @@ require File.join(File.dirname(__FILE__), "../spec_helper.rb")
 
 describe ActiveService::Model::Attributes do
   context "mapping data to Ruby objects" do
-    before do 
+    before do
       spawn_model "User" do
         attribute :name
         attribute :'life-span'
@@ -24,13 +24,13 @@ describe ActiveService::Model::Attributes do
     it "handles respond_to for getter" do
       @new_user = User.new(:name => 'Mayonegg')
       expect { @new_user.unknown_method_for_a_user }.to raise_error(NoMethodError)
-      expect { @new_user.name }.not_to raise_error()      
+      expect { @new_user.name }.not_to raise_error()
     end
 
     it "handles respond_to for setter" do
       @new_user = User.new(:name => 'Mayonegg')
       expect { @new_user.unknown_method_for_a_user }.to raise_error(NoMethodError)
-      expect { @new_user.name }.not_to raise_error()            
+      expect { @new_user.name }.not_to raise_error()
     end
 
     it "handles respond_to for query" do
@@ -41,7 +41,7 @@ describe ActiveService::Model::Attributes do
     it "handles has_attribute? for getter" do
       @new_user = User.new(:name => 'Mayonegg')
       expect(@new_user).not_to have_attribute(:unknown_method_for_a_user)
-      expect(@new_user).to have_attribute(:name)      
+      expect(@new_user).to have_attribute(:name)
     end
 
     it "handles get_attribute for getter" do
@@ -92,7 +92,7 @@ describe ActiveService::Model::Attributes do
         uses_api api
         attribute :name
       end
-      
+
       spawn_model "Admin" do
         uses_api api
         attribute :name
@@ -165,7 +165,7 @@ describe ActiveService::Model::Attributes do
 
     it "maps source fields to attributes" do
       expect(user.name).to eq "Tobias Fünke"
-      expect(user).not_to respond_to :UserName 
+      expect(user).not_to respond_to :UserName
     end
   end
 end

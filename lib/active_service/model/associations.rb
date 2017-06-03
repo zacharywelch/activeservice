@@ -17,8 +17,8 @@ module ActiveService
       def has_association?(association_name)
         associations = self.class.associations.values.flatten.map { |a| a[:name] }
         associations.include?(association_name.to_sym)
-      end   
-      
+      end
+
       # Returns the resource/collection corresponding to the association_name association.
       #
       # @private
@@ -58,7 +58,7 @@ module ActiveService
               data.merge! association_class.parse(association, self, data)
             end
           end
-          
+
           data
         end
 
@@ -154,7 +154,7 @@ module ActiveService
         def has_and_belongs_to_many(name, opts={})
           ActiveService::Model::Associations::HasAndBelongsToManyAssociation.attach(self, name, opts)
         end
-      end      
+      end
     end
   end
 end

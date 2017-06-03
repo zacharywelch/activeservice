@@ -21,7 +21,7 @@ module ActiveService
       #   User.get(:popular) # GET "/users/popular"
       #   User.active # GET "/users/active"
       module ClassMethods
-        
+
         # Change which API the model will use to make its HTTP requests
         #
         # @example
@@ -34,7 +34,7 @@ module ActiveService
         #   end
         def use_api(value = nil)
           @use_api ||= begin
-            superclass.use_api if superclass.respond_to?(:use_api) 
+            superclass.use_api if superclass.respond_to?(:use_api)
           end || ActiveService::API.default_api
 
           unless value
@@ -43,11 +43,11 @@ module ActiveService
 
           @use_api = value
         end
-        
+
         alias api use_api
         alias uses_api use_api
 
-        # Main request wrapper around ActiveService::API. Used to make custom 
+        # Main request wrapper around ActiveService::API. Used to make custom
         # requests to the API.
         #
         # @private

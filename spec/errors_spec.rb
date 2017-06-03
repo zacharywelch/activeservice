@@ -13,7 +13,7 @@ describe ActiveService::Errors do
       stub.get("/ServerError") { |env| [567, {}, { :errors => "ServerError" }.to_json] }
     end
   end
-  
+
   context 'when a BadRequest error is raised' do
     it "should raise a BadRequest error" do
       expect do
@@ -24,7 +24,7 @@ describe ActiveService::Errors do
       end
     end
   end
-  
+
   context 'when a UnauthorizedAccess error is raised' do
     it "should raise a UnauthorizedAccess error" do
       expect do
@@ -46,7 +46,7 @@ describe ActiveService::Errors do
       end
     end
   end
-  
+
   context 'when a TimeoutError error is raised' do
     it "should raise a TimeoutError error" do
       expect do
@@ -57,7 +57,7 @@ describe ActiveService::Errors do
       end
     end
   end
-  
+
   context 'when a ResourceInvalid error is raised' do
     it "should raise a ResourceInvalid error" do
       expect do
@@ -68,7 +68,7 @@ describe ActiveService::Errors do
       end
     end
   end
-  
+
   context 'when a ClientError error is raised' do
     it "should raise a ClientError error" do
       expect do
@@ -79,7 +79,7 @@ describe ActiveService::Errors do
       end
     end
   end
-  
+
   context 'when a ServerError error is raised' do
     it "should raise a ServerError error" do
       expect do

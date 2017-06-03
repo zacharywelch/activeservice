@@ -23,7 +23,7 @@ describe ActiveService::Collection do
         expect {ActiveService::Collection.new(malformed_items)}.to raise_error(
 	  ActiveService::Errors::ParserError
         )
-      end 
+      end
     end
   end
 

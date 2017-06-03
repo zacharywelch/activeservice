@@ -55,7 +55,7 @@ describe ActiveService::Model::Parse do
           include_root_in_json true
         end
 
-        class User < Model 
+        class User < Model
           attribute :name
         end
         @spawned_models << :User
@@ -85,7 +85,7 @@ describe ActiveService::Model::Parse do
 
         spawn_model "User" do
           uses_api api
-          attribute :name    
+          attribute :name
           custom_get :admins, on: :collection
           parse_root_in_json true
         end
@@ -129,7 +129,7 @@ describe ActiveService::Model::Parse do
           end
         end
 
-        spawn_model "User" do 
+        spawn_model "User" do
           uses_api api
           attribute :name
           parse_root_in_json :person
@@ -274,7 +274,7 @@ describe ActiveService::Model::Parse do
       end
 
       spawn_model "User" do
-        uses_api api 
+        uses_api api
         parse_root_in_json true, :format => :json_api
         include_root_in_json true
         custom_get :admins, on: :collection
@@ -373,7 +373,7 @@ describe ActiveService::Model::Parse do
           stub.get("/users/active") { |env| [200, {}, { :collection => [{ :id => 1, :name => "Tobias Fünke" }], :total_count => 50 }.to_json] }
         end
       end
-      
+
       spawn_model "User" do
         uses_api api
         collection_parser CustomCollection
@@ -385,7 +385,7 @@ describe ActiveService::Model::Parse do
         attribute :name
       end
     end
-  
+
     context "when the custom collection is set" do
       it "handles parsing the collection" do
         @users = User.all
@@ -483,7 +483,7 @@ describe ActiveService::Model::Parse do
         @new_user.comments = [Comment.new(:body =>"lorem ipsum")]
 
         expect(@new_user.to_params[:comments]).to eq([{ :body => "lorem ipsum", :id => nil }])
-      end      
+      end
     end
 
     context "with multiple has_many associations" do

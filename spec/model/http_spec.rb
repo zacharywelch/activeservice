@@ -54,7 +54,7 @@ describe ActiveService::Model::HTTP do
         Superclass.uses_api api1
         Subclass = Class.new(Superclass)
       end
-      after { Object.send(:remove_const, :Subclass) } 
+      after { Object.send(:remove_const, :Subclass) }
       specify { expect(Subclass.api).to eq Superclass.api }
     end
 
@@ -65,7 +65,7 @@ describe ActiveService::Model::HTTP do
         Superclass.uses_api api1
         Subclass.uses_api api2
       end
-      after { Object.send(:remove_const, :Subclass) } 
+      after { Object.send(:remove_const, :Subclass) }
       specify { expect(Subclass.api).to_not eq Superclass.api }
     end
   end
@@ -73,7 +73,7 @@ describe ActiveService::Model::HTTP do
   context "making HTTP requests" do
     before do
       api = ActiveService::API.new :url => "https://api.example.com" do |builder|
-        builder.use ActiveService::Middleware::ParseJSON        
+        builder.use ActiveService::Middleware::ParseJSON
         builder.adapter :test do |stub|
           stub.get("/users") { |env| ok! [{ :id => 1 }] }
           stub.get("/users/1") { |env| [200, {}, { :id => 1 }.to_json] }
@@ -85,8 +85,8 @@ describe ActiveService::Model::HTTP do
             else
               ok! [{ :id => 1 }, { :id => 2 }]
             end
-          end          
-          stub.post("/comments") { |env| error! body: ["can't be blank"] }                    
+          end
+          stub.post("/comments") { |env| error! body: ["can't be blank"] }
         end
       end
 
@@ -97,7 +97,7 @@ describe ActiveService::Model::HTTP do
       spawn_model "Comment" do
         use_api api
         attribute :body
-      end      
+      end
     end
 
     describe :get do
@@ -170,7 +170,7 @@ describe ActiveService::Model::HTTP do
       it "handles errors" do
         expect { Comment.post_raw("/comments") }.to raise_error ActiveService::Errors::BadRequest
       end
-    end    
+    end
   end
 
   context "setting custom HTTP requests" do

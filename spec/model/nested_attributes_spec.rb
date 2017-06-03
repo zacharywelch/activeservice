@@ -16,7 +16,7 @@ describe ActiveService::Model::Attributes::NestedAttributes do
         accepts_nested_attributes_for :company
       end
 
-      spawn_model "Company" do 
+      spawn_model "Company" do
         uses_api api
         attribute :name
       end
@@ -54,7 +54,7 @@ describe ActiveService::Model::Attributes::NestedAttributes do
         accepts_nested_attributes_for :pet
       end
 
-      spawn_model "Pet" do 
+      spawn_model "Pet" do
         uses_api api
         attribute :name
         attribute :user_id

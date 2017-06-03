@@ -1,9 +1,9 @@
 module ActiveService
   module Model
-    # Active Service implements aggregation through a macro-like class method 
-    # called +composed_of+ for representing attributes as value objects. This 
-    # macro is very similar to Active Record's composed_of macro. For detailed 
-    # documentation on this macro please see the Rails documentation at 
+    # Active Service implements aggregation through a macro-like class method
+    # called +composed_of+ for representing attributes as value objects. This
+    # macro is very similar to Active Record's composed_of macro. For detailed
+    # documentation on this macro please see the Rails documentation at
     # +http://api.rubyonrails.org/classes/ActiveRecord/Aggregations/ClassMethods.html#method-i-composed_of+
     #
     #   class Customer < ActiveService::Base
@@ -29,15 +29,15 @@ module ActiveService
     #    def ==(other_address)
     #      city == other_address.city && street == other_address.street
     #    end
-    #  end      
+    #  end
     module Aggregations
       extend ActiveSupport::Concern
 
-      module ClassMethods    
-        
+      module ClassMethods
+
         def composed_of(value, options = {})
           options.assert_valid_keys(:class_name, :mapping)
-          
+
           name       = value.id2name
           class_name = options[:class_name] || name.classify
           mapping    = options[:mapping]    || [ name, name ]
@@ -55,7 +55,7 @@ module ActiveService
               attrs = mapping.inject(
                 ActiveSupport::HashWithIndifferentAccess.new
                 ) do |result, (source, target)|
-                
+
                 result[target] = read_attribute(source)
                 result
               end
@@ -77,7 +77,7 @@ module ActiveService
             instance_variable_set("@#{name}", value)
           end
         end
-      end  
+      end
     end
   end
 end

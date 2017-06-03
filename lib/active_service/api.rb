@@ -1,6 +1,6 @@
 module ActiveService
-  # This class is where all HTTP requests are made. Before using ActiveService, 
-  # you must configure it so it knows where to make those requests. In Rails, 
+  # This class is where all HTTP requests are made. Before using ActiveService,
+  # you must configure it so it knows where to make those requests. In Rails,
   # this is usually done in `config/initializers/active_service.rb`:
   class API
     # @private
@@ -8,18 +8,18 @@ module ActiveService
     delegate :headers, :ssl, :parallel_manager, :to => :connection
 
     # Constants
-    FARADAY_OPTIONS = [:request, :proxy, :ssl, :builder, :url, :parallel_manager, 
+    FARADAY_OPTIONS = [:request, :proxy, :ssl, :builder, :url, :parallel_manager,
                        :params, :headers, :builder_class].freeze
 
-    # Setup a default API connection. Accepted arguments and options are the 
+    # Setup a default API connection. Accepted arguments and options are the
     # same as {API#setup}.
     def self.setup(opts={}, &block)
       @default_api = new
       @default_api.setup(opts, &block)
     end
 
-    # Create a new API object. This is useful to create multiple APIs and use 
-    # them with the `uses_api` method. If your application uses only one API, 
+    # Create a new API object. This is useful to create multiple APIs and use
+    # them with the `uses_api` method. If your application uses only one API,
     # you should use ActiveService::API.setup to configure the default API
     #
     # @example Setting up a new API
@@ -115,7 +115,7 @@ module ActiveService
     end
 
     # @private
-    # Parse response and error codes    
+    # Parse response and error codes
     def handle_response(response)
       case response.status
         when 200, 201, 204
@@ -135,6 +135,6 @@ module ActiveService
         else
           raise response.body
       end
-    end    
+    end
   end
 end

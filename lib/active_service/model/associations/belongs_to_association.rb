@@ -4,7 +4,7 @@ module ActiveService
       class BelongsToAssociation < Association
 
         # @private
-        def self.attach(klass, name, opts)          
+        def self.attach(klass, name, opts)
           opts = {
             :class_name => name.to_s.classify,
             :name => name,
@@ -71,7 +71,7 @@ module ActiveService
           resource
         end
 
-        def scoped 
+        def scoped
           klass
         end
 
@@ -80,10 +80,10 @@ module ActiveService
           foreign_key_value = @owner.attributes[@opts[:foreign_key].to_sym]
           data_key_value = @owner.attributes[@opts[:data_key].to_sym]
           return @opts[:default].try(:dup) if (@owner.attributes.include?(@name) && @owner.attributes[@name].nil? && @params.empty?) || (@owner.persisted? && foreign_key_value.blank? && data_key_value.blank?)
-          
+
           return @cached_result unless @params.any? || @cached_result.nil?
           return @owner.attributes[@name] unless @params.any? || @owner.attributes[@name].blank?
-          
+
           path_params = @owner.attributes.merge(@params.merge(@klass.primary_key => foreign_key_value))
           path = build_association_path lambda { @klass.build_request_path(path_params) }
           @klass.get(path, @params).tap do |result|

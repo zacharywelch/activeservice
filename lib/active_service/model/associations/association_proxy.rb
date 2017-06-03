@@ -15,7 +15,7 @@ module ActiveService
         end
 
         install_proxy_methods :association,
-          :build, :create, :destroy, :where, :order, :find, :all, 
+          :build, :create, :destroy, :where, :order, :find, :all,
           :assign_nested_attributes, :reset, :reload
 
         # @private
@@ -41,7 +41,7 @@ module ActiveService
           __send__(name, *args, &block)
         end
 
-        private 
+        private
 
         def target_for(method)
           scope = association.klass.respond_to?(method) && association.klass.singleton_methods(false).include?(method)

@@ -40,6 +40,6 @@ module ActiveService
     # @private
     def singularized_resource_name
       self.class.model_name.singular
-    end    
+    end
   end
 end

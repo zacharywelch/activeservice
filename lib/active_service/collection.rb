@@ -8,13 +8,13 @@ module ActiveService
 
     # The array of actual elements returned by index actions
     attr_accessor :elements
-    
+
     # ActiveService::Collection is a wrapper to handle parsing index responses that
-    # do not directly map to Rails conventions. Implementation details are heavily  
+    # do not directly map to Rails conventions. Implementation details are heavily
     # influenced by ActiveResource::Collection
     #
     # You can define a custom class that inherets from ActiveService::Collection
-    # in order to to set the elements instance. 
+    # in order to to set the elements instance.
     #
     # GET /posts.json delivers following response body:
     #   {
@@ -27,7 +27,7 @@ module ActiveService
     #     ]
     #     next_page: "/posts.json?page=2"
     #   }
-    # 
+    #
     # A Post class can be setup to handle it with:
     #
     #   class Post < ActiveService::Base
@@ -45,7 +45,7 @@ module ActiveService
     #     end
     #   end
     #
-    # The result from a find method that returns multiple entries will now be a 
+    # The result from a find method that returns multiple entries will now be a
     # PostParser instance.  ActiveService::Collection includes Enumerable and
     # instances can be iterated over just like an array.
     #    @posts = Post.find(:all) # => PostCollection:xxx
@@ -59,7 +59,7 @@ module ActiveService
       raise ActiveService::Errors::ParserError, message unless elements.is_a? Array
       @elements = elements
     end
-    
+
     def to_a
       elements
     end
@@ -67,7 +67,7 @@ module ActiveService
     def is_a?(klass)
       (klass == Array) || super
     end
-    
+
     def collect!
       return elements unless block_given?
       set = []

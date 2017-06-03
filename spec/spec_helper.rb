@@ -17,7 +17,7 @@ I18n.enforce_available_locales = false
 RSpec.configure do |config|
   config.include ActiveService::Testing::Macros::ModelMacros
   config.include ActiveService::Testing::Macros::RequestMacros
-  
+
   config.before :each do
     @spawned_models = []
   end
@@ -26,5 +26,5 @@ RSpec.configure do |config|
     @spawned_models.each do |model|
       Object.instance_eval { remove_const model } if Object.const_defined?(model)
     end
-  end  
+  end
 end

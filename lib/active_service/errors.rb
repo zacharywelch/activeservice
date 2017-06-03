@@ -15,10 +15,10 @@ module ActiveService
     # Base class for response errors
     class ResponseError < StandardError
       attr_reader :response
-      
-      delegate :status, :body, :to => :response      
+
+      delegate :status, :body, :to => :response
       alias :code :status
-      
+
       def initialize(response)
         @response = response
       end

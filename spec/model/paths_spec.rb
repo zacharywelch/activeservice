@@ -5,7 +5,7 @@ describe ActiveService::Model::Paths do
   context "building request paths" do
     context "simple model" do
       before do
-        spawn_model "User" do 
+        spawn_model "User" do
           attribute :id
           attribute :name
         end
@@ -72,7 +72,7 @@ describe ActiveService::Model::Paths do
     context "simple model with multiple words" do
       before do
         spawn_model "AdminUser" do
-          attribute :id          
+          attribute :id
         end
       end
 
@@ -134,13 +134,13 @@ describe ActiveService::Model::Paths do
       before do
         api = ActiveService::API.setup :url => "https://api.example.com" do |builder|
           builder.use Faraday::Request::UrlEncoded
-          builder.use ActiveService::Middleware::ParseJSON          
+          builder.use ActiveService::Middleware::ParseJSON
           builder.adapter :test do |stub|
             stub.get("/users/foo") { |env| ok! :id => 'foo' }
           end
         end
 
-        spawn_model "Model" do 
+        spawn_model "Model" do
           uses_api api
           include_root_in_json true
         end
@@ -293,7 +293,7 @@ describe ActiveService::Model::Paths do
         @user.destroy
         expect(@user.active).to be_falsey
       end
-    end  
+    end
   end
 
   context "making path HTTP requests" do

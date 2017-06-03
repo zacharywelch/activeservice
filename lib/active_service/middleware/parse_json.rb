@@ -9,7 +9,7 @@ module ActiveService
         end
       end
 
-      private 
+      private
 
       # @private
       def parse_json(body = nil)
@@ -25,7 +25,7 @@ module ActiveService
         raise ActiveService::Errors::ParserError, message unless json.is_a?(Hash) or json.is_a?(Array)
 
         json
-      end      
+      end
     end
   end
 end

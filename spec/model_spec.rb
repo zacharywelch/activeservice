@@ -12,7 +12,7 @@ describe ActiveService::Model do
     end
 
     spawn_model "User" do
-      uses_api api 
+      uses_api api
       attribute :name
       has_many :comments
     end

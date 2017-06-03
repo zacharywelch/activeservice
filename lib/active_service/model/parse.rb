@@ -23,8 +23,8 @@ module ActiveService
         def parse(data)
           data = data.with_indifferent_access
           if parse_root_in_json? && root_element_included?(data)
-            data = json_api_format? ? 
-              data.fetch(parsed_root_element).first : 
+            data = json_api_format? ?
+              data.fetch(parsed_root_element).first :
               data.fetch(parsed_root_element) { data }
           end
           attribute_map.map(data)
@@ -35,7 +35,7 @@ module ActiveService
         def to_params(attributes)
           attributes = attribute_map.map(attributes, :to => :source)
           filtered_attributes = attributes.dup.symbolize_keys
-          filtered_attributes.merge!(embeded_params(attributes))          
+          filtered_attributes.merge!(embeded_params(attributes))
           if include_root_in_json?
             if json_api_format?
               { included_root_element => [filtered_attributes] }
@@ -93,7 +93,7 @@ module ActiveService
         def include_root_in_json(value, options = {})
           @include_root_in_json = value
           @include_root_in_json_format = options[:format]
-        end        
+        end
 
         # Return or change the value of `parse_root_in_json`
         #
@@ -228,7 +228,7 @@ module ActiveService
         # @private
         def include_root_in_json?
           @include_root_in_json || (superclass.respond_to?(:include_root_in_json?) && superclass.include_root_in_json?)
-        end        
+        end
 
         # @private
         def parse_root_in_json?

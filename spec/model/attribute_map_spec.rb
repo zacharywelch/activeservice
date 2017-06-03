@@ -10,7 +10,7 @@ describe ActiveService::Model::Attributes::AttributeMap do
         end
       end
 
-      let(:definitions) { User.attributes.values }      
+      let(:definitions) { User.attributes.values }
       subject(:map) { ActiveService::Model::Attributes::AttributeMap.new(definitions) }
 
       its(:attributes) { should == { :id => "id", :name => "name" } }
@@ -24,7 +24,7 @@ describe ActiveService::Model::Attributes::AttributeMap do
         end
       end
 
-      let(:definitions) { User.attributes.values }      
+      let(:definitions) { User.attributes.values }
       subject(:map) { ActiveService::Model::Attributes::AttributeMap.new(definitions) }
 
       its(:attributes) { should == { :id => "id", :name => "UserName" } }
@@ -37,7 +37,7 @@ describe ActiveService::Model::Attributes::AttributeMap do
       spawn_model "User" do
         attribute :name, :source => "UserName"
       end
-    end    
+    end
 
     it "returns a hash with source names as keys and attributes as values" do
       expect(User.attribute_map.by_source).to eq({ "id" => :id, "UserName" => :name })
@@ -59,11 +59,11 @@ describe ActiveService::Model::Attributes::AttributeMap do
     it "maps attributes to source names" do
       hash = { :id => 1, :name => "foo" }
       expect(User.attribute_map.map(hash, :to => :source)).to eq({ "id" => 1, "UserName" => "foo" })
-    end    
+    end
 
     it "maps attributes with string keys to source names" do
       hash = { "id" => 1, "name" => "foo" }
       expect(User.attribute_map.map(hash, :to => :source)).to eq({ "id" => 1, "UserName" => "foo" })
-    end    
+    end
   end
 end
