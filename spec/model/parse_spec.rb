@@ -24,13 +24,13 @@ describe ActiveService::Model::Parse do
       end
 
       it "wraps params in the element name in `to_params`" do
-        @new_user = User.new(:name => "Tobias Fünke")
-        expect(@new_user.to_params).to eq({ :user => { :name=>"Tobias Fünke", :id=>nil } })
+        user = User.new(:name => "Tobias Fünke")
+        expect(user.to_params).to eq({ :user => { :name=>"Tobias Fünke", :id=>nil } })
       end
 
       it "wraps params in the element name in `.create`" do
-        @new_user = User.admins(:name => "Tobias Fünke")
-        expect(@new_user.name).to eq "Tobias Fünke"
+        user = User.admins(:name => "Tobias Fünke")
+        expect(user.name).to eq "Tobias Fünke"
       end
     end
 
@@ -44,8 +44,8 @@ describe ActiveService::Model::Parse do
       end
 
       it "wraps params in the specified value" do
-        @new_user = User.new(:name => "Tobias Fünke")
-        expect(@new_user.to_params).to eq({ :person => { :name => "Tobias Fünke", :id => nil } })
+        user = User.new(:name => "Tobias Fünke")
+        expect(user.to_params).to eq({ :person => { :name => "Tobias Fünke", :id => nil } })
       end
     end
 
@@ -62,8 +62,8 @@ describe ActiveService::Model::Parse do
       end
 
       it "wraps params with the class name" do
-        @new_user = User.new(:name => "Tobias Fünke")
-        expect(@new_user.to_params).to eq({ :user => { :name => "Tobias Fünke", :id => nil } })
+        user = User.new(:name => "Tobias Fünke")
+        expect(user.to_params).to eq({ :user => { :name => "Tobias Fünke", :id => nil } })
       end
     end
   end
@@ -92,30 +92,30 @@ describe ActiveService::Model::Parse do
       end
 
       it "parse the data from the JSON root element after .create" do
-        @new_user = User.create(:name => "Lindsay Fünke")
-        expect(@new_user.name).to eq "Lindsay Fünke"
+        user = User.create(:name => "Lindsay Fünke")
+        expect(user.name).to eq "Lindsay Fünke"
       end
 
       it "parse the data from the JSON root element after an arbitrary HTTP request" do
-        @new_user = User.admins
-        expect(@new_user.first.name).to eq "Lindsay Fünke"
+        user = User.admins
+        expect(user.first.name).to eq "Lindsay Fünke"
       end
 
       it "parse the data from the JSON root element after .all" do
-        @users = User.all
-        expect(@users.first.name).to eq "Lindsay Fünke"
+        users = User.all
+        expect(users.first.name).to eq "Lindsay Fünke"
       end
 
       it "parse the data from the JSON root element after .find" do
-        @user = User.find(1)
-        expect(@user.name).to eq "Lindsay Fünke"
+        user = User.find(1)
+        expect(user.name).to eq "Lindsay Fünke"
       end
 
       it "parse the data from the JSON root element after .save" do
-        @user = User.find(1)
-        @user.name = "Tobias Fünke"
-        @user.save
-        expect(@user.name).to eq "Tobias Fünke Jr."
+        user = User.find(1)
+        user.name = "Tobias Fünke"
+        user.save
+        expect(user.name).to eq "Tobias Fünke Jr."
       end
     end
 
@@ -137,8 +137,8 @@ describe ActiveService::Model::Parse do
       end
 
       it "parse the data with the symbol" do
-        @new_user = User.create(:name => "Lindsay Fünke")
-        expect(@new_user.name).to eq "Lindsay Fünke"
+        user = User.create(:name => "Lindsay Fünke")
+        expect(user.name).to eq "Lindsay Fünke"
       end
     end
 
@@ -167,13 +167,13 @@ describe ActiveService::Model::Parse do
       end
 
       it "parse the data with the symbol" do
-        @new_user = User.create(:name => "Lindsay Fünke")
-        expect(@new_user.name).to eq "Lindsay Fünke"
+        user = User.create(:name => "Lindsay Fünke")
+        expect(user.name).to eq "Lindsay Fünke"
       end
 
       it "parses the collection of data" do
-        @users = User.all
-        expect(@users.first.name).to eq "Lindsay Fünke"
+        users = User.all
+        expect(users.first.name).to eq "Lindsay Fünke"
       end
     end
 
@@ -200,30 +200,30 @@ describe ActiveService::Model::Parse do
       end
 
       it "parse the data from the JSON root element after .create" do
-        @new_user = User.create(:name => "Lindsay Fünke")
-        expect(@new_user.name).to eq "Lindsay Fünke"
+        user = User.create(:name => "Lindsay Fünke")
+        expect(user.name).to eq "Lindsay Fünke"
       end
 
       it "parse the data from the JSON root element after an arbitrary HTTP request" do
-        @users = User.admins
-        expect(@users.first.name).to eq "Lindsay Fünke"
+        users = User.admins
+        expect(users.first.name).to eq "Lindsay Fünke"
       end
 
       it "parse the data from the JSON root element after .all" do
-        @users = User.all
-        expect(@users.first.name).to eq "Lindsay Fünke"
+        users = User.all
+        expect(users.first.name).to eq "Lindsay Fünke"
       end
 
       it "parse the data from the JSON root element after .find" do
-        @user = User.find(1)
-        expect(@user.name).to eq "Lindsay Fünke"
+        user = User.find(1)
+        expect(user.name).to eq "Lindsay Fünke"
       end
 
       it "parse the data from the JSON root element after .save" do
-        @user = User.find(1)
-        @user.name = "Tobias Fünke"
-        @user.save
-        expect(@user.name).to eq "Tobias Fünke Jr."
+        user = User.find(1)
+        user.name = "Tobias Fünke"
+        user.save
+        expect(user.name).to eq "Tobias Fünke Jr."
       end
     end
   end
@@ -248,14 +248,14 @@ describe ActiveService::Model::Parse do
     end
 
     it "changes the request parameters for one-line resource creation" do
-      @user = User.create(:name => "Tobias Fünke")
-      expect(@user.name).to eq "Lindsay Fünke"
+      user = User.create(:name => "Tobias Fünke")
+      expect(user.name).to eq "Lindsay Fünke"
     end
 
     it "changes the request parameters for Model.new + #save" do
-      @user = User.new(:name => "Tobias Fünke")
-      @user.save
-      expect(@user.name).to eq "Lindsay Fünke"
+      user = User.new(:name => "Tobias Fünke")
+      user.save
+      expect(user.name).to eq "Lindsay Fünke"
     end
   end
 
@@ -283,37 +283,37 @@ describe ActiveService::Model::Parse do
     end
 
     it "parse the data from the JSON root element after .create" do
-      @new_user = User.create(:name => "Lindsay Fünke")
-      expect(@new_user.name).to eq "Lindsay Fünke"
+      user = User.create(:name => "Lindsay Fünke")
+      expect(user.name).to eq "Lindsay Fünke"
     end
 
     it "parse the data from the JSON root element after an arbitrary HTTP request" do
-      @new_user = User.admins
-      expect(@new_user.first.name).to eq "Lindsay Fünke"
+      user = User.admins
+      expect(user.first.name).to eq "Lindsay Fünke"
     end
 
     it "parse the data from the JSON root element after .all" do
-      @users = User.all
-      expect(@users.first.name).to eq "Lindsay Fünke"
+      users = User.all
+      expect(users.first.name).to eq "Lindsay Fünke"
     end
 
     it "parse the data from the JSON root element after .find" do
-      @user = User.find(1)
-      expect(@user.name).to eq "Lindsay Fünke"
+      user = User.find(1)
+      expect(user.name).to eq "Lindsay Fünke"
     end
 
     it "parse the data from the JSON root element after .save" do
-      @user = User.find(1)
-      @user.name = "Tobias Fünke"
-      @user.save
-      expect(@user.name).to eq "Tobias Fünke Jr."
+      user = User.find(1)
+      user.name = "Tobias Fünke"
+      user.save
+      expect(user.name).to eq "Tobias Fünke Jr."
     end
 
     it "parse the data from the JSON root element after new/save" do
-      @user = User.new
-      @user.name = "Lindsay Fünke (before save)"
-      @user.save
-      expect(@user.name).to eq "Lindsay Fünke"
+      user = User.new
+      user.name = "Lindsay Fünke (before save)"
+      user.save
+      expect(user.name).to eq "Lindsay Fünke"
     end
   end
 
@@ -340,13 +340,13 @@ describe ActiveService::Model::Parse do
       end
 
       it "wraps params in the element name in `to_params`" do
-        @new_user = User.new(:name => "Tobias Fünke")
-        expect(@new_user.to_params).to eq({ :users => [{ :name => "Tobias Fünke", :id => nil }] })
+        user = User.new(:name => "Tobias Fünke")
+        expect(user.to_params).to eq({ :users => [{ :name => "Tobias Fünke", :id => nil }] })
       end
 
       it "wraps params in the element name in `.where`" do
-        @new_user = User.where(:name => "Tobias Fünke").build
-        expect(@new_user.name).to eq"Tobias Fünke"
+        user = User.where(:name => "Tobias Fünke").build
+        expect(user.name).to eq"Tobias Fünke"
       end
     end
   end
@@ -381,39 +381,37 @@ describe ActiveService::Model::Parse do
       end
 
       spawn_model "SuperUser" do
-	uses_api api
+        uses_api api
         attribute :name
       end
     end
 
     context "when the custom collection is set" do
       it "handles parsing the collection" do
-        @users = User.all
-        expect(@users).to be_kind_of(CustomCollection)
-        expect(@users.length).to be 1
-        expect(@users.first.name).to eq "Tobias Fünke"
+        users = User.all
+        expect(users).to be_kind_of(CustomCollection)
+        expect(users.length).to be 1
+        expect(users.first.name).to eq "Tobias Fünke"
       end
 
       it "handles other methods on custom collection" do
-        @users = User.all
-        expect(@users.respond_to?(:total_count)).to be_truthy
-        expect(@users.total_count).to be 100
+        users = User.all
+        expect(users.respond_to?(:total_count)).to be_truthy
+        expect(users.total_count).to be 100
       end
 
       it "handles custom_get on custom collection" do
         User.custom_get :active, on: :collection
-        @users = User.active
-        expect(@users.respond_to?(:total_count)).to be_truthy
-        expect(@users.total_count).to be 50
+        users = User.active
+        expect(users.respond_to?(:total_count)).to be_truthy
+        expect(users.total_count).to be 50
       end
     end
 
     context "when custom collection is not set" do
       it "raises a ParserError" do
-	@super_users = SuperUser.all
-        expect {@super_users.first}.to raise_error(
-	  ActiveService::Errors::ParserError
-        )
+        super_users = SuperUser.all
+        expect { super_users.first }.to raise_error(ActiveService::Errors::ParserError)
       end
     end
   end
@@ -432,10 +430,10 @@ describe ActiveService::Model::Parse do
       end
 
       it "includes has_one associations" do
-        @new_user = User.new(:name => "Tobias Fünke")
-        @new_user.role = Role.new(:name => "admin")
+        user = User.new(:name => "Tobias Fünke")
+        user.role = Role.new(:name => "admin")
 
-        expect(@new_user.to_params[:role]).to eq({ :name => "admin", :id => nil })
+        expect(user.to_params[:role]).to eq({ :name => "admin", :id => nil })
       end
     end
 
@@ -457,12 +455,12 @@ describe ActiveService::Model::Parse do
       end
 
       it "includes nil has_one association" do
-        @new_user = User.new(:name => "Tobias Fünke")
-        @new_user.role = Role.new(:name => "admin")
-        @new_user.address = nil
+        user = User.new(:name => "Tobias Fünke")
+        user.role = Role.new(:name => "admin")
+        user.address = nil
 
-        expect(@new_user.to_params[:role]).to eq({ :name => "admin", :id => nil })
-        expect(@new_user.to_params[:address]).to be_nil
+        expect(user.to_params[:role]).to eq({ :name => "admin", :id => nil })
+        expect(user.to_params[:address]).to be_nil
       end
     end
 
@@ -479,10 +477,10 @@ describe ActiveService::Model::Parse do
       end
 
       it "includes has_many associations" do
-        @new_user = User.new(:name => "Tobias Fünke")
-        @new_user.comments = [Comment.new(:body =>"lorem ipsum")]
+        user = User.new(:name => "Tobias Fünke")
+        user.comments = [Comment.new(:body =>"lorem ipsum")]
 
-        expect(@new_user.to_params[:comments]).to eq([{ :body => "lorem ipsum", :id => nil }])
+        expect(user.to_params[:comments]).to eq([{ :body => "lorem ipsum", :id => nil }])
       end
     end
 
@@ -504,12 +502,12 @@ describe ActiveService::Model::Parse do
       end
 
       it "includes empty has_many association" do
-        @new_user = User.new(:name => "Tobias Fünke")
-        @new_user.comments = [Comment.new(:body =>"lorem ipsum")]
-        @new_user.posts = []
+        user = User.new(:name => "Tobias Fünke")
+        user.comments = [Comment.new(:body =>"lorem ipsum")]
+        user.posts = []
 
-        expect(@new_user.to_params[:comments]).to eq([{ :body => "lorem ipsum", :id => nil }])
-        expect(@new_user.to_params[:posts]).to be_empty
+        expect(user.to_params[:comments]).to eq([{ :body => "lorem ipsum", :id => nil }])
+        expect(user.to_params[:posts]).to be_empty
       end
     end
   end
