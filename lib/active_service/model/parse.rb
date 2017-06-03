@@ -90,6 +90,30 @@ module ActiveService
           end || {}
         end
 
+        # Extract an array from the request data
+        #
+        # @example
+        #   # with parse_root_in_json true, :format => :active_model_serializers
+        #   class User < ActiveService::Base
+        #     parse_root_in_json true, :format => :active_model_serializers
+        #   end
+        #
+        #   users = User.all # { :users => [ { :id => 1, :name => "Tobias" } ] }
+        #   users.first.name # => "Tobias"
+        #
+        #   # without parse_root_in_json
+        #   class User < ActiveService::Base
+        #   end
+        #
+        #   users = User.all # [ { :id => 1, :name => "Tobias" } ]
+        #   users.first.name # => "Tobias"
+        # @private
+        def changed_params(attributes, changes = {})
+          changes.keys.each_with_object({}) do |attribute, hash|
+            hash[attribute] = attributes[attribute]
+          end
+        end
+
         # Return or change the value of `include_root_in_json`
         #
         # @example
