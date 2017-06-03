@@ -93,8 +93,8 @@ describe ActiveService::Model::Aggregations do
 
       it "handles assignment of aggregation having different class_name" do
         address = Address.new(:street => "New Street", :city => "New City")
-        expect { user.work_address = address }.not_to raise_error()
-        expect { user.work_address = BadAddress.new }.to raise_error()
+        expect { user.work_address = address }.not_to raise_error
+        expect { user.work_address = BadAddress.new }.to raise_error(NoMethodError)
       end
     end
   end
