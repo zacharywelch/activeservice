@@ -18,4 +18,10 @@ module ActiveAttr::Dirty
       end
     end
   end
+
+  def modified_attributes
+    changes.each_with_object({}) do |(attribute, values), modified|
+      modified[attribute] = values.last
+    end
+  end
 end

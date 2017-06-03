@@ -6,13 +6,12 @@ module ActiveService
 
       # Convert into a hash of request parameters, based on `include_root_in_json`.
       #
-      # @todo add dirty changes
-      #
       # @example
       #   @user.to_params
       #   # => { :id => 1, :name => 'John Smith' }
       def to_params
-        self.class.to_params(self.attributes)
+        changes = modified_attributes if send_modified_attributes?
+        self.class.to_params(attributes, changes)
       end
 
       module ClassMethods
@@ -31,22 +30,28 @@ module ActiveService
         end
 
         # @private
-        # @todo add filtered attributes and associations
-        def to_params(attributes)
-          attributes = attribute_map.map(attributes, :to => :source)
-          filtered_attributes = attributes.dup.symbolize_keys
-          filtered_attributes.merge!(embeded_params(attributes))
+        def to_params(attributes, changes = {})
+          params = attributes.dup.symbolize_keys
+                                 .merge(embeded_params(attributes))
+
+          if changes.present?
+            params = changes.keys.each_with_object({}) do |attribute, hash|
+              hash[attribute] = attributes[attribute]
+            end
+          end
+
+          params = attribute_map.map(params, to: :source).symbolize_keys
+
           if include_root_in_json?
             if json_api_format?
-              { included_root_element => [filtered_attributes] }
+              { included_root_element => [params] }
             else
-              { included_root_element => filtered_attributes }
+              { included_root_element => params }
             end
           else
-            filtered_attributes
-          end.symbolize_keys
+            params
+          end
         end
-
 
         # @private
         def embeded_params(attributes)
@@ -55,6 +60,7 @@ module ActiveService
           embed_has_one(attributes).merge(embed_has_many(attributes))
         end
 
+        # @private
         def embed_has_one(attributes)
           associations[:has_one].select { |a| attributes.include?(a[:data_key]) }.compact.inject({}) do |hash, association|
             params = attributes[association[:data_key]].try(:to_params)
@@ -69,6 +75,7 @@ module ActiveService
           end || {}
         end
 
+        # @private
         def embed_has_many(attributes)
           associations[:has_many].select { |a| attributes.include?(a[:data_key]) }.compact.inject({}) do |hash, association|
             params = attributes[association[:data_key]].map(&:to_params)

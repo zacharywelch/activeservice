@@ -208,6 +208,11 @@ module ActiveService
         self
       end
 
+      # Return `true` if the resource should only save modified attributes
+      def send_modified_attributes?
+        new? && self.class.method_for(:update) == :patch
+      end
+
       module ClassMethods
         # Create a new chainable scope
         #

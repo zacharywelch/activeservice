@@ -33,6 +33,10 @@ describe "ActiveService::Model and ActiveAttr::Dirty" do
         expect(user).to_not be_changed
       end
 
+      it "has no modified attributes" do
+        expect(user.modified_attributes).to be_empty
+      end
+
       context "with successful save" do
 
         it "tracks dirty attributes" do
@@ -61,6 +65,13 @@ describe "ActiveService::Model and ActiveAttr::Dirty" do
           expect(user).to be_changed
           expect(user.changes.length).to eq(1)
         end
+
+        it "tracks modified attributes" do
+          user.name = "Tobias Fünke"
+          expect(user.modified_attributes).to eq({ "name" => "Tobias Fünke" })
+          user.save
+          expect(user.modified_attributes).to be_empty
+        end
       end
 
       context "with erroneous save" do
@@ -86,6 +97,10 @@ describe "ActiveService::Model and ActiveAttr::Dirty" do
         expect(user).to be_changed
       end
 
+      it "has modified attributes" do
+        expect(user.modified_attributes).to eq({ "name" => "Lindsay Fünke" })
+      end
+
       it "tracks dirty attributes" do
         user.name = "Tobias Fünke"
         expect(user.name_changed?).to be_truthy
@@ -96,4 +111,3 @@ describe "ActiveService::Model and ActiveAttr::Dirty" do
     end
   end
 end
-#

@@ -351,10 +351,6 @@ describe ActiveService::Model::Parse do
     end
   end
 
-  context 'when send_only_modified_attributes is set' do
-    pending
-  end
-
   context "when a custom collection exists" do
     before do
       class CustomCollection < ActiveService::Collection
@@ -509,6 +505,33 @@ describe ActiveService::Model::Parse do
         expect(user.to_params[:comments]).to eq([{ body: "lorem ipsum", id: nil }])
         expect(user.to_params[:posts]).to be_empty
       end
+    end
+  end
+
+  context "when method for update is PATCH" do
+    before do
+      spawn_model "User" do
+        attribute :name
+        attribute :email
+        method_for :update, :patch
+      end
+
+      spawn_model "Comment" do
+        attribute :body
+        attribute :approved
+      end
+
+      spawn_model "Role" do
+        attribute :name
+        attribute :active
+      end
+    end
+
+    after { User.method_for :update, :put }
+
+    it "only sends the attributes that were modified" do
+      user = User.new(name: "Tobias Fünke")
+      expect(user.to_params).to eq({ name: "Tobias Fünke" })
     end
   end
 end
