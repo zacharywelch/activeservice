@@ -27,11 +27,7 @@ module ActiveService
           return {} unless data[data_key]
 
           klass = klass.nearby_class(association[:class_name])
-          if data[data_key].kind_of?(klass)
-            { association[:name] => data[data_key] }
-          else
-            { association[:name] => klass.new(data[data_key]) }
-          end
+          { association[:name] => klass.instantiate_record(klass, data[data_key]) }
         end
 
         # @private
