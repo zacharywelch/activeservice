@@ -294,12 +294,12 @@ describe ActiveService::Model::Params do
 
     after { User.method_for :update, :put }
 
-    xit "only includes the attributes that were modified" do
+    it "only includes the attributes that were modified" do
       user = User.new(name: "Tobias Fünke")
       expect(user.to_params).to eq({ name: "Tobias Fünke" })
     end
 
-    xit "includes has one associations that were modified" do
+    it "includes has one associations that were modified" do
       user = User.new(name: "Tobias Fünke")
       user.role = Role.new(name: "Therapist")
 
