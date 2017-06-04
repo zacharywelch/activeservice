@@ -1,6 +1,6 @@
 require 'active_service/model/attributes/nested_attributes'
 require 'active_service/model/attributes/attribute_map'
-require 'active_service/model/attributes/symbolizer'
+require 'active_service/model/attributes/serializer'
 
 module ActiveService
   module Model
@@ -88,8 +88,8 @@ module ActiveService
       # Returns complete list of attributes and included associations
       #
       # @private
-      def symbolized_attributes
-        Symbolizer.new(self).symbolize
+      def serialized_attributes
+        Serializer.new(self).serialize
       end
 
       # Return the value of the model `primary_key` attribute

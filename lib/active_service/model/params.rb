@@ -11,7 +11,7 @@ module ActiveService
       #   @user.to_params
       #   # => { id: 1, name: 'John Smith' }
       def to_params
-        self.class.to_params(symbolized_attributes)
+        self.class.to_params(serialized_attributes)
       end
 
       module ClassMethods
