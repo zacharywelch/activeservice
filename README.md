@@ -486,6 +486,25 @@ User.find(1, _organization_id: 2)
 # => GET /organizations/2/users/1
 ```
 
+### Custom Requests
+Define custom requests for your models using custom_get, custom_post, etc.
+You can map responses to a collection or individual members.
+
+```ruby
+class User < ActiveService::Page
+  custom_get :popular, on: :collection
+  custom_post :featured, on: :member
+end
+
+User.popular
+# GET "/users/popular"
+# => [#<User id=1>, #<User id=2>]
+
+User.featured(name: "Maeby Fünke")
+# POST "/users/featured" with `name=Maeby+Fünke`
+# => #<User id=5 name="Maeby Fünke">
+```
+
 ### Multiple APIs
 
 Connect your models to a different API using `ActiveService::API.new` and the `uses_api` macro.
