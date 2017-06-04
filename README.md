@@ -224,7 +224,7 @@ purchases = Purchase.shipped
 # => GET /purchases?status=shipped
 ```
 
-### Dirty Tracking
+### Dirty Tracking and PATCH
 
 ActiveService includes `ActiveModel::Dirty` to track changes on attributes the
 same way ActiveRecord does.
@@ -247,6 +247,52 @@ user.changes # => {"name"=>["Tobias", "foo"]}
 user.save # => true
 user.changes # => {}
 user.previous_changes # => {"name"=>["Tobias", "foo"]}
+```
+
+Setup your model to only send changes by specifying `method_for :update, :patch`
+
+```ruby
+class Order < ActiveService::Base
+  attribute :name
+  attribute :email
+  method_for :update, :patch
+end
+
+order = Order.find(1)
+# => #<Order(orders/1) id=1 name="Tobias" email="tobias@gmail.com">
+
+order.email = "tobias@blueman.com"
+order.save
+# => PATCH /users/1 { "id": 1, "email": "tobias@blueman.com" }
+```
+
+Changes are also sent for any nested associations
+
+```ruby
+class Order < ActiveService::Base
+  attribute :name
+  attribute :email
+  has_one :shipping
+  method_for :update, :patch
+end
+
+class Shipping < ActiveService::Base
+  attribute :address
+  attribute :expedited, type: Boolean
+end
+
+order = Order.create(name: "Tobias", email: "tobias@gmail.com")
+
+# JSON response
+# { "id": 1, "name": "Tobias", "email": "tobias@gmail.com",
+#   "shipping": { "id": 2, "address": null, "expedited": false } }
+
+order.email = "tobias@blueman.com"
+order.shipping.address = "123 Sesame St"
+order.save
+# => PATCH /orders/1 { "id": 1, "email": "tobias@blueman.com",
+#                      "shipping": { "id": 2, "address": "123 Sesame St" }
+
 ```
 
 ## Associations
