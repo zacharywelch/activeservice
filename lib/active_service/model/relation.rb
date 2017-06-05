@@ -235,6 +235,10 @@ module ActiveService
         first || build(attributes)
       end
 
+      def exists?(id)
+        find(id).present?
+      end
+
       # @private
       def clear_fetch_cache!
         instance_variable_set(:@_fetch, nil)

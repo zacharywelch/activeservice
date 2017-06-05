@@ -256,7 +256,7 @@ module ActiveService
         # Delegate the following methods to `scoped`
         [:all, :where, :order, :create, :build, :find, :find_by,
          :find_or_create_by, :find_or_initialize_by, :first, :last, :limit,
-         :first_or_create, :first_or_initialize].each do |method|
+         :first_or_create, :first_or_initialize, :exists?].each do |method|
           class_eval <<-RUBY, __FILE__, __LINE__ + 1
             def #{method}(*params)
               scoped.send(#{method.to_sym.inspect}, *params)
