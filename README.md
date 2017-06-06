@@ -108,6 +108,14 @@ user.update_attributes(name: "new new name")
 # => PUT /users/1 { "id": 1, "name": "new new name" }
 ```
 
+If you know the id you can also update a resource without fetching it.
+
+```ruby
+# Update a resource without fetching it
+User.save_existing(1, name: "Tobias Fünke")
+# PUT "/users/1" { "id": 1, "name": "Tobias Fünke" }
+```
+
 ### Delete
 
 Calling `destroy` on an Active Service object will send an HTTP `DELETE` request to the API. If you already know the resource, you can save a round trip to the API by using the `destroy` class method.

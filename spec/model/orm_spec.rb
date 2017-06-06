@@ -414,6 +414,11 @@ describe ActiveService::Model::ORM do
       expect(@user.name).to eq "Lindsay Fünke"
     end
 
+    it "handle resource update through the .update class method" do
+      @user = User.save_existing(1, name: "Lindsay Fünke")
+      expect(@user.name).to eq("Lindsay Fünke")
+    end
+
     it "handle resource update through #save on an existing resource" do
       @user = User.find(1)
       @user.name = "Lindsay Fünke"

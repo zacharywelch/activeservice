@@ -264,6 +264,17 @@ module ActiveService
           RUBY
         end
 
+        # Save an existing resource and return it
+        #
+        # @example
+        #   @user = User.save_existing(1, { fullname: "Tobias Fünke" })
+        #   # Called via PUT "/users/1"
+        def save_existing(id, params)
+          resource = new(params.merge(primary_key => id))
+          resource.save
+          resource
+        end
+
         # Build a new resource with the given attributes.
         # If the request_new_object_on_build flag is set, the new object is requested via API.
         def build(attributes = {})
