@@ -9,9 +9,9 @@ describe ActiveService::Model::Attributes::Serializer do
       builder.use ActiveService::Middleware::ParseJSON
       builder.adapter :test do |stub|
         stub.get("/users/1") { |env| ok! id: 1, name: "Tobias Fünke", email: "tobias@gmail.com" }
-        stub.get("/users/2") { |env| ok! id: 2, name: "Tobias Fünke", email: "tobias@gmail.com", role: { id: 1, name: "Therapist", active: true } }
-        stub.get("/users/3") { |env| ok! id: 3, name: "Tobias Fünke", email: "tobias@gmail.com", comments: [{ id: 1, body: "They're having a FIRESALE?", approved: true }] }
-        stub.get("/users/4") { |env| ok! id: 4, name: "Tobias Fünke", email: "tobias@gmail.com", role: { id: 1, name: "Therapist", active: true }, comments: [{ id: 1, body: "They're having a FIRESALE?", approved: true }, { id: 2, body: "Is this the tiny town from Footloose?", approved: true }] }
+        stub.get("/users/2") { |env| ok! id: 2, name: "Tobias Fünke", email: "tobias@gmail.com", role: { id: 1, name: "Therapist", active: true, user_id: 2 } }
+        stub.get("/users/3") { |env| ok! id: 3, name: "Tobias Fünke", email: "tobias@gmail.com", comments: [{ id: 1, body: "They're having a FIRESALE?", approved: true, user_id: 3 }] }
+        stub.get("/users/4") { |env| ok! id: 4, name: "Tobias Fünke", email: "tobias@gmail.com", role: { id: 1, name: "Therapist", active: true, user_id: 4 }, comments: [{ id: 1, body: "They're having a FIRESALE?", approved: true }, { id: 2, body: "Is this the tiny town from Footloose?", approved: true }] }
       end
     end
 
@@ -28,11 +28,15 @@ describe ActiveService::Model::Attributes::Serializer do
     spawn_model "Comment" do
       attribute :body
       attribute :approved
+      attribute :user_id
+      belongs_to :user
     end
 
     spawn_model "Role" do
       attribute :name
       attribute :active
+      attribute :user_id
+      belongs_to :user
     end
 
     spawn_model "Profile" do
@@ -72,7 +76,8 @@ describe ActiveService::Model::Attributes::Serializer do
                                            role: {
                                              id: 1,
                                              name: "Therapist",
-                                             active: true
+                                             active: true,
+                                             user_id: 2
                                            }
                                          })
     end
@@ -85,7 +90,8 @@ describe ActiveService::Model::Attributes::Serializer do
                                            role: {
                                              id: 1,
                                              name: "Therapist",
-                                             active: true
+                                             active: true,
+                                             user_id: 2
                                            },
                                            profile: {
                                              bio: "Blue Man Group understudy",
@@ -102,7 +108,8 @@ describe ActiveService::Model::Attributes::Serializer do
                                            role: {
                                              id: 1,
                                              name: "Therapist",
-                                             active: true
+                                             active: true,
+                                             user_id: 2
                                            },
                                            profile: nil
                                          })
@@ -124,7 +131,8 @@ describe ActiveService::Model::Attributes::Serializer do
                                            comments: [{
                                              id: 1,
                                              body: "They're having a FIRESALE?",
-                                             approved: true
+                                             approved: true,
+                                             user_id: 3
                                            }]
                                          })
     end
@@ -137,7 +145,8 @@ describe ActiveService::Model::Attributes::Serializer do
                                            comments: [{
                                              id: 1,
                                              body: "They're having a FIRESALE?",
-                                             approved: true
+                                             approved: true,
+                                             user_id: 3
                                            }],
                                            posts: [{
                                              content: "Frightened Inmate #2",
@@ -154,7 +163,8 @@ describe ActiveService::Model::Attributes::Serializer do
                                            comments: [{
                                              id: 1,
                                              body: "They're having a FIRESALE?",
-                                             approved: true
+                                             approved: true,
+                                             user_id: 3
                                            }],
                                            posts: []
                                          })
@@ -203,6 +213,50 @@ describe ActiveService::Model::Attributes::Serializer do
                                                body: "I thought it was a pool toy.",
                                                id: 1
                                              }]
+                                           })
+      end
+    end
+  end
+
+  context "when creating changes only" do
+
+    let(:user) { User.find(1) }
+
+    context "with new has_one" do
+
+      before { Role.method_for :create, :patch }
+      after  { Role.method_for :create, :post }
+
+      let(:role) { user.role.build(name: "Blue Man Standby") }
+
+      subject(:serializer) do
+        ActiveService::Model::Attributes::Serializer.new(role)
+      end
+
+      it "includes modified has_one attributes" do
+        expect(serializer.serialize).to eq({ name: "Blue Man Standby",
+                                             id: nil,
+                                             user_id: 1
+                                           })
+      end
+    end
+
+    context "with new has_many" do
+
+      before { Role.method_for :create, :patch }
+      after  { Role.method_for :create, :post }
+
+      let(:comment) { user.comments.build(body: "I thought it was a pool toy.") }
+
+      subject(:serializer) do
+        ActiveService::Model::Attributes::Serializer.new(comment)
+      end
+
+
+      it "includes modified has_many attributes" do
+        expect(serializer.serialize).to eq({ body: "I thought it was a pool toy.",
+                                             id: nil,
+                                             user_id: 1
                                            })
       end
     end

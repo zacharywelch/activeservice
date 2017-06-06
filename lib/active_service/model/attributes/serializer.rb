@@ -51,6 +51,16 @@ module ActiveService
         # Return `true` if only modified attributes should be used
         # @private
         def changes_only?
+          patch_new? || patch_existing?
+        end
+
+        # @private
+        def patch_new?
+          resource.new? &&
+          resource.class.method_for(:create) == :patch
+        end
+
+        def patch_existing?
           resource.persisted? &&
           resource.class.method_for(:update) == :patch
         end
