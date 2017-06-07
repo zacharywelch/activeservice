@@ -49,12 +49,6 @@ module ActiveService
         where(limit: value)
       end
 
-      # Fetch the first or last record
-      # @note
-      #   This is not the most efficient way of returning the first or last
-      #   resource because a fetch is required but it's provided for convenience
-      delegate :first, :last, :to => :fetch
-
       # Add a query string parameter for sorting
       #
       # @example
