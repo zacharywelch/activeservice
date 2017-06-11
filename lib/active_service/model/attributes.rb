@@ -9,7 +9,23 @@ module ActiveService
       extend ActiveSupport::Concern
       include ActiveService::Model::Attributes::NestedAttributes
 
-      # Apply default scope to any new object
+      # Initialize a new object with data
+      #
+      # @param [Hash] attributes The attributes to initialize the object with
+      # @option attributes [Boolean] :_destroyed
+      #
+      # @example
+      #   class User < ActiveService::Base
+      #     attribute :name
+      #   end
+      #
+      #  User.new(name: "Tobias")
+      #  # => #<User name="Tobias">
+      #
+      #  User.new do |u|
+      #    u.name = "Tobias"
+      #  end
+      #  # => #<User name="Tobias">
       def initialize(attributes={})
         attributes ||= {}
         @destroyed = attributes.delete(:_destroyed) || false
