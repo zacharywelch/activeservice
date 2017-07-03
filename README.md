@@ -611,7 +611,11 @@ describe User do
     end
   end
 
-  describe :find do
+  after do
+    User.use_api ActiveService::API.default_api
+  end
+
+  describe '.find' do
     subject(:user) { User.find(1) }
     expect(user.name).to eq "Hodor Hodor"
   end
