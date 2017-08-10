@@ -93,9 +93,11 @@ module ActiveService
       method = opts.delete(:_method)
       path = opts.delete(:_path)
       headers = opts.delete(:_headers)
+      timeout = opts.delete(:_timeout)
       opts.delete_if { |key, value| key.to_s =~ /^_/ } # Remove all internal parameters
       response = @connection.send method do |request|
         request.headers.merge!(headers) if headers
+        request.options.timeout = timeout if timeout
         if method == :get
           # For GET requests, treat additional parameters as querystring data
           request.url path, opts

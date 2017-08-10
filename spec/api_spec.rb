@@ -64,6 +64,16 @@ describe ActiveService::API do
         specify { expect(response).to eq("Foo, it is page 2.") }
       end
 
+      context "making HTTP requests while specifying custom request options" do
+        let(:response) { subject.request(:_method => :get, :_path => "/foo", _timeout: 2).body }
+        before do
+          subject.setup :url => "https://api.example.com" do |builder|
+            builder.adapter(:test) { |stub| stub.get("/foo") { |env| [200, {}, "Foo, it has timeout #{env[:request]["timeout"]}."] } }
+          end
+        end
+        specify { expect(response).to eq("Foo, it has timeout 2.") }
+      end
+
       context "parsing a request with the middleware json parser" do
         let(:response) { subject.request(:_method => :get, :_path => "users/1").body }
         before do
