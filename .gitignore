@@ -9,3 +9,4 @@ bundler_stubs/
 /tmp
 /coverage
 .rspec
+.ruby-gemset
