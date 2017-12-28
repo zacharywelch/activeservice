@@ -63,7 +63,12 @@ module ActiveService
       # Configure ActiveModel callbacks
       extend ActiveModel::Callbacks
       define_model_callbacks :save, :create, :update, :destroy
-      before_save { !destroyed? && valid? }
+
+      if ActiveModel::VERSION::MAJOR >= 5
+        before_save { throw(:abort) unless !destroyed? && valid? }
+      else
+        before_save { !destroyed? && valid? }
+      end
     end
   end
 end
